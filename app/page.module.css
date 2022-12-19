@@ -1,0 +1,17 @@
+.main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: top;
+  padding: 6rem;
+  min-height: 100vh;
+}
+
+.left {
+  width: 10rem;
+  flex: 0 0 auto;
+}
+
+.container {
+  flex: 1;
+}
