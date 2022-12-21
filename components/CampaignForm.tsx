@@ -1,13 +1,21 @@
 'use client';
-import { Box, Button, TextField } from '@mui/material';
+
+import { Autocomplete, Box, Button, Chip, TextField } from '@mui/material';
+import { BaseCampaign } from '@/types'
 import { Session } from 'next-auth';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-const CampaignForm = () => {
-  const [campaignForm, setCampaignForm] = useState({
+const CampaignForm = ({ session }: { session: Session }) => {
+  const [campaignForm, setCampaignForm] = useState<BaseCampaign>({
     name: '',
     description: '',
+    readers: [session?.user?.email ? session.user.email : ''],
+    writers: [session?.user?.email ? session.user.email : ''],
+    admins: [session?.user?.email ? session.user.email : ''],
   });
+
+  const router = useRouter();
 
   const onSubmit = async () => {
     try {
@@ -15,6 +23,7 @@ const CampaignForm = () => {
         method: 'POST',
         body: JSON.stringify(campaignForm),
       });
+      router.refresh();
     } catch (error) {
       console.log('error submitting campaign: ', error);
     }
@@ -25,7 +34,7 @@ const CampaignForm = () => {
       <Box
         component='form'
         sx={{
-          '& .MuiTextField-root': { m: 1, width: '25ch' },
+          '& .MuiTextField-root': { m: 1, width: '75ch' },
         }}
       >
         <TextField
@@ -44,6 +53,72 @@ const CampaignForm = () => {
           onChange={(e) =>
             setCampaignForm({ ...campaignForm, description: e.target.value })
           }
+        />
+        <Autocomplete
+          multiple
+          id='tags-filled'
+          options={[]}
+          freeSolo
+          value={campaignForm.readers}
+          onChange={(event, value) =>
+            setCampaignForm({ ...campaignForm, readers: value })
+          }
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip
+                variant='outlined'
+                label={option}
+                {...getTagProps({ index })}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField {...params} variant='filled' placeholder='readers' />
+          )}
+        />
+        <Autocomplete
+          multiple
+          id='tags-filled'
+          options={[]}
+          freeSolo
+          value={campaignForm.writers}
+          onChange={(event, value) =>
+            setCampaignForm({ ...campaignForm, writers: value })
+          }
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip
+                variant='outlined'
+                label={option}
+                {...getTagProps({ index })}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField {...params} variant='filled' placeholder='writers' />
+          )}
+        />
+        <Autocomplete
+          multiple
+          id='tags-filled'
+          options={[]}
+          freeSolo
+          value={campaignForm.admins}
+          onChange={(event, value) =>
+            setCampaignForm({ ...campaignForm, admins: value })
+          }
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip
+                variant='outlined'
+                label={option}
+                {...getTagProps({ index })}
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField {...params} variant='filled' placeholder='admins' />
+          )}
         />
         <Button variant='contained' sx={{ met: 3 }} onClick={() => onSubmit()}>
           Submit Campaign
