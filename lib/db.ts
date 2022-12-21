@@ -5,7 +5,7 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { ExtendedCampaign, LocationMap } from '@/types';
+import { ExtendedCampaign, Location, LocationMap } from '@/types';
 
 if (!admin.apps.length) {
   try {
