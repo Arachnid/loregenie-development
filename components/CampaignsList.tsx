@@ -1,6 +1,12 @@
 'use client';
 
-import { Collapse, Link, List, ListItem, ListItemButton, ListItemText, ListSubheader } from '@mui/material';
+import Collapse from '@mui/material/Collapse';
+import Link from '@mui/material/Link';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ExtendedCampaign, Location, LocationMap, Nav } from '@/types';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
@@ -81,9 +87,9 @@ export default function CampaignsList({ campaigns, locations }: Props) {
         </ListSubheader>
       }
     >
-      {campaigns.map((campaign: ExtendedCampaign) => {
+      {campaigns.map((campaign: ExtendedCampaign, index) => {
         return (
-          <>
+          <div key={index}>
             <ListItem>
               <ListItemButton
                 component={Link}
@@ -98,7 +104,7 @@ export default function CampaignsList({ campaigns, locations }: Props) {
             <Collapse in={open[campaign.id]} timeout='auto' unmountOnExit>
               <LocationsList nav={campaign.nav} locations={locations} />
             </Collapse>
-          </>
+          </div>
         );
       })}
     </List>
