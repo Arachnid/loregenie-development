@@ -1,11 +1,11 @@
-import { ExecOptionsWithStringEncoding } from 'child_process';
 import admin from 'firebase-admin';
 import {
-  CollectionGroup,
   DocumentData,
   FirestoreDataConverter,
   QueryDocumentSnapshot,
+  Firestore,
 } from 'firebase-admin/firestore';
+import { ExtendedCampaign, LocationMap } from '@/types';
 
 if (!admin.apps.length) {
   try {
@@ -19,7 +19,7 @@ if (!admin.apps.length) {
   }
 }
 
-export const db = admin.firestore();
+export const db: Firestore = admin.firestore();
 
 class Converter<U> implements FirestoreDataConverter<U> {
   toFirestore(u: U): DocumentData {
@@ -31,35 +31,13 @@ class Converter<U> implements FirestoreDataConverter<U> {
   }
 }
 
-export interface Nav {
-  key: string;
-  children: Nav[];
-}
-
-export interface Campaign {
-  readonly id: string;
-  name: string;
-  description: string;
-  nav: Nav[];
-  owner: string;
-  readers: string[];
-  writers: string[];
-}
-
-export interface Location {
-  readonly id: string;
-  campaign: string;
-  name: string;
-  description: string;
-}
-
-export async function getCampaigns(email: string) {
+export async function getCampaigns(email: string): Promise<{campaigns: ExtendedCampaign[], locations: LocationMap}> {
   const campaigns = await db
     .collection('campaigns')
     .where('readers', 'array-contains', email)
-    .withConverter(new Converter<Campaign>())
+    .withConverter(new Converter<ExtendedCampaign>())
     .get();
-  let locationMap: { [key: string]: Location } = {};
+  let locationMap: LocationMap = {};
   if (campaigns.docs.length > 0) {
     const locations = await db
       .collection('locations')
@@ -70,9 +48,9 @@ export async function getCampaigns(email: string) {
       )
       .withConverter(new Converter<Location>())
       .get();
-    locationMap = Object.fromEntries(
-      locations.docs.map((location) => [location.id, location.data()])
-    );
+    locationMap = Object.fromEntries<Location>(
+      locations.docs.map((location: QueryDocumentSnapshot<Location>) => [location.id, location.data()])
+    ) as unknown as LocationMap;
   }
   return {
     campaigns: campaigns.docs.map((campaign) => campaign.data()),
@@ -80,16 +58,16 @@ export async function getCampaigns(email: string) {
   };
 }
 
-export async function getCampaign(id: string) {
+export async function getCampaign(id: string): Promise<ExtendedCampaign | undefined> {
   const campaign = await db
     .collection('campaigns')
     .doc(id)
-    .withConverter(new Converter<Campaign>())
+    .withConverter(new Converter<ExtendedCampaign>())
     .get();
   return campaign.data();
 }
 
-export async function getLocation(id: string) {
+export async function getLocation(id: string): Promise<Location | undefined> {
   const location = await db
     .collection('locations')
     .doc(id)
