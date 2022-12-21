@@ -1,42 +1,41 @@
 'use client';
 
-import ListItemButton from '@mui/material/ListItemButton';
-import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import { Collapse, Link, List, ListItem, ListItemButton, ListItemText, ListSubheader } from '@mui/material';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { ExtendedCampaign, Location, LocationMap, Nav } from '@/types';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
 import React from 'react';
-import { Campaign, Location } from '../lib/db';
-import Collapse from '@mui/material/Collapse';
-import Link from '@mui/material/Link';
-import ListItem from '@mui/material/ListItem';
-import { ListSubheader } from '@mui/material';
 
 interface Props {
-  campaigns: Campaign[];
-  locations: { [key: string]: Location };
+  campaigns: ExtendedCampaign[];
+  locations: LocationMap;
 }
+
+interface Open {
+  [key: string]: boolean,
+}
+
+const expandHandler = (id: string, open: Open, setOpen: Dispatch<SetStateAction<Open>>) => {
+  const newOpen = Object.assign({}, open, { [id]: !open[id] });
+  setOpen(newOpen);
+};
 
 function LocationsList({
   nav,
   locations,
 }: {
-  nav: Campaign['nav'];
-  locations: Props['locations'];
+  nav: Nav[];
+  locations: LocationMap;
 }) {
-  const [open, setOpen] = React.useState(
-    Object.fromEntries(nav.map((n) => [n.key, false]))
+  const [open, setOpen] = useState<Open>(
+    Object.fromEntries(nav.map((n: Nav) => [n.key, false]))
   );
-  const handleLocationExpander = (id: string) => () => {
-    const newOpen = Object.assign({}, open, { [id]: !open[id] });
-    console.log(newOpen);
-    setOpen(newOpen);
-  };
+
   return (
     <List disablePadding sx={{ pl: 1 }}>
-      {nav.map((n) => {
-        const location = locations[n.key];
+      {nav.map((n: Nav) => {
+        const location: Location = locations[n.key];
         return (
           <>
             <ListItem>
@@ -44,7 +43,7 @@ function LocationsList({
                 <ListItemText primary={location.name} />
               </ListItemButton>
               {n.children.length > 0 ? (
-                <a onClick={handleLocationExpander(n.key)}>
+                <a onClick={() => expandHandler(n.key, open, setOpen)}>
                   {open[n.key] ? <ExpandLess /> : <ExpandMore />}
                 </a>
               ) : (
@@ -66,15 +65,9 @@ function LocationsList({
 }
 
 export default function CampaignsList({ campaigns, locations }: Props) {
-  const [open, setOpen] = React.useState(
+  const [open, setOpen] = useState<Open>(
     Object.fromEntries(campaigns.map((campaign) => [campaign.id, false]))
   );
-
-  const handleCampaignExpander = (id: string) => () => {
-    const newOpen = Object.assign({}, open, { [id]: !open[id] });
-    console.log(newOpen);
-    setOpen(newOpen);
-  };
 
   return (
     <List
@@ -88,7 +81,7 @@ export default function CampaignsList({ campaigns, locations }: Props) {
         </ListSubheader>
       }
     >
-      {campaigns.map((campaign) => {
+      {campaigns.map((campaign: ExtendedCampaign) => {
         return (
           <>
             <ListItem>
@@ -98,7 +91,7 @@ export default function CampaignsList({ campaigns, locations }: Props) {
               >
                 <ListItemText primary={campaign.name} />
               </ListItemButton>
-              <a onClick={handleCampaignExpander(campaign.id)}>
+              <a onClick={() => expandHandler(campaign.id, open, setOpen)}>
                 {open[campaign.id] ? <ExpandLess /> : <ExpandMore />}
               </a>
             </ListItem>
