@@ -2,10 +2,11 @@
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import { ReactNode } from 'react';
 
 interface Props {
-    nav: React.ReactNode;
-    children: React.ReactNode;
+    nav: ReactNode;
+    children: ReactNode;
 }
 
 export default function BaseLayout({ nav, children }: Props) {

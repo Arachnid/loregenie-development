@@ -1,7 +1,7 @@
 import { unstable_getServerSession } from 'next-auth';
-import { authOptions } from '../pages/api/auth/[...nextauth]';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+import styles from '@/app/page.module.css'
 
 const inter = Inter({ subsets: ['latin'] })
 

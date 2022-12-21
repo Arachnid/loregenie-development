@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@mui/material/Button';
+import { Button } from '@mui/material';
 import { signIn } from 'next-auth/react';
 
 export default function LoggedOutNav() {
