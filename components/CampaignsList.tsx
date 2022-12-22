@@ -48,7 +48,7 @@ function LocationsList({
               <ListItemButton component={Link} href={`/location/${n.key}`}>
                 <ListItemText primary={location.name} />
               </ListItemButton>
-              {n.children.length > 0 ? (
+              {n.children && n.children.length > 0 ? (
                 <a onClick={() => expandHandler(n.key, open, setOpen)}>
                   {open[n.key] ? <ExpandLess /> : <ExpandMore />}
                 </a>
@@ -56,7 +56,7 @@ function LocationsList({
                 ''
               )}
             </ListItem>
-            {n.children.length > 0 ? (
+            {n.children && n.children.length > 0 ? (
               <Collapse in={open[n.key]} timeout='auto' unmountOnExit>
                 <LocationsList nav={n.children} locations={locations} />
               </Collapse>

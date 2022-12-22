@@ -1,6 +1,6 @@
 export interface Nav {
   key: string;
-  children: Nav[];
+  children?: Nav[];
 }
 
 export interface BaseCampaign {
