@@ -6,11 +6,11 @@ import { notFound } from 'next/navigation';
 export default async function NewCampaignPage() {
   const session = await unstable_getServerSession(authOptions);
 
-  if (!session) {
+  if (!session?.user?.email) {
     notFound();
   }
   
   return (
-    <CampaignForm session={session} />
+    <CampaignForm sessionEmail={session?.user?.email} campaign={false} />
   );
 }

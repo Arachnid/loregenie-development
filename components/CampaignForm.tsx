@@ -1,31 +1,71 @@
 'use client';
 
-import { Autocomplete, Box, Button, Chip, TextField } from '@mui/material';
-import { BaseCampaign } from '@/types'
-import { Session } from 'next-auth';
+import Autocomplete from '@mui/material/Autocomplete';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import TextField from '@mui/material/TextField';
+import { BaseCampaign, ExtendedCampaign } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const CampaignForm = ({ session }: { session: Session }) => {
-  const [campaignForm, setCampaignForm] = useState<BaseCampaign>({
+interface Props {
+  sessionEmail: string;
+  campaign: ExtendedCampaign | false;
+}
+
+const editExistingOrNewCampaign = (
+  campaign: ExtendedCampaign | false,
+  sessionEmail: string
+) => {
+  if (campaign) {
+    return {
+      name: campaign.name,
+      description: campaign.description,
+      readers: campaign.readers,
+      writers: campaign.writers,
+      admins: campaign.admins,
+    };
+  }
+  return {
     name: '',
     description: '',
-    readers: [session?.user?.email ? session.user.email : ''],
-    writers: [session?.user?.email ? session.user.email : ''],
-    admins: [session?.user?.email ? session.user.email : ''],
-  });
+    readers: [sessionEmail],
+    writers: [sessionEmail],
+    admins: [sessionEmail],
+  };
+};
+
+const CampaignForm = ({ sessionEmail, campaign }: Props) => {
+  const [campaignForm, setCampaignForm] = useState<BaseCampaign>(
+    editExistingOrNewCampaign(campaign, sessionEmail)
+  );
 
   const router = useRouter();
 
-  const onSubmit = async () => {
+  const onCreate = async () => {
     try {
-      await fetch('/api/set-campaign', {
+      await fetch('/api/create-campaign', {
         method: 'POST',
         body: JSON.stringify(campaignForm),
       });
       router.refresh();
     } catch (error) {
       console.log('error submitting campaign: ', error);
+    }
+  };
+
+  const onUpdate = async () => {
+    if (campaign) {
+      try {
+        await fetch('/api/update-campaign', {
+          method: 'POST',
+          body: JSON.stringify({campaignData: campaignForm, campaignID: campaign.id}),
+        });
+        router.push(`/campaign/${campaign.id}`);
+      } catch (error) {
+        console.log('error updating campaign: ', error);
+      }
     }
   };
 
@@ -120,9 +160,19 @@ const CampaignForm = ({ session }: { session: Session }) => {
             <TextField {...params} variant='filled' placeholder='admins' />
           )}
         />
-        <Button variant='contained' sx={{ met: 3 }} onClick={() => onSubmit()}>
-          Submit Campaign
-        </Button>
+        {campaign ? (
+          <Button variant='contained'
+          sx={{ margin: 1 }}
+          onClick={() => onUpdate()}>Update Campaign</Button>
+        ) : (
+          <Button
+            variant='contained'
+            sx={{ margin: 1 }}
+            onClick={() => onCreate()}
+          >
+            Create Campaign
+          </Button>
+        )}
       </Box>
     </>
   );
