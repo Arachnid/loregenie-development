@@ -31,7 +31,9 @@ export class Converter<U> implements FirestoreDataConverter<U> {
   }
 }
 
-export async function getCampaigns(email: string): Promise<{campaigns: ExtendedCampaign[], locations: LocationMap}> {
+export async function getCampaigns(
+  email: string
+): Promise<{ campaigns: ExtendedCampaign[]; locations: LocationMap }> {
   const campaigns = await db
     .collection('campaigns')
     .where('readers', 'array-contains', email)
@@ -49,7 +51,10 @@ export async function getCampaigns(email: string): Promise<{campaigns: ExtendedC
       .withConverter(new Converter<Location>())
       .get();
     locationMap = Object.fromEntries<Location>(
-      locations.docs.map((location: QueryDocumentSnapshot<Location>) => [location.id, location.data()])
+      locations.docs.map((location: QueryDocumentSnapshot<Location>) => [
+        location.id,
+        location.data(),
+      ])
     ) as unknown as LocationMap;
   }
   return {
@@ -58,13 +63,33 @@ export async function getCampaigns(email: string): Promise<{campaigns: ExtendedC
   };
 }
 
-export async function getCampaign(id: string): Promise<ExtendedCampaign | undefined> {
+export async function getCampaign(
+  id: string
+): Promise<ExtendedCampaign | undefined> {
   const campaign = await db
     .collection('campaigns')
     .doc(id)
     .withConverter(new Converter<ExtendedCampaign>())
     .get();
   return campaign.data();
+}
+
+export async function getLocations(
+  id: string
+): Promise<LocationMap | undefined> {
+  let locationMap: LocationMap = {};
+  const locations = await db
+    .collection('locations')
+    .where('campaign', '==', id)
+    .withConverter(new Converter<Location>())
+    .get();
+  locationMap = Object.fromEntries<Location>(
+    locations.docs.map((location: QueryDocumentSnapshot<Location>) => [
+      location.id,
+      location.data(),
+    ])
+  ) as unknown as LocationMap;
+  return locationMap;
 }
 
 export async function getLocation(id: string): Promise<Location | undefined> {
