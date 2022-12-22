@@ -9,6 +9,7 @@ export interface BaseCampaign {
   readers: string[];
   writers: string[];
   admins: string[];
+  public: boolean;
 }
 
 export interface ExtendedCampaign extends BaseCampaign  {

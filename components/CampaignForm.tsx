@@ -8,6 +8,10 @@ import TextField from '@mui/material/TextField';
 import { BaseCampaign, ExtendedCampaign } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
 
 interface Props {
   sessionEmail: string;
@@ -25,6 +29,7 @@ const editExistingOrNewCampaign = (
       readers: campaign.readers,
       writers: campaign.writers,
       admins: campaign.admins,
+      public: campaign.public,
     };
   }
   return {
@@ -33,6 +38,7 @@ const editExistingOrNewCampaign = (
     readers: [sessionEmail],
     writers: [sessionEmail],
     admins: [sessionEmail],
+    public: false,
   };
 };
 
@@ -60,7 +66,10 @@ const CampaignForm = ({ sessionEmail, campaign }: Props) => {
       try {
         await fetch('/api/update-campaign', {
           method: 'POST',
-          body: JSON.stringify({campaignData: campaignForm, campaignID: campaign.id}),
+          body: JSON.stringify({
+            campaignData: campaignForm,
+            campaignID: campaign.id,
+          }),
         });
         router.push(`/campaign/${campaign.id}`);
       } catch (error) {
@@ -160,10 +169,29 @@ const CampaignForm = ({ sessionEmail, campaign }: Props) => {
             <TextField {...params} variant='filled' placeholder='admins' />
           )}
         />
+        <FormControl component='fieldset'>
+          <RadioGroup
+            value={campaignForm.public}
+            onChange={() =>
+              setCampaignForm({ ...campaignForm, public: !campaignForm.public })
+            }
+          >
+            <FormControlLabel
+              value={false}
+              control={<Radio />}
+              label='Private'
+            />
+            <FormControlLabel value={true} control={<Radio />} label='Public' />
+          </RadioGroup>
+        </FormControl>
         {campaign ? (
-          <Button variant='contained'
-          sx={{ margin: 1 }}
-          onClick={() => onUpdate()}>Update Campaign</Button>
+          <Button
+            variant='contained'
+            sx={{ margin: 1 }}
+            onClick={() => onUpdate()}
+          >
+            Update Campaign
+          </Button>
         ) : (
           <Button
             variant='contained'

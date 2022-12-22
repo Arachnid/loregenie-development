@@ -55,6 +55,7 @@ const ViewCampaign = ({ campaign, sessionEmail }: Props) => {
       <div>readers: {campaign.readers.join(', ')}</div>
       <div>writers: {campaign.writers.join(', ')}</div>
       <div>admins: {campaign.admins.join(', ')}</div>
+      <div>visibility: {campaign.public ? 'public' : 'private'}</div>
       <Button
         variant='contained'
         sx={{ margin: 1 }}
