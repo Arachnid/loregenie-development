@@ -21,7 +21,7 @@ if (!admin.apps.length) {
 
 export const db: Firestore = admin.firestore();
 
-class Converter<U> implements FirestoreDataConverter<U> {
+export class Converter<U> implements FirestoreDataConverter<U> {
   toFirestore(u: U): DocumentData {
     return u as DocumentData;
   }
