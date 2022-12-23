@@ -2,14 +2,13 @@
 
 import Button from '@mui/material/Button';
 import { signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const ClientUserNav = ({children}: {children: JSX.Element}) => {
-  const router = useRouter();
   return (
     <>
       <Button onClick={() => signOut()}>Sign Out</Button>
-      <Button onClick={() => router.push('/')}>Home</Button>
+      <Link href='/' style={{ textDecoration: 'none' }}><Button>Home</Button></Link>
       {children}
     </>
   );
