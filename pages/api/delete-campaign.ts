@@ -11,7 +11,7 @@ export default async function handler(
   try {
     await db.collection('campaigns').doc(campaignID).withConverter(new Converter<ExtendedCampaign>()).delete();
   } catch (error) {
-    console.log('error writing campaign to database: ', error);
+    console.log('error deleting campaign from database: ', error);
     response.statusCode = 500;
     response.send({});
     return;
