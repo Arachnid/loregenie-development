@@ -1,5 +1,4 @@
-import ViewCampaign from '@/components/ViewCampaign';
-import ViewLocations from '@/components/ViewLocations';
+import ViewCampaignPage from '@/components/ViewCampaignPage';
 import { getCampaign, getLocations } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
@@ -24,8 +23,7 @@ export default async function CampaignPage({ params }: Props) {
 
   return (
     <div>
-      <ViewCampaign campaign={campaign} sessionEmail={session.user.email} />
-      {locations && <ViewLocations locations={locations} campaignNav={campaign.nav} />}
+      <ViewCampaignPage campaign={campaign} locations={locations} />
     </div>
   );
 }
