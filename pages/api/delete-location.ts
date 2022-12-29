@@ -16,20 +16,21 @@ export default async function handler(
 
   try {
     const locationKey = `locationNav.${firebaseKey}`;
-    const response = await db
+    const locationNav = await db
       .collection('campaigns')
       .doc(campaignID)
       .withConverter(new Converter<ExtendedCampaign>())
       .update({
         [locationKey]: FieldValue.delete(),
       });
-      console.log('delete', response);
+    console.log('delete locationNav:', locationNav);
 
-    // await db
-    //   .collection('locations')
-    //   .doc(locationID)
-    //   .withConverter(new Converter<Location>())
-    //   .delete();
+    const location = await db
+      .collection('locations')
+      .doc(locationID)
+      .withConverter(new Converter<Location>())
+      .delete();
+    console.log('delete location:', location);
   } catch (error) {
     console.log('error deleting location from database: ', error);
     response.statusCode = 500;
