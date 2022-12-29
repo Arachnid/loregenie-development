@@ -1,18 +1,23 @@
 'use client';
 
-import { Location, LocationMap, Nav } from '@/types';
+import { Location, LocationMap, LocationNav } from '@/types';
 import Button from '@mui/material/Button';
 
 interface Props {
   locations: LocationMap;
-  campaignNav: Nav[];
+  locationNav: LocationNav;
+  campaignID: string;
 }
 
-const onDelete = async (id: string) => {
+const onDelete = async (
+  locationID: string,
+  campaignID: string,
+  firebaseKey: string
+) => {
   try {
     await fetch('/api/delete-location', {
       method: 'POST',
-      body: id,
+      body: JSON.stringify({ locationID, campaignID, firebaseKey }),
     });
   } catch (error) {
     console.log('error deleting campaign: ', error);
@@ -20,42 +25,71 @@ const onDelete = async (id: string) => {
 };
 
 const recursiveLocations = (
-  nav: Nav,
+  nav: LocationNav,
   locations: LocationMap,
-  results: JSX.Element[]
+  campaignID: string,
+  results: JSX.Element[],
+  firebaseKey?: string
 ) => {
   const location: Location = locations[nav.key];
+  let nestedFirebaseKey: string;
+  if (firebaseKey) {
+    nestedFirebaseKey = `${firebaseKey}.children.${nav.key}`;
+  } else {
+    nestedFirebaseKey = `${nav.key}`;
+  }
+
   results.push(
     <div key={nav.key} style={{ display: 'flex', alignItems: 'baseline' }}>
       <div>{location.name}</div>
-      <Button size='small' color='error' variant='contained' sx={{ margin: 1 }} onClick={() => onDelete(nav.key)}>
+      <Button
+        size='small'
+        color='error'
+        variant='contained'
+        sx={{ margin: 1 }}
+        onClick={() => onDelete(nav.key, campaignID, nestedFirebaseKey)}
+      >
         Delete
       </Button>
     </div>
   );
   nav.children &&
-    nav.children.forEach((child: Nav) =>
-      recursiveLocations(child, locations, results)
+    Object.values(nav.children).forEach((value: LocationNav) =>
+      recursiveLocations(
+        value,
+        locations,
+        campaignID,
+        results,
+        nestedFirebaseKey
+      )
     );
 };
 
 const LocationList = ({
   locations,
-  nav,
-}: {
-  locations: LocationMap;
-  nav: Nav[];
-}): JSX.Element => {
+  locationNav,
+  campaignID,
+}: Props): JSX.Element => {
+  if (!Object.keys(locations).length) {
+    return <></>;
+  }
   const results: JSX.Element[] = [];
-  nav.forEach((child: Nav) => recursiveLocations(child, locations, results));
+  Object.values(locationNav).forEach((value: LocationNav) =>
+    recursiveLocations(value, locations, campaignID, results)
+  );
+
   return <>{results}</>;
 };
 
-const LocationsList = ({ locations, campaignNav }: Props) => {
+const LocationsList = ({ locations, locationNav, campaignID }: Props) => {
   return (
     <>
       <h4>Locations:</h4>
-      <LocationList locations={locations} nav={campaignNav} />
+      <LocationList
+        locations={locations}
+        locationNav={locationNav}
+        campaignID={campaignID}
+      />
     </>
   );
 };
@@ -63,19 +97,14 @@ const LocationsList = ({ locations, campaignNav }: Props) => {
 export default LocationsList;
 
 /*
-locations [
-  {
-    key: region1
-    children [
-      {
-        key: city1
-        children [
-          {
-            key: tavern1
-          }
-        ]
+locationNav {
+  regionID {
+    key: regionID
+    children {
+      cityID {
+        key: cityID
       }
-    ]
+    }
   }
-]
+}
 */

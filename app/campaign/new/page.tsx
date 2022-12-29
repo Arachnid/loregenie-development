@@ -9,8 +9,11 @@ export default async function NewCampaignPage() {
   if (!session?.user?.email) {
     notFound();
   }
-  
+
   return (
-    <CampaignForm sessionEmail={session?.user?.email} campaign={false} />
+    <>
+      <h1>Create New Campaign</h1>
+      <CampaignForm sessionEmail={session?.user?.email} campaign={false} />
+    </>
   );
 }

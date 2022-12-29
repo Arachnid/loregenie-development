@@ -1,6 +1,6 @@
 import { Session } from 'next-auth';
 import { getCampaigns } from '@/lib/db';
-import CampaignsList from '@/components/CampaignsList';
+import CampaignsList2 from '@/components/CampaignsList2';
 import ClientUserNav from '@/components/ClientUserNav';
 import { ExtendedCampaign, LocationMap } from '@/types';
 
@@ -14,7 +14,7 @@ export default async function UserNav({ session }: Props) {
   );
   return (
     <ClientUserNav>
-      <CampaignsList campaigns={campaigns} locations={locations} />
+      <CampaignsList2 campaigns={campaigns} locations={locations} />
     </ClientUserNav>
   );
 }

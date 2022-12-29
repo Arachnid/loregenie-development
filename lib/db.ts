@@ -5,7 +5,7 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { ExtendedCampaign, Location, LocationMap } from '@/types';
+import { ExtendedCampaign, Location, LocationMap, NPC } from '@/types';
 
 if (!admin.apps.length) {
   try {
@@ -99,4 +99,13 @@ export async function getLocation(id: string): Promise<Location | undefined> {
     .withConverter(new Converter<Location>())
     .get();
   return location.data();
+}
+
+export async function getNPC(id: string): Promise<NPC | undefined> {
+  const npc = await db
+    .collection('npcs')
+    .doc(id)
+    .withConverter(new Converter<NPC>())
+    .get();
+  return npc.data();
 }

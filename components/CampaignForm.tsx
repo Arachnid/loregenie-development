@@ -97,7 +97,6 @@ const CampaignForm = ({ sessionEmail, campaign }: Props) => {
         <TextField
           label='description'
           multiline
-          maxRows={4}
           value={campaignForm.description}
           onChange={(e) =>
             setCampaignForm({ ...campaignForm, description: e.target.value })

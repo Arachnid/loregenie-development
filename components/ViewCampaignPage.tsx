@@ -43,7 +43,7 @@ const ViewCampaignPage = ({ campaign, locations }: Props) => {
         Delete Campaign
       </Button>
       {locations && (
-        <LocationsList locations={locations} campaignNav={campaign.nav} />
+        <LocationsList locations={locations} locationNav={campaign.locationNav} campaignID={campaign.id} />
       )}
       <Link href={'/location/new'} style={{ textDecoration: 'none' }}>
         <Button variant='contained' sx={{ margin: 1 }}>
