@@ -8,12 +8,12 @@ import React from 'react'
 
 interface Props {
   params: {
-    id: string;
+    campaignID: string;
   };
 }
 
 const editCampaignPage = async ({ params }: Props) => {
-  const campaign: ExtendedCampaign | undefined = await getCampaign(params.id);
+  const campaign: ExtendedCampaign | undefined = await getCampaign(params.campaignID);
   const session: Session | null = await unstable_getServerSession(authOptions);
 
   if (!campaign || !session?.user?.email) {

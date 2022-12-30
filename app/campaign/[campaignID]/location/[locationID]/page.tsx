@@ -5,12 +5,12 @@ import ViewLocationPage from '@/components/ViewLocationPage';
 
 interface Props {
   params: {
-    id: string;
+    locationID: string;
   };
 }
 
 export default async function LocationPage({ params }: Props) {
-  const location: Location | undefined = await getLocation(params.id);
+  const location: Location | undefined = await getLocation(params.locationID);
   if (!location) {
     notFound();
   }

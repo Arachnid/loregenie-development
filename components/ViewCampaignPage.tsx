@@ -45,7 +45,7 @@ const ViewCampaignPage = ({ campaign, locations }: Props) => {
       {locations && (
         <LocationsList locations={locations} locationNav={campaign.locationNav} campaignID={campaign.id} />
       )}
-      <Link href={'/location/new'} style={{ textDecoration: 'none' }}>
+      <Link href={`/campaign/${campaign.id}/location/new`} style={{ textDecoration: 'none' }}>
         <Button variant='contained' sx={{ margin: 1 }}>
           Add Location
         </Button>
