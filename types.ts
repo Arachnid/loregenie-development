@@ -24,11 +24,14 @@ export interface ExtendedCampaign extends BaseCampaign  {
   locationNav: LocationNav;
 }
 
-export interface Location {
-  readonly id: string;
+export interface BaseLocation {
   campaign: string;
   name: string;
   description: string;
+}
+
+export interface Location extends BaseLocation {
+  readonly id: string;
 }
 
 export interface LocationMap {

@@ -45,15 +45,17 @@ function LocationsList({
 }) {
   let results: Open = {};
 
-  Object.values(locationNav).forEach((locationNav: LocationNav) => {
-    results[locationNav.key] = false;
-  });
+  if (locationNav) {
+    Object.values(locationNav).forEach((locationNav: LocationNav) => {
+      results[locationNav.key] = false;
+    });
+  }
 
   const [open, setOpen] = useState<Open>(results);
 
   return (
     <List disablePadding sx={{ pl: 1 }}>
-      {Object.values(locationNav).map((locationNav) => {
+      {locationNav && Object.values(locationNav).map((locationNav) => {
         const location: Location = locations[locationNav.key];
         return (
           <>
@@ -118,9 +120,9 @@ export default function CampaignsList2({ campaigns, locations }: Props) {
               >
                 <ListItemText primary={campaign.name} />
               </ListItemButton>
-              <a onClick={() => expandHandler(campaign.id, open, setOpen)}>
+              {(Object.values(campaign.locationNav).length > 0) && <a onClick={() => expandHandler(campaign.id, open, setOpen)}>
                 {open[campaign.id] ? <ExpandLess /> : <ExpandMore />}
-              </a>
+              </a>}
             </ListItem>
             <Collapse in={open[campaign.id]} timeout='auto' unmountOnExit>
               <LocationsList
