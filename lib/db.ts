@@ -5,7 +5,7 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { ExtendedCampaign, Location, LocationMap, NPC } from '@/types';
+import { ExtendedCampaign, Location, LocationMap, NPC, NPCMap } from '@/types';
 
 if (!admin.apps.length) {
   try {
@@ -66,12 +66,35 @@ export async function getCampaigns(
 export async function getCampaign(
   id: string
 ): Promise<ExtendedCampaign | undefined> {
-  const campaign = await db
+  const campaign = db
     .collection('campaigns')
     .doc(id)
-    .withConverter(new Converter<ExtendedCampaign>())
-    .get();
-  return campaign.data();
+    .withConverter(new Converter<ExtendedCampaign>());
+
+  //wip
+  let response: admin.firestore.DocumentData[] = [];
+  const recursiveCollections = async (
+    collection: admin.firestore.CollectionReference<admin.firestore.DocumentData>,
+    docID: string
+  ) => {
+    const subCollections = await collection.doc(docID).listCollections();
+    if (subCollections.length > 0) {
+      subCollections.forEach(async (subCollection) => {
+        let id = '';
+        await subCollection.get().then((docs) =>
+          docs.forEach((doc) => {
+            id = doc.id;
+            response.push(doc.data());
+          })
+        );
+        recursiveCollections(subCollection, id);
+      });
+    }
+  };
+  recursiveCollections(db.collection('campaigns'), id);
+  
+  
+  return (await campaign.get()).data();
 }
 
 export async function getLocations(
@@ -108,4 +131,19 @@ export async function getNPC(id: string): Promise<NPC | undefined> {
     .withConverter(new Converter<NPC>())
     .get();
   return npc.data();
+}
+
+export async function getNPCs(): Promise<NPCMap | undefined> {
+  let npcMap: NPCMap = {};
+  const npcs = await db
+    .collection('npcs')
+    .withConverter(new Converter<NPC>())
+    .get();
+  npcMap = Object.fromEntries<NPC>(
+    npcs.docs.map((npc: QueryDocumentSnapshot<NPC>) => [
+      npc.id,
+      npc.data(),
+    ])
+  ) as unknown as NPCMap;
+  return npcMap;
 }

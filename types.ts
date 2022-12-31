@@ -39,6 +39,7 @@ export interface LocationMap {
 }
 
 export interface NPC {
+  readonly id: string;
   name: string;
   gender: string;
   age: number;
@@ -54,4 +55,8 @@ export interface NPC {
   ideals: string[];
   flaws: string[];
   public: boolean;
+}
+
+export interface NPCMap {
+  [key: string]: NPC,
 }

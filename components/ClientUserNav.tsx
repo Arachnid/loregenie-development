@@ -12,9 +12,6 @@ const ClientUserNav = ({ children }: { children: JSX.Element }) => {
         <Button>Home</Button>
       </Link>
       {children}
-      <Link href='/npc/new' style={{ textDecoration: 'none' }}>
-        <Button>Create NPC</Button>
-      </Link>
     </>
   );
 };
