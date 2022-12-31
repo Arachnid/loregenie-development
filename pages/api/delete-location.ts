@@ -1,6 +1,6 @@
 import { Converter, db } from '@/lib/db';
 import { ExtendedCampaign, Location } from '@/types';
-import { FieldValue, QueryDocumentSnapshot } from 'firebase-admin/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -23,14 +23,14 @@ export default async function handler(
       .update({
         [locationKey]: FieldValue.delete(),
       });
-    console.log('delete locationNav:', locationNav);
+    console.log('delete location locationNav:', locationNav);
 
-    const location = await db
+    const locationCollection = await db
       .collection('locations')
       .doc(locationID)
       .withConverter(new Converter<Location>())
       .delete();
-    console.log('delete location:', location);
+    console.log('delete location from locations collection:', locationCollection);
   } catch (error) {
     console.log('error deleting location from database: ', error);
     response.statusCode = 500;

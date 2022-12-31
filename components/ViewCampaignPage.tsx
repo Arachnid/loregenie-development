@@ -21,6 +21,7 @@ const ViewCampaignPage = ({ campaign, locations }: Props) => {
         body: campaign.id,
       });
       router.push('/');
+      router.refresh();
     } catch (error) {
       console.log('error deleting campaign: ', error);
     }

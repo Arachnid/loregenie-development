@@ -38,6 +38,7 @@ const editExistingOrNewCampaign = (
     readers: [sessionEmail],
     writers: [sessionEmail],
     admins: [sessionEmail],
+    locationNav: [],
     public: false,
   };
 };
