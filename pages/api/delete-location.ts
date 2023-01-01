@@ -16,6 +16,7 @@ export default async function handler(
 
   try {
     const locationKey = `locationNav.${firebaseKey}`;
+    
     const locationNav = await db
       .collection('campaigns')
       .doc(campaignID)
@@ -30,7 +31,10 @@ export default async function handler(
       .doc(locationID)
       .withConverter(new Converter<Location>())
       .delete();
-    console.log('delete location from locations collection:', locationCollection);
+    console.log(
+      'delete location from locations collection:',
+      locationCollection
+    );
   } catch (error) {
     console.log('error deleting location from database: ', error);
     response.statusCode = 500;

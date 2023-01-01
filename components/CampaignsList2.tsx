@@ -55,10 +55,10 @@ function LocationsList({
 
   return (
     <List disablePadding sx={{ pl: 1 }}>
-      {locationNav && Object.values(locationNav).map((locationNav) => {
+      {locationNav && Object.values(locationNav).map((locationNav, index) => {
         const location: Location = locations[locationNav.key];
         return (
-          <>
+          <div key={index}>
             <ListItem>
               <ListItemButton
                 component={Link}
@@ -86,7 +86,7 @@ function LocationsList({
             ) : (
               ''
             )}
-          </>
+          </div>
         );
       })}
     </List>
