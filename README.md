@@ -6,6 +6,17 @@
 - Generate your Firebase Admin SDK Private Key
 - Save your ```private-key.json``` into ```/node_modules```
 
+## Firebase Local Emulator
+
+- run: ```npm install -g firebase-tools```
+- run: ```firebase init```
+- select Emulators
+- select Authentication Emulator and Firestore Emulator
+- copy auth and firestore ports into env
+- run: ```firebase emulators:start``` OR run firebase emulator with persistent data:
+  - create ```exported-firebase-data``` folder in root directory
+  - run: ```npm run emulator```
+
 ## Discord and Twitch SSO
 
 - Create Discord project
@@ -16,13 +27,15 @@
 ## Environment Variables
 
 - create a ```.env.local``` file
-- env file template:
+- env file template example:
 ```
 GOOGLE_SERVICE_ACCOUNT='./node_modules/private-key.json'
 DISCORD_CLIENT_ID='discord-client-id'
 DISCORD_CLIENT_SECRET='dicord-client-secret'
 TWITCH_CLIENT_ID='twitch-client-id'
 TWITCH_CLIENT_SECRET='twitch-client-secret'
+FIRESTORE_EMULATOR_HOST='localhost:8080'
+FIREBASE_AUTH_EMULATOR_HOST='localhost:9099'
 ```
 
 ## Run Development Server
