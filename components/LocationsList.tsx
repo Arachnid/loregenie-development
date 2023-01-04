@@ -3,6 +3,7 @@
 import { Location, LocationMap, LocationNav } from '@/types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface Props {
@@ -58,6 +59,17 @@ const recursiveLocations = (
       >
         Delete
       </Button>
+      <Link
+        href={{
+          pathname: `campaign/${campaignID}/location/${location.id}/edit`,
+          query: { nav: nestedFirebaseKey },
+        }}
+        style={{ textDecoration: 'none' }}
+      >
+        <Button size='small' variant='contained'>
+          Edit
+        </Button>
+      </Link>
     </Box>
   );
   nav.children &&

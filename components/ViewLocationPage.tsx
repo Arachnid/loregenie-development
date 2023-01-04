@@ -6,18 +6,23 @@ import { useRouter } from 'next/navigation';
 
 interface Props {
   location: Location;
+  campaignID: string;
 }
 
-const ViewLocationPage = ({ location }: Props) => {
+const ViewLocationPage = ({ location, campaignID }: Props) => {
   const router = useRouter();
 
   const onDelete = async () => {
     try {
       await fetch('/api/delete-location', {
         method: 'POST',
-        body: location.id,
+        body: JSON.stringify({
+          locationID: location.id,
+          campaignID,
+        }),
       });
       router.push('/');
+      router.refresh();
     } catch (error) {
       console.log('error deleting location: ', error);
     }

@@ -28,6 +28,7 @@ export interface BaseLocation {
   campaign: string;
   name: string;
   description: string;
+  public: boolean;
 }
 
 export interface Location extends BaseLocation {

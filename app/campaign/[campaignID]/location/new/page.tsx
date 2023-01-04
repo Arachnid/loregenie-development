@@ -1,7 +1,5 @@
 import LocationForm from '@/components/LocationForm';
-import { getCampaign } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { ExtendedCampaign } from '@/types';
 import { unstable_getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
