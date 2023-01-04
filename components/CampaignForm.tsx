@@ -38,7 +38,7 @@ const editExistingOrNewCampaign = (
     readers: [sessionEmail],
     writers: [sessionEmail],
     admins: [sessionEmail],
-    locationNav: [],
+    locationNav: {},
     public: false,
   };
 };
@@ -56,6 +56,7 @@ const CampaignForm = ({ sessionEmail, campaign }: Props) => {
         method: 'POST',
         body: JSON.stringify(campaignForm),
       });
+      router.push('/');
       router.refresh();
     } catch (error) {
       console.log('error submitting campaign: ', error);

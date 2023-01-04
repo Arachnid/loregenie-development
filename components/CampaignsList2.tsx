@@ -39,9 +39,11 @@ const expandHandler = (
 function LocationsList({
   locationNav,
   locations,
+  campaignID,
 }: {
   locationNav: LocationNav;
   locations: LocationMap;
+  campaignID: string;
 }) {
   let results: Open = {};
 
@@ -55,14 +57,14 @@ function LocationsList({
 
   return (
     <List disablePadding sx={{ pl: 1 }}>
-      {locationNav && Object.values(locationNav).map((locationNav, index) => {
+      {locationNav && Object.values(locationNav).map((locationNav: LocationNav, index: number) => {
         const location: Location = locations[locationNav.key];
         return (
           <div key={index}>
             <ListItem>
               <ListItemButton
                 component={Link}
-                href={`/location/${locationNav.key}`}
+                href={`campaign/${campaignID}/location/${locationNav.key}`}
               >
                 <ListItemText primary={location.name} />
               </ListItemButton>
@@ -81,6 +83,7 @@ function LocationsList({
                 <LocationsList
                   locationNav={locationNav.children}
                   locations={locations}
+                  campaignID={campaignID}
                 />
               </Collapse>
             ) : (
@@ -128,6 +131,7 @@ export default function CampaignsList2({ campaigns, locations }: Props) {
               <LocationsList
                 locationNav={campaign.locationNav}
                 locations={locations}
+                campaignID={campaign.id}
               />
             </Collapse>
           </div>
