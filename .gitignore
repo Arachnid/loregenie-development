@@ -39,6 +39,7 @@ next-env.d.ts
 # firebase
 .firebaserc
 firebase.json
+firebase-debug.log
 firestore-debug.log
 ui-debug.log
 /exported-firebase-data

@@ -1,7 +1,9 @@
 'use client';
 
 import { Location, LocationMap, LocationNav } from '@/types';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   locations: LocationMap;
@@ -31,6 +33,7 @@ const recursiveLocations = (
   results: JSX.Element[],
   firebaseKey?: string
 ) => {
+  const router = useRouter();
   const location: Location = locations[nav.key];
   let nestedFirebaseKey: string;
   if (firebaseKey) {
@@ -40,18 +43,22 @@ const recursiveLocations = (
   }
 
   results.push(
-    <div key={nav.key} style={{ display: 'flex', alignItems: 'baseline' }}>
+    <Box key={nav.key} style={{ display: 'flex', alignItems: 'baseline' }}>
       <div>{location.name}</div>
       <Button
         size='small'
         color='error'
         variant='contained'
         sx={{ margin: 1 }}
-        onClick={() => onDelete(nav.key, campaignID, nestedFirebaseKey)}
+        onClick={() =>
+          onDelete(nav.key, campaignID, nestedFirebaseKey).then(() =>
+            router.refresh()
+          )
+        }
       >
         Delete
       </Button>
-    </div>
+    </Box>
   );
   nav.children &&
     Object.values(nav.children).forEach((value: LocationNav) =>
@@ -95,16 +102,3 @@ const LocationsList = ({ locations, locationNav, campaignID }: Props) => {
 };
 
 export default LocationsList;
-
-/*
-locationNav {
-  regionID {
-    key: regionID
-    children {
-      cityID {
-        key: cityID
-      }
-    }
-  }
-}
-*/

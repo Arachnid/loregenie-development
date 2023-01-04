@@ -4,16 +4,11 @@ import { BaseLocation } from '@/types';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   campaignID: string;
-}
-
-interface LocationFormProps {
-  campaignID: string;
-  locationForm: BaseLocation;
-  setLocationForm: Dispatch<SetStateAction<BaseLocation>>;
 }
 
 const editExistingOrNewLocation = (campaignID: string) => {
@@ -25,22 +20,24 @@ const editExistingOrNewLocation = (campaignID: string) => {
   };
 };
 
-const LocationForm = ({
-  campaignID,
-  locationForm,
-  setLocationForm,
-}: LocationFormProps) => {
-  const [newLocation, setNewLocation] = useState<JSX.Element[]>([]);
+const LocationFormPage = ({ campaignID }: Props) => {
+  const [locationForm, setLocationForm] = useState<BaseLocation>(
+    editExistingOrNewLocation(campaignID)
+  );
 
-  const addLocation = () => {
-    setNewLocation((prev) => [
-      ...prev,
-      <LocationForm
-        campaignID={campaignID}
-        locationForm={locationForm}
-        setLocationForm={setLocationForm}
-      />,
-    ]);
+  const router = useRouter();
+
+  const onCreate = async () => {
+    try {
+      await fetch('/api/create-location', {
+        method: 'POST',
+        body: JSON.stringify(locationForm),
+      });
+      router.push(`/campaign/${campaignID}`);
+      router.refresh();
+    } catch (error) {
+      console.log('error creating location: ', error);
+    }
   };
 
   return (
@@ -72,38 +69,9 @@ const LocationForm = ({
             setLocationForm({ ...locationForm, description: e.target.value })
           }
         />
-        <Button onClick={() => addLocation()}>Add Location</Button>
-        <Button>Remove Location</Button>
       </Box>
-      <Box sx={{ margin: 5 }}>{newLocation}</Box>
-    </>
-  );
-};
-
-const LocationFormPage = ({ campaignID }: Props) => {
-  const [locationForm, setLocationForm] = useState<BaseLocation>(
-    editExistingOrNewLocation(campaignID)
-  );
-
-  const onCreate = async () => {
-    try {
-      await fetch('/api/create-location', {
-        method: 'POST',
-        body: JSON.stringify(locationForm),
-      });
-    } catch (error) {
-      console.log('error creating location: ', error);
-    }
-  };
-
-  return (
-    <>
-      <LocationForm
-        campaignID={campaignID}
-        locationForm={locationForm}
-        setLocationForm={setLocationForm}
-      />
       <Button onClick={() => onCreate()}>Create Location</Button>
+      <Button onClick={() => router.back()}>Cancel</Button>
     </>
   );
 };
