@@ -13,7 +13,7 @@ export default async function NewCampaignPage() {
   return (
     <>
       <h1>Create New Setting</h1>
-      <SettingForm sessionEmail={session?.user?.email} setting={false} />
+      <SettingForm sessionEmail={session?.user?.email} />
     </>
   );
 }

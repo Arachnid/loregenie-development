@@ -19,7 +19,7 @@ export default async function NewCampaignPage({params}: Props) {
   return (
     <>
       <h1>Create New Campaign</h1>
-      <CampaignForm sessionEmail={session?.user?.email} campaign={false} settingID={params.settingID} />
+      <CampaignForm sessionEmail={session?.user?.email} settingID={params.settingID} />
     </>
   );
 }

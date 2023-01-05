@@ -1,15 +1,22 @@
 import { Converter, db } from '@/lib/db';
-import { ExtendedCampaign } from '@/types';
+import { Campaign } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const campaignID = request.body;
+  const { campaignID, settingID }: { campaignID: string; settingID: string } =
+    JSON.parse(request.body);
 
   try {
-    await db.collection('campaigns').doc(campaignID).withConverter(new Converter<ExtendedCampaign>()).delete();
+    await db
+      .collection('settings')
+      .doc(settingID)
+      .collection('campaigns')
+      .doc(campaignID)
+      .withConverter(new Converter<Campaign>())
+      .delete();
   } catch (error) {
     console.log('error deleting campaign from database: ', error);
     response.statusCode = 500;

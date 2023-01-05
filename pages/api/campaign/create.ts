@@ -1,14 +1,22 @@
 import { Converter, db } from '@/lib/db';
-import { ExtendedCampaign } from '@/types';
+import { Campaign } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const {campaignData, campaignID} = JSON.parse(request.body);
+  const {
+    campaignData,
+    settingID,
+  }: { campaignData: Campaign; settingID: string } = JSON.parse(request.body);
   try {
-    await db.collection('campaigns').doc(campaignID).withConverter(new Converter<ExtendedCampaign>()).update(campaignData);
+    await db
+      .collection('settings')
+      .doc(settingID)
+      .collection('campaigns')
+      .withConverter(new Converter<Campaign>())
+      .add(campaignData);
   } catch (error) {
     console.log('error writing campaign to database: ', error);
     response.statusCode = 500;

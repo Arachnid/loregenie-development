@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
-import { BaseCampaign, ExtendedCampaign } from '@/types';
+import { Campaign } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -15,22 +15,16 @@ import Radio from '@mui/material/Radio';
 
 interface Props {
   sessionEmail: string;
-  campaign: ExtendedCampaign | false;
+  settingID: string;
+  campaign?: Campaign;
 }
 
 const editExistingOrNewCampaign = (
-  campaign: ExtendedCampaign | false,
+  campaign: Campaign | undefined,
   sessionEmail: string
 ) => {
   if (campaign) {
-    return {
-      name: campaign.name,
-      description: campaign.description,
-      readers: campaign.readers,
-      writers: campaign.writers,
-      admins: campaign.admins,
-      public: campaign.public,
-    };
+    return campaign;
   }
   return {
     name: '',
@@ -38,13 +32,12 @@ const editExistingOrNewCampaign = (
     readers: [sessionEmail],
     writers: [sessionEmail],
     admins: [sessionEmail],
-    locationNav: {},
     public: false,
   };
 };
 
-const CampaignForm = ({ sessionEmail, campaign }: Props) => {
-  const [campaignForm, setCampaignForm] = useState<BaseCampaign>(
+const CampaignForm = ({ sessionEmail, campaign, settingID }: Props) => {
+  const [campaignForm, setCampaignForm] = useState<Campaign>(
     editExistingOrNewCampaign(campaign, sessionEmail)
   );
 
@@ -52,11 +45,11 @@ const CampaignForm = ({ sessionEmail, campaign }: Props) => {
 
   const onCreate = async () => {
     try {
-      await fetch('/api/create-campaign', {
+      await fetch('/api/campaign/create', {
         method: 'POST',
-        body: JSON.stringify(campaignForm),
+        body: JSON.stringify({ campaignData: campaignForm, settingID }),
       });
-      router.push('/');
+      router.push(`/setting/${settingID}`);
       router.refresh();
     } catch (error) {
       console.log('error submitting campaign: ', error);
@@ -64,19 +57,18 @@ const CampaignForm = ({ sessionEmail, campaign }: Props) => {
   };
 
   const onUpdate = async () => {
-    if (campaign) {
-      try {
-        await fetch('/api/update-campaign', {
-          method: 'POST',
-          body: JSON.stringify({
-            campaignData: campaignForm,
-            campaignID: campaign.id,
-          }),
-        });
-        router.push(`/campaign/${campaign.id}`);
-      } catch (error) {
-        console.log('error updating campaign: ', error);
-      }
+    try {
+      await fetch('/api/campaign/update', {
+        method: 'POST',
+        body: JSON.stringify({
+          campaignData: campaignForm,
+          campaignID: campaign?.id,
+          settingID,
+        }),
+      });
+      router.push(`/setting/${settingID}/campaign/${campaign?.id}`);
+    } catch (error) {
+      console.log('error updating campaign: ', error);
     }
   };
 
@@ -202,6 +194,7 @@ const CampaignForm = ({ sessionEmail, campaign }: Props) => {
             Create Campaign
           </Button>
         )}
+        <Button onClick={() => router.back()}>Cancel</Button>
       </Box>
     </>
   );

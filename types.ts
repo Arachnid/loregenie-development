@@ -1,4 +1,4 @@
-export type Item = Record<string, Location | NPC>;
+export type PlotPoints = Location | NPC;
 
 export interface Setting {
   readonly id?: string;
@@ -25,10 +25,11 @@ export interface Campaign {
 
 export interface Location {
   readonly id?: string;
-  campaign: string;
   name: string;
   description: string;
   public: boolean;
+  parent?: string;
+  plotPoint: 'Location';
 }
 
 export interface NPC {
@@ -48,4 +49,5 @@ export interface NPC {
   ideals: string[];
   flaws: string[];
   public: boolean;
+  plotPoint: 'NPC';
 }

@@ -1,26 +1,25 @@
 'use client';
 
-import { ExtendedCampaign, LocationMap } from '@/types';
+import { Campaign } from '@/types';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/navigation';
-import LocationsList from '@/components/LocationsList';
 import Link from 'next/link';
 
 interface Props {
-  campaign: ExtendedCampaign;
-  locations: LocationMap | undefined;
+  campaign: Campaign;
+  settingID: string;
 }
 
-const ViewCampaignPage = ({ campaign, locations }: Props) => {
+const ClientCampaignPage = ({ campaign, settingID }: Props) => {
   const router = useRouter();
 
   const onDelete = async () => {
     try {
-      await fetch('/api/delete-campaign', {
+      await fetch('/api/campaign/delete', {
         method: 'POST',
-        body: campaign.id,
+        body: JSON.stringify({campaignID: campaign.id, settingID}),
       });
-      router.push('/');
+      router.push(`/setting/${settingID}`);
       router.refresh();
     } catch (error) {
       console.log('error deleting campaign: ', error);
@@ -35,7 +34,7 @@ const ViewCampaignPage = ({ campaign, locations }: Props) => {
       <div>writers: {campaign.writers.join(', ')}</div>
       <div>admins: {campaign.admins.join(', ')}</div>
       <div>visibility: {campaign.public ? 'public' : 'private'}</div>
-      <Link href={`/campaign/${campaign.id}/edit`} style={{ textDecoration: 'none' }}>
+      <Link href={`/setting/${settingID}/campaign/${campaign.id}/edit`} style={{ textDecoration: 'none' }}>
         <Button variant='contained' sx={{ margin: 1 }}>
           Edit Campaign
         </Button>
@@ -43,16 +42,9 @@ const ViewCampaignPage = ({ campaign, locations }: Props) => {
       <Button variant='contained' sx={{ margin: 1 }} color='error' onClick={() => onDelete()}>
         Delete Campaign
       </Button>
-      {locations && (
-        <LocationsList locations={locations} locationNav={campaign.locationNav} campaignID={campaign.id} />
-      )}
-      <Link href={`/campaign/${campaign.id}/location/new`} style={{ textDecoration: 'none' }}>
-        <Button variant='contained' sx={{ margin: 1 }}>
-          Add Location
-        </Button>
-      </Link>
+      <Button onClick={() => router.push(`/setting/${settingID}`)}>Return To Setting</Button>
     </>
   );
 };
 
-export default ViewCampaignPage;
+export default ClientCampaignPage;

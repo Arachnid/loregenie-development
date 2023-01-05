@@ -5,7 +5,7 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { Campaign, Item, Location, NPC, Setting } from '@/types';
+import { Campaign, PlotPoints, Location, NPC, Setting } from '@/types';
 
 if (!admin.apps.length) {
   try {
@@ -59,9 +59,9 @@ export async function getSetting(id: string): Promise<{
       .get()
   ).docs.map((campaign) => campaign.data());
 
-  const items = await settingRef
-    .collection('items')
-    .withConverter(new Converter<Item>())
+  const plotPoints = await settingRef
+    .collection('plotPoints')
+    .withConverter(new Converter<PlotPoints>())
     .get();
 
   const isLocation = (location: Location | undefined): location is Location => {
@@ -70,15 +70,13 @@ export async function getSetting(id: string): Promise<{
 
   const assertedLocations: Location[] = [];
 
-  items.docs.map((item) => {
-    const data: Item = item.data();
-    Object.values(data).map((value) => {
-      if ('campaign' in value) {
-        if (isLocation(value)) {
-          assertedLocations.push(value);
-        }
+  plotPoints.docs.map((plotPoint) => {
+    const data = plotPoint.data();
+    if (data.plotPoint === 'Location') {
+      if (isLocation(data)) {
+        assertedLocations.push(data);
       }
-    });
+    }
   });
 
   return {
@@ -131,7 +129,7 @@ export async function getLocation(
   const location = await db
     .collection('settings')
     .doc(settingID)
-    .collection('locations')
+    .collection('plotPoints')
     .doc(locationID)
     .withConverter(new Converter<Location>())
     .get();
@@ -145,7 +143,7 @@ export async function getNPC(
   const npc = await db
     .collection('settings')
     .doc(settingID)
-    .collection('npcs')
+    .collection('plotPoints')
     .doc(npcID)
     .withConverter(new Converter<NPC>())
     .get();
@@ -156,7 +154,7 @@ export async function getNPCs(settingID: string): Promise<NPC[]> {
   const npcs = await db
     .collection('settings')
     .doc(settingID)
-    .collection('npcs')
+    .collection('plotPoints')
     .withConverter(new Converter<NPC>())
     .get();
   return npcs.docs.map((npc) => npc.data());

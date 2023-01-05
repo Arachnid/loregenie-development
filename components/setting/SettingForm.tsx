@@ -15,11 +15,11 @@ import Radio from '@mui/material/Radio';
 
 interface Props {
   sessionEmail: string;
-  setting: Setting | false;
+  setting?: Setting;
 }
 
 const editExistingOrNewSetting = (
-  setting: Setting | false,
+  setting: Setting | undefined,
   sessionEmail: string
 ) => {
   if (setting) {
@@ -66,6 +66,7 @@ const SettingForm = ({ sessionEmail, setting }: Props) => {
           }),
         });
         router.push(`/setting/${setting.id}`);
+        router.refresh();
       } catch (error) {
         console.log('error updating setting: ', error);
       }
