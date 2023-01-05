@@ -5,7 +5,15 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { ExtendedCampaign, Location, LocationMap, NPC, NPCMap } from '@/types';
+import {
+  Campaign,
+  Item,
+  Location,
+  LocationMap,
+  NPC,
+  NPCMap,
+  Setting,
+} from '@/types';
 
 if (!admin.apps.length) {
   try {
@@ -31,45 +39,55 @@ export class Converter<U> implements FirestoreDataConverter<U> {
   }
 }
 
-export async function getCampaigns(
-  email: string
-): Promise<{ campaigns: ExtendedCampaign[]; locations: LocationMap }> {
-  const campaigns = await db
-    .collection('campaigns')
+export async function getSettings(email: string): Promise<Setting[]> {
+  const settings = await db
+    .collection('settings')
     .where('readers', 'array-contains', email)
-    .withConverter(new Converter<ExtendedCampaign>())
+    .withConverter(new Converter<Setting>())
     .get();
-  let locationMap: LocationMap = {};
-  if (campaigns.docs.length > 0) {
-    const locations = await db
-      .collection('locations')
-      .where(
-        'campaign',
-        'in',
-        campaigns.docs.map((campaign) => campaign.id)
-      )
-      .withConverter(new Converter<Location>())
-      .get();
-    locationMap = Object.fromEntries<Location>(
-      locations.docs.map((location: QueryDocumentSnapshot<Location>) => [
-        location.id,
-        location.data(),
-      ])
-    ) as unknown as LocationMap;
-  }
+  return settings.docs.map((setting) => setting.data());
+}
+
+export async function getSetting(
+  id: string
+): Promise<{
+  setting: Setting | undefined;
+  campaigns: Campaign[];
+  items: Item[];
+}> {
+  const setting = db
+    .collection('settings')
+    .doc(id)
+    .withConverter(new Converter<Setting>());
+
+  const campaigns = setting
+    .collection('campaigns')
+    .withConverter(new Converter<Campaign>());
+
+  const items = setting.collection('items').withConverter(new Converter<Item>())
+
   return {
-    campaigns: campaigns.docs.map((campaign) => campaign.data()),
-    locations: locationMap,
+    setting: (await setting.get()).data(),
+    campaigns: (await campaigns.get()).docs.map((campaign) => campaign.data()),
+    items: (await items.get()).docs.map((item) => item.data())
   };
 }
 
-export async function getCampaign(
-  id: string
-): Promise<ExtendedCampaign | undefined> {
+export async function getCampaigns(id: string): Promise<Campaign[]> {
+  const campaigns = await db
+    .collection('settings')
+    .doc(id)
+    .collection('campaigns')
+    .withConverter(new Converter<Campaign>())
+    .get();
+  return campaigns.docs.map((campaign) => campaign.data());
+}
+
+export async function getCampaign(id: string): Promise<Campaign | undefined> {
   const campaign = db
     .collection('campaigns')
     .doc(id)
-    .withConverter(new Converter<ExtendedCampaign>());
+    .withConverter(new Converter<Campaign>());
 
   //wip
   let response: admin.firestore.DocumentData[] = [];
@@ -92,8 +110,7 @@ export async function getCampaign(
     }
   };
   recursiveCollections(db.collection('campaigns'), id);
-  
-  
+
   return (await campaign.get()).data();
 }
 
@@ -140,10 +157,7 @@ export async function getNPCs(): Promise<NPCMap | undefined> {
     .withConverter(new Converter<NPC>())
     .get();
   npcMap = Object.fromEntries<NPC>(
-    npcs.docs.map((npc: QueryDocumentSnapshot<NPC>) => [
-      npc.id,
-      npc.data(),
-    ])
+    npcs.docs.map((npc: QueryDocumentSnapshot<NPC>) => [npc.id, npc.data()])
   ) as unknown as NPCMap;
   return npcMap;
 }

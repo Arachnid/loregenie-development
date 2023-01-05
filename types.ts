@@ -1,3 +1,18 @@
+export interface Setting {
+  readonly id: string;
+  name: string;
+  description: string;
+  readers: string[];
+  writers: string[];
+  admins: string[];
+  public: boolean;
+  campaigns?: Campaign[];
+  locations?: Location[];
+  npcs?: NPC[];
+}
+
+export type Item = Record<string, Location | NPC>
+
 export interface Nav {
   key: string;
   children?: Nav[];
@@ -8,20 +23,14 @@ export interface LocationNav {
   children?: LocationNav;
 }
 
-export interface BaseCampaign {
+export interface Campaign {
+  readonly id: string;
   name: string;
   description: string;
   readers: string[];
   writers: string[];
   admins: string[];
   public: boolean;
-}
-
-export interface ExtendedCampaign extends BaseCampaign  {
-  readonly id: string;
-  nav: Nav[];
-  owner: string;
-  locationNav: LocationNav;
 }
 
 export interface BaseLocation {
