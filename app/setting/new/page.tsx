@@ -1,4 +1,4 @@
-import CampaignForm from '@/components/CampaignForm';
+import SettingForm from '@/components/setting/SettingForm';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
@@ -12,8 +12,8 @@ export default async function NewCampaignPage() {
 
   return (
     <>
-      <h1>Create New Campaign</h1>
-      <CampaignForm sessionEmail={session?.user?.email} campaign={false} />
+      <h1>Create New Setting</h1>
+      <SettingForm sessionEmail={session?.user?.email} setting={false} />
     </>
   );
 }

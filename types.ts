@@ -1,5 +1,7 @@
+export type Item = Record<string, Location | NPC>;
+
 export interface Setting {
-  readonly id: string;
+  readonly id?: string;
   name: string;
   description: string;
   readers: string[];
@@ -11,20 +13,8 @@ export interface Setting {
   npcs?: NPC[];
 }
 
-export type Item = Record<string, Location | NPC>
-
-export interface Nav {
-  key: string;
-  children?: Nav[];
-}
-
-export interface LocationNav {
-  key: string;
-  children?: LocationNav;
-}
-
 export interface Campaign {
-  readonly id: string;
+  readonly id?: string;
   name: string;
   description: string;
   readers: string[];
@@ -33,23 +23,16 @@ export interface Campaign {
   public: boolean;
 }
 
-export interface BaseLocation {
+export interface Location {
+  readonly id?: string;
   campaign: string;
   name: string;
   description: string;
   public: boolean;
 }
 
-export interface Location extends BaseLocation {
-  readonly id: string;
-}
-
-export interface LocationMap {
-  [key: string]: Location,
-}
-
 export interface NPC {
-  readonly id: string;
+  readonly id?: string;
   name: string;
   gender: string;
   age: number;
@@ -65,8 +48,4 @@ export interface NPC {
   ideals: string[];
   flaws: string[];
   public: boolean;
-}
-
-export interface NPCMap {
-  [key: string]: NPC,
 }
