@@ -14,10 +14,11 @@ import Chip from '@mui/material/Chip';
 import { useRouter } from 'next/navigation';
 
 interface Props {
-  npc: NPC | false;
+  settingID: string;
+  npc?: NPC;
 }
 
-const editExistingOrNewNPC = (npc: NPC | false) => {
+const editExistingOrNewNPC = (npc: NPC | undefined) => {
   if (npc) {
     return npc;
   }
@@ -37,21 +38,38 @@ const editExistingOrNewNPC = (npc: NPC | false) => {
     ideals: [],
     flaws: [],
     public: false,
+    plotPoint: 'NPC' as const,
   };
 };
 
-const NPCForm = ({ npc }: Props) => {
+const NPCForm = ({ settingID, npc }: Props) => {
   const [npcForm, setNpcForm] = useState<NPC>(editExistingOrNewNPC(npc));
 
   const router = useRouter();
 
-  const onUpdate = () => {};
+  const onUpdate = async () => {
+    try {
+      await fetch('/api/npc/update', {
+        method: 'POST',
+        body: JSON.stringify({
+          npcData: npcForm,
+          npcID: npc?.id,
+          settingID,
+        }),
+      });
+      router.push(`/setting/${settingID}/npc/${npc?.id}`);
+      router.refresh();
+    } catch (error) {
+      console.log('error updating npc: ', error);
+    }
+  };
   const onCreate = async () => {
     try {
-      await fetch('/api/create-npc', {
+      await fetch('/api/npc/create', {
         method: 'POST',
-        body: JSON.stringify(npcForm),
+        body: JSON.stringify({ npcData: npcForm, settingID }),
       });
+      router.push(`/setting/${settingID}`);
       router.refresh();
     } catch (error) {
       console.log('error creating npc: ', error);
@@ -241,6 +259,7 @@ const NPCForm = ({ npc }: Props) => {
             Create NPC
           </Button>
         )}
+        <Button onClick={() => router.back()}>Cancel</Button>
       </Box>
     </>
   );

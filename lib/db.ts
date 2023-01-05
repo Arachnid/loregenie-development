@@ -44,6 +44,7 @@ export async function getSetting(id: string): Promise<{
   setting: Setting | undefined;
   campaigns: Campaign[];
   locations: Location[];
+  npcs: NPC[];
 }> {
   const settingRef = db
     .collection('settings')
@@ -67,14 +68,22 @@ export async function getSetting(id: string): Promise<{
   const isLocation = (location: Location | undefined): location is Location => {
     return location !== undefined;
   };
+  const isNPC = (npc: NPC | undefined): npc is NPC => {
+    return npc !== undefined;
+  };
 
   const assertedLocations: Location[] = [];
+  const assertedNPCs: NPC[] = [];
 
   plotPoints.docs.map((plotPoint) => {
     const data = plotPoint.data();
     if (data.plotPoint === 'Location') {
       if (isLocation(data)) {
         assertedLocations.push(data);
+      }
+    } else if (data.plotPoint === 'NPC') {
+      if (isNPC(data)) {
+        assertedNPCs.push(data);
       }
     }
   });
@@ -83,6 +92,7 @@ export async function getSetting(id: string): Promise<{
     setting,
     campaigns,
     locations: assertedLocations,
+    npcs: assertedNPCs,
   };
 }
 

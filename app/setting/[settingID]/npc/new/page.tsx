@@ -1,9 +1,15 @@
-import NPCForm from '@/components/NPCForm';
+import NPCForm from '@/components/npc/NPCForm';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
-export default async function NewNPCPage() {
+interface Props {
+  params: {
+    settingID: string;
+  };
+}
+
+export default async function NewNPCPage({ params }: Props) {
   const session = await unstable_getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -12,7 +18,7 @@ export default async function NewNPCPage() {
   return (
     <>
       <h1>Create New NPC</h1>
-      <NPCForm npc={false} />
+      <NPCForm settingID={params.settingID} />
     </>
   );
 }
