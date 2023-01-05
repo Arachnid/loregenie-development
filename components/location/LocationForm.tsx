@@ -1,6 +1,6 @@
 'use client';
 
-import { BaseLocation, Location } from '@/types';
+import { Location } from '@/types';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -12,40 +12,36 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 
 interface Props {
-  campaignID: string;
+  settingID: string;
   location?: Location;
-  firebaseKey?: string;
 }
 
-const editExistingOrNewLocation = (
-  campaignID: string,
-  location: Location | undefined
-) => {
+const editExistingOrNewLocation = (location: Location | undefined) => {
   if (location) {
     return location;
   }
   return {
-    campaign: campaignID,
     name: '',
     description: '',
     public: false,
+    plotPoint: 'Location' as const,
   };
 };
 
-const LocationForm = ({ campaignID, location, firebaseKey }: Props) => {
-  const [locationForm, setLocationForm] = useState<BaseLocation>(
-    editExistingOrNewLocation(campaignID, location)
+const LocationForm = ({ settingID, location }: Props) => {
+  const [locationForm, setLocationForm] = useState<Location>(
+    editExistingOrNewLocation(location)
   );
 
   const router = useRouter();
 
   const onCreate = async () => {
     try {
-      await fetch('/api/create-location', {
+      await fetch('/api/location/create', {
         method: 'POST',
-        body: JSON.stringify(locationForm),
+        body: JSON.stringify({ locationData: locationForm, settingID }),
       });
-      router.push(`/campaign/${campaignID}`);
+      router.push(`/setting/${settingID}`);
       router.refresh();
     } catch (error) {
       console.log('error creating location: ', error);
@@ -54,11 +50,15 @@ const LocationForm = ({ campaignID, location, firebaseKey }: Props) => {
 
   const onUpdate = async () => {
     try {
-      await fetch('/api/update-location', {
+      await fetch('/api/location/update', {
         method: 'POST',
-        body: JSON.stringify({ data: locationForm, firebaseKey }),
+        body: JSON.stringify({
+          locationData: locationForm,
+          locationID: location?.id,
+          settingID,
+        }),
       });
-      router.push(`/campaign/${campaignID}`);
+      router.push(`/setting/${settingID}/location/${location?.id}`);
       router.refresh();
     } catch (error) {
       console.log('error updating location: ', error);

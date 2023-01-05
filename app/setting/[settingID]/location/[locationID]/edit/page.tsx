@@ -1,22 +1,22 @@
 import { getLocation } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { Location } from '@/types';
-import ViewEditLocationPage from '@/components/ViewEditLocationPage';
+import LocationForm from '@/components/location/LocationForm';
 
 interface Props {
   params: {
+    settingID: string;
     locationID: string;
-    campaignID: string;
   };
-  searchParams: {
-    nav: string;
-  }
 }
 
-export default async function LocationPage({ params, searchParams }: Props) {
-  const location: Location | undefined = await getLocation(params.locationID);
+export default async function LocationPage({ params }: Props) {
+  const location: Location | undefined = await getLocation(
+    params.settingID,
+    params.locationID
+  );
   if (!location) {
     notFound();
   }
-  return <ViewEditLocationPage location={location} campaignID={params.campaignID} firebaseKey={searchParams.nav} />;
+  return <LocationForm location={location} settingID={params.settingID} />;
 }

@@ -1,19 +1,19 @@
 import { getLocation } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { Location } from '@/types';
-import ViewLocationPage from '@/components/ViewLocationPage';
+import ClientLocationPage from '@/components/location/ClientLocationPage';
 
 interface Props {
   params: {
     locationID: string;
-    campaignID: string;
+    settingID: string;
   };
 }
 
 export default async function LocationPage({ params }: Props) {
-  const location: Location | undefined = await getLocation(params.locationID);
+  const location: Location | undefined = await getLocation(params.settingID, params.locationID);
   if (!location) {
     notFound();
   }
-  return <ViewLocationPage location={location} campaignID={params.campaignID} />;
+  return <ClientLocationPage location={location} settingID={params.settingID} />;
 }

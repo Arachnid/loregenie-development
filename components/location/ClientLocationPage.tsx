@@ -6,19 +6,19 @@ import { useRouter } from 'next/navigation';
 
 interface Props {
   location: Location;
-  campaignID: string;
+  settingID: string;
 }
 
-const ViewLocationPage = ({ location, campaignID }: Props) => {
+const ClientLocationPage = ({ location, settingID }: Props) => {
   const router = useRouter();
 
   const onDelete = async () => {
     try {
-      await fetch('/api/delete-location', {
+      await fetch('/api/location/delete', {
         method: 'POST',
         body: JSON.stringify({
           locationID: location.id,
-          campaignID,
+          settingID,
         }),
       });
       router.push('/');
@@ -32,11 +32,13 @@ const ViewLocationPage = ({ location, campaignID }: Props) => {
     <>
       <h1>name: {location.name}</h1>
       <div>description: {location.description}</div>
-      <Button variant='contained' sx={{ margin: 1 }} onClick={() => onDelete()}>
+      <Button color='error' variant='contained' sx={{ margin: 1 }} onClick={() => onDelete()}>
         Delete Location
       </Button>
+      <Button variant='contained' onClick={() => router.push(`/setting/${settingID}/location/${location.id}/edit`)}>Edit Location</Button>
+      <Button onClick={() => router.push(`/setting/${settingID}`)}>Return To Setting</Button>
     </>
   );
 };
 
-export default ViewLocationPage;
+export default ClientLocationPage;
