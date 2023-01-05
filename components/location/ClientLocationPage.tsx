@@ -21,7 +21,7 @@ const ClientLocationPage = ({ location, settingID }: Props) => {
           settingID,
         }),
       });
-      router.push('/');
+      router.push(`/setting/${settingID}`);
       router.refresh();
     } catch (error) {
       console.log('error deleting location: ', error);
@@ -32,11 +32,26 @@ const ClientLocationPage = ({ location, settingID }: Props) => {
     <>
       <h1>name: {location.name}</h1>
       <div>description: {location.description}</div>
-      <Button color='error' variant='contained' sx={{ margin: 1 }} onClick={() => onDelete()}>
+      <div>visibility: {location.public ? 'public' : 'private'}</div>
+      <Button
+        color='error'
+        variant='contained'
+        sx={{ margin: 1 }}
+        onClick={() => onDelete()}
+      >
         Delete Location
       </Button>
-      <Button variant='contained' onClick={() => router.push(`/setting/${settingID}/location/${location.id}/edit`)}>Edit Location</Button>
-      <Button onClick={() => router.push(`/setting/${settingID}`)}>Return To Setting</Button>
+      <Button
+        variant='contained'
+        onClick={() =>
+          router.push(`/setting/${settingID}/location/${location.id}/edit`)
+        }
+      >
+        Edit Location
+      </Button>
+      <Button onClick={() => router.push(`/setting/${settingID}`)}>
+        Return To Setting
+      </Button>
     </>
   );
 };

@@ -16,7 +16,7 @@ export default async function handler(
       .doc(settingID)
       .collection('plotPoints')
       .withConverter(new Converter<PlotPoints>())
-      .add({ ...locationData });
+      .add(locationData);
   } catch (error) {
     console.log('error writing location to database: ', error);
     response.statusCode = 500;

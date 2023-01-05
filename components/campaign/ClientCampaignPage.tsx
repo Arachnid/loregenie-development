@@ -3,7 +3,6 @@
 import { Campaign } from '@/types';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 interface Props {
   campaign: Campaign;
@@ -17,7 +16,7 @@ const ClientCampaignPage = ({ campaign, settingID }: Props) => {
     try {
       await fetch('/api/campaign/delete', {
         method: 'POST',
-        body: JSON.stringify({campaignID: campaign.id, settingID}),
+        body: JSON.stringify({ campaignID: campaign.id, settingID }),
       });
       router.push(`/setting/${settingID}`);
       router.refresh();
@@ -34,15 +33,26 @@ const ClientCampaignPage = ({ campaign, settingID }: Props) => {
       <div>writers: {campaign.writers.join(', ')}</div>
       <div>admins: {campaign.admins.join(', ')}</div>
       <div>visibility: {campaign.public ? 'public' : 'private'}</div>
-      <Link href={`/setting/${settingID}/campaign/${campaign.id}/edit`} style={{ textDecoration: 'none' }}>
-        <Button variant='contained' sx={{ margin: 1 }}>
-          Edit Campaign
-        </Button>
-      </Link>
-      <Button variant='contained' sx={{ margin: 1 }} color='error' onClick={() => onDelete()}>
+      <Button
+        variant='contained'
+        sx={{ margin: 1 }}
+        onClick={() =>
+          router.push(`/setting/${settingID}/campaign/${campaign.id}/edit`)
+        }
+      >
+        Edit Campaign
+      </Button>
+      <Button
+        variant='contained'
+        sx={{ margin: 1 }}
+        color='error'
+        onClick={() => onDelete()}
+      >
         Delete Campaign
       </Button>
-      <Button onClick={() => router.push(`/setting/${settingID}`)}>Return To Setting</Button>
+      <Button onClick={() => router.push(`/setting/${settingID}`)}>
+        Return To Setting
+      </Button>
     </>
   );
 };
