@@ -12,14 +12,17 @@ interface Props {
 }
 
 const EditWorldPage = async ({ params }: Props) => {
-  const {world}: {world: World | undefined} = await getWorld(params.worldID);
   const session: Session | null = await unstable_getServerSession(authOptions);
+  const { world }: { world: World | undefined } = await getWorld(
+    params.worldID,
+    session?.user?.email as string
+  );
 
   if (!world || !session?.user?.email) {
     notFound();
   }
 
-  return <WorldForm sessionEmail={session.user.email} world={world} />
-}
+  return <WorldForm sessionEmail={session.user.email} world={world} />;
+};
 
 export default EditWorldPage;

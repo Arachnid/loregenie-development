@@ -1,5 +1,11 @@
-export type PlotPoints = Location | NPC;
-export type Forms = WorldForm | CampaignForm | LocationForm | NPCForm;
+export type PlotPoints = Location | NPC | Lore;
+export type Forms =
+  | WorldForm
+  | CampaignForm
+  | LocationForm
+  | NPCForm
+  | JournalEntryForm
+  | LoreForm;
 
 export interface World {
   readonly id: string;
@@ -23,8 +29,9 @@ export interface Campaign {
   writers: string[];
   admins: string[];
   public: boolean;
+  journalEntries?: JournalEntry[];
 }
-export type CampaignForm = Omit<Campaign, 'id'>
+export type CampaignForm = Omit<Campaign, 'id'>;
 
 export interface Location {
   readonly id: string;
@@ -57,3 +64,20 @@ export interface NPC {
   plotPoint: 'NPC';
 }
 export type NPCForm = Omit<NPC, 'id'>;
+
+export interface JournalEntry {
+  readonly id: string;
+  date: string;
+  text: string;
+  public: boolean;
+}
+export type JournalEntryForm = Omit<JournalEntry, 'id'>;
+
+export interface Lore {
+  readonly id: string;
+  title: string;
+  description: string;
+  public: boolean;
+  plotPoint: 'Lore';
+}
+export type LoreForm = Omit<Lore, 'id'>;

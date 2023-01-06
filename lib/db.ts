@@ -5,7 +5,15 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { Campaign, PlotPoints, Location, NPC, World } from '@/types';
+import {
+  Campaign,
+  PlotPoints,
+  Location,
+  NPC,
+  World,
+  JournalEntry,
+  Lore,
+} from '@/types';
 
 if (!admin.apps.length) {
   try {
@@ -31,76 +39,55 @@ export class Converter<U> implements FirestoreDataConverter<U> {
   }
 }
 
-export async function getWorlds(email: string): Promise<World[]> {
+export async function getWorlds(email: string) {
   const worlds = await db
     .collection('worlds')
     .where('readers', 'array-contains', email)
     .withConverter(new Converter<World>())
     .get();
-  return worlds.docs.map((world) => world.data());
+  return worlds.docs.map((world) => getWorld(world.id, email));
 }
 
-export async function getWorld(id: string): Promise<{
+export async function getWorld(
+  worldID: string,
+  email: string
+): Promise<{
   world: World | undefined;
   campaigns: Campaign[];
   locations: Location[];
   npcs: NPC[];
+  loreEntries: Lore[];
 }> {
-  const worldRef = db
+  const worldRef = await db
     .collection('worlds')
-    .doc(id)
-    .withConverter(new Converter<World>());
-
-  const world = (await worldRef.get()).data();
-
-  const campaigns = (
-    await worldRef
-      .collection('campaigns')
-      .withConverter(new Converter<Campaign>())
-      .get()
-  ).docs.map((campaign) => campaign.data());
-
-  const plotPoints = await worldRef
-    .collection('plotPoints')
-    .withConverter(new Converter<PlotPoints>())
+    .doc(worldID)
+    .withConverter(new Converter<World>())
     .get();
 
-  const isLocation = (location: Location | undefined): location is Location => {
-    return location !== undefined;
-  };
-  const isNPC = (npc: NPC | undefined): npc is NPC => {
-    return npc !== undefined;
-  };
-
-  const assertedLocations: Location[] = [];
-  const assertedNPCs: NPC[] = [];
-
-  plotPoints.docs.map((plotPoint) => {
-    const data = plotPoint.data();
-    if (data.plotPoint === 'Location') {
-      if (isLocation(data)) {
-        assertedLocations.push(data);
-      }
-    } else if (data.plotPoint === 'NPC') {
-      if (isNPC(data)) {
-        assertedNPCs.push(data);
-      }
-    }
-  });
+  const world = worldRef.data();
+  const campaigns = await getCampaigns(worldID, email);
+  const locations = await getLocations(worldID);
+  const npcs = await getNPCs(worldID);
+  const loreEntries = await getLoreEntries(worldID);
 
   return {
     world,
     campaigns,
-    locations: assertedLocations,
-    npcs: assertedNPCs,
+    locations,
+    npcs,
+    loreEntries,
   };
 }
 
-export async function getCampaigns(id: string): Promise<Campaign[]> {
+export async function getCampaigns(
+  worldID: string,
+  email: string
+): Promise<Campaign[]> {
   const campaigns = await db
     .collection('worlds')
-    .doc(id)
+    .doc(worldID)
     .collection('campaigns')
+    .where('readers', 'array-contains', email)
     .withConverter(new Converter<Campaign>())
     .get();
   return campaigns.docs.map((campaign) => campaign.data());
@@ -109,8 +96,11 @@ export async function getCampaigns(id: string): Promise<Campaign[]> {
 export async function getCampaign(
   worldID: string,
   campaignID: string
-): Promise<Campaign | undefined> {
-  const campaign = await db
+): Promise<{
+  campaign: Campaign | undefined;
+  journalEntries: JournalEntry[];
+}> {
+  const campaignRef = await db
     .collection('worlds')
     .doc(worldID)
     .withConverter(new Converter<World>())
@@ -119,17 +109,72 @@ export async function getCampaign(
     .withConverter(new Converter<Campaign>())
     .get();
 
-  return campaign.data();
+  const campaign = campaignRef.data();
+  const journalEntries = await getJournalEntries(worldID, campaignID);
+
+  return {
+    campaign,
+    journalEntries,
+  };
+}
+
+export async function getJournalEntries(
+  worldID: string,
+  campaignID: string
+): Promise<JournalEntry[]> {
+  const journalEntries = await db
+    .collection('worlds')
+    .doc(worldID)
+    .collection('campaigns')
+    .doc(campaignID)
+    .collection('journalEntries')
+    .withConverter(new Converter<JournalEntry>())
+    .get();
+
+  return journalEntries.docs.map((journalEntry) => journalEntry.data());
+}
+
+export async function getJournalEntry(
+  worldID: string,
+  campaignID: string,
+  journalEntryID: string
+): Promise<JournalEntry | undefined> {
+  const journalEntry = await db
+    .collection('worlds')
+    .doc(worldID)
+    .collection('campaigns')
+    .doc(campaignID)
+    .collection('journalEntries')
+    .doc(journalEntryID)
+    .withConverter(new Converter<JournalEntry>())
+    .get();
+  return journalEntry.data();
 }
 
 export async function getLocations(worldID: string): Promise<Location[]> {
-  const locations = await db
+  const plotPoints = await db
     .collection('worlds')
     .doc(worldID)
-    .collection('locations')
-    .withConverter(new Converter<Location>())
+    .collection('plotPoints')
+    .withConverter(new Converter<PlotPoints>())
     .get();
-  return locations.docs.map((location) => location.data());
+
+  const isLocation = (location: Location | undefined): location is Location => {
+    return location !== undefined;
+  };
+
+  const assertedLocations: Location[] = [];
+
+  plotPoints.docs.map((plotPoint) => {
+    const data = plotPoint.data();
+    if (data.plotPoint === 'Location') {
+      if (isLocation(data)) {
+        assertedLocations.push(data);
+      }
+    }
+  });
+
+  return assertedLocations;
 }
 
 export async function getLocation(
@@ -161,11 +206,68 @@ export async function getNPC(
 }
 
 export async function getNPCs(worldID: string): Promise<NPC[]> {
-  const npcs = await db
+  const plotPoints = await db
     .collection('worlds')
     .doc(worldID)
     .collection('plotPoints')
-    .withConverter(new Converter<NPC>())
+    .withConverter(new Converter<PlotPoints>())
     .get();
-  return npcs.docs.map((npc) => npc.data());
+
+  const isNPC = (npc: NPC | undefined): npc is NPC => {
+    return npc !== undefined;
+  };
+
+  const assertedNPCs: NPC[] = [];
+
+  plotPoints.docs.map((plotPoint) => {
+    const data = plotPoint.data();
+    if (data.plotPoint === 'NPC') {
+      if (isNPC(data)) {
+        assertedNPCs.push(data);
+      }
+    }
+  });
+
+  return assertedNPCs;
+}
+
+export async function getLoreEntries(worldID: string): Promise<Lore[]> {
+  const plotPoints = await db
+    .collection('worlds')
+    .doc(worldID)
+    .collection('plotPoints')
+    .withConverter(new Converter<PlotPoints>())
+    .get();
+
+  const isLore = (lore: Lore | undefined): lore is Lore => {
+    return lore !== undefined;
+  };
+
+  const assertedLoreEntries: Lore[] = [];
+
+  plotPoints.docs.map((plotPoint) => {
+    const data = plotPoint.data();
+    if (data.plotPoint === 'Lore') {
+      if (isLore(data)) {
+        assertedLoreEntries.push(data);
+      }
+    }
+  });
+
+  return assertedLoreEntries;
+}
+
+export async function getLore(
+  worldID: string,
+  loreID: string
+): Promise<Lore | undefined> {
+  const lore = await db
+    .collection('worlds')
+    .doc(worldID)
+    .collection('plotPoints')
+    .doc(loreID)
+    .withConverter(new Converter<Lore>())
+    .get();
+
+  return lore.data();
 }
