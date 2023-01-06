@@ -7,12 +7,9 @@ interface Props {
   params: {
     worldID: string;
   };
-  searchParams: {
-    parent: string;
-  };
 }
 
-export default async function NewLorePage({ params, searchParams }: Props) {
+export default async function NewLorePage({ params }: Props) {
   const session = await unstable_getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -22,7 +19,7 @@ export default async function NewLorePage({ params, searchParams }: Props) {
   return (
     <>
       <h1>Create New Lore</h1>
-      <LoreForm worldID={params.worldID} parent={searchParams.parent} />
+      <LoreForm worldID={params.worldID} />
     </>
   );
 }

@@ -39,13 +39,14 @@ export class Converter<U> implements FirestoreDataConverter<U> {
   }
 }
 
-export async function getWorlds(email: string) {
+export async function getWorlds(email: string): Promise<World[]> {
   const worlds = await db
     .collection('worlds')
     .where('readers', 'array-contains', email)
     .withConverter(new Converter<World>())
     .get();
-  return worlds.docs.map((world) => getWorld(world.id, email));
+  
+  return worlds.docs.map((world) => world.data());
 }
 
 export async function getWorld(

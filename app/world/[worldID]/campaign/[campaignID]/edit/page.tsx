@@ -14,7 +14,7 @@ interface Props {
 }
 
 const EditCampaignPage = async ({ params }: Props) => {
-  const campaign: Campaign | undefined = await getCampaign(
+  const { campaign }: { campaign: Campaign | undefined } = await getCampaign(
     params.worldID,
     params.campaignID
   );
