@@ -21,7 +21,7 @@ const LocationList = ({ locations, worldID }: Props) => {
         {locations.map((location, index) => {
           return (
             <ListItem key={index}>
-              <Link href={`world/${worldID}/location/${'location.id'}`}>
+              <Link href={`world/${worldID}/location/${location.id}`}>
                 {location.name}
               </Link>
             </ListItem>
