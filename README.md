@@ -12,7 +12,9 @@
 - run: ```firebase init```
 - select Emulators
 - select Authentication Emulator and Firestore Emulator
-- copy auth and firestore ports into env
+- copy auth and firestore ports into the env. By default, the values are:
+  - ```FIRESTORE_EMULATOR_HOST='localhost:8080'```
+  - ```FIREBASE_AUTH_EMULATOR_HOST='localhost:9099'```
 - run: ```firebase emulators:start``` OR run firebase emulator with persistent data:
   - create ```exported-firebase-data``` folder in root directory
   - run: ```npm run emulator```
