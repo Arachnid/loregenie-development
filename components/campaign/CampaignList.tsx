@@ -9,10 +9,10 @@ import { useRouter } from 'next/navigation';
 
 type Props = {
   campaigns: Campaign[];
-  settingID: string;
+  worldID: string;
 };
 
-const CampaignList = ({ campaigns, settingID }: Props) => {
+const CampaignList = ({ campaigns, worldID }: Props) => {
   const router = useRouter();
   return (
     <>
@@ -21,14 +21,14 @@ const CampaignList = ({ campaigns, settingID }: Props) => {
         {campaigns.map((campaign, index) => {
           return (
             <ListItem key={index}>
-              <Link href={`/setting/${settingID}/campaign/${campaign.id}`}>
+              <Link href={`/world/${worldID}/campaign/${campaign.id}`}>
                 {campaign.name}
               </Link>
             </ListItem>
           );
         })}
       </List>
-      <Button onClick={() => router.push(`setting/${settingID}/campaign/new`)}>
+      <Button onClick={() => router.push(`world/${worldID}/campaign/new`)}>
         Create Campaign
       </Button>
     </>

@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
-import { Campaign, CampaignForm } from '@/types';
+import { World, WorldForm } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -15,11 +15,10 @@ import Radio from '@mui/material/Radio';
 
 interface Props {
   sessionEmail: string;
-  worldID: string;
-  campaign?: Campaign;
+  world?: World;
 }
 
-const createNewCampaign = (sessionEmail: string): CampaignForm => {
+const createNewWorld = (sessionEmail: string): WorldForm => {
   return {
     name: '',
     description: '',
@@ -30,42 +29,59 @@ const createNewCampaign = (sessionEmail: string): CampaignForm => {
   };
 };
 
-const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
-  const [campaignForm, setCampaignForm] = useState<Campaign | CampaignForm>(
-    campaign ? campaign : createNewCampaign(sessionEmail)
+const WorldForm = ({ sessionEmail, world }: Props) => {
+  const [worldForm, setWorldForm] = useState<World | WorldForm>(
+    world ? world : createNewWorld(sessionEmail)
   );
 
   const router = useRouter();
 
   const onCreate = async () => {
     try {
-      await fetch('/api/campaign/create', {
+      await fetch('/api/world/create', {
         method: 'POST',
-        body: JSON.stringify({ campaignData: campaignForm, worldID }),
+        body: JSON.stringify(worldForm),
       }).then((res) =>
-        res.json().then((campaignID: string) => {
-          router.push(`/world/${worldID}/campaign/${campaignID}`);
-          router.refresh();
-        })
-      );
+      res.json().then((worldID: string) => {
+        router.push(`/world/${worldID}`);
+        router.refresh();
+      })
+    );
     } catch (error) {
-      console.log('error submitting campaign: ', error);
+      console.log('error creating world: ', error);
     }
   };
 
   const onUpdate = async () => {
-    try {
-      await fetch('/api/campaign/update', {
-        method: 'POST',
-        body: JSON.stringify({
-          campaignData: campaignForm,
-          campaignID: campaign?.id,
-          worldID,
-        }),
-      });
-      router.push(`/world/${worldID}/campaign/${campaign?.id}`);
-    } catch (error) {
-      console.log('error updating campaign: ', error);
+    if (world) {
+      try {
+        await fetch('/api/world/update', {
+          method: 'POST',
+          body: JSON.stringify({
+            worldData: worldForm,
+            worldID: world.id,
+          }),
+        });
+        router.push(`/world/${world.id}`);
+        router.refresh();
+      } catch (error) {
+        console.log('error updating world: ', error);
+      }
+    }
+  };
+
+  const onDelete = async () => {
+    if (world) {
+      try {
+        await fetch('/api/world/delete', {
+          method: 'POST',
+          body: world.id,
+        });
+        router.push('/');
+        router.refresh();
+      } catch (error) {
+        console.log('error deleting world: ', error);
+      }
     }
   };
 
@@ -80,17 +96,15 @@ const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
         <TextField
           label='name'
           margin='normal'
-          value={campaignForm.name}
-          onChange={(e) =>
-            setCampaignForm({ ...campaignForm, name: e.target.value })
-          }
+          value={worldForm.name}
+          onChange={(e) => setWorldForm({ ...worldForm, name: e.target.value })}
         />
         <TextField
           label='description'
           multiline
-          value={campaignForm.description}
+          value={worldForm.description}
           onChange={(e) =>
-            setCampaignForm({ ...campaignForm, description: e.target.value })
+            setWorldForm({ ...worldForm, description: e.target.value })
           }
         />
         <Autocomplete
@@ -98,9 +112,9 @@ const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
           id='tags-filled'
           options={[]}
           freeSolo
-          value={campaignForm.readers}
+          value={worldForm.readers}
           onChange={(event, value) =>
-            setCampaignForm({ ...campaignForm, readers: value })
+            setWorldForm({ ...worldForm, readers: value })
           }
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
@@ -120,9 +134,9 @@ const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
           id='tags-filled'
           options={[]}
           freeSolo
-          value={campaignForm.writers}
+          value={worldForm.writers}
           onChange={(event, value) =>
-            setCampaignForm({ ...campaignForm, writers: value })
+            setWorldForm({ ...worldForm, writers: value })
           }
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
@@ -142,9 +156,9 @@ const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
           id='tags-filled'
           options={[]}
           freeSolo
-          value={campaignForm.admins}
+          value={worldForm.admins}
           onChange={(event, value) =>
-            setCampaignForm({ ...campaignForm, admins: value })
+            setWorldForm({ ...worldForm, admins: value })
           }
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
@@ -161,9 +175,9 @@ const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
         />
         <FormControl component='fieldset'>
           <RadioGroup
-            value={campaignForm.public}
+            value={worldForm.public}
             onChange={() =>
-              setCampaignForm({ ...campaignForm, public: !campaignForm.public })
+              setWorldForm({ ...worldForm, public: !worldForm.public })
             }
           >
             <FormControlLabel
@@ -174,21 +188,31 @@ const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
             <FormControlLabel value={true} control={<Radio />} label='Public' />
           </RadioGroup>
         </FormControl>
-        {campaign ? (
-          <Button
-            variant='contained'
-            sx={{ margin: 1 }}
-            onClick={() => onUpdate()}
-          >
-            Update Campaign
-          </Button>
+        {world ? (
+          <>
+            <Button
+              variant='contained'
+              sx={{ margin: 1 }}
+              onClick={() => onUpdate()}
+            >
+              Update World
+            </Button>
+            <Button
+              variant='contained'
+              color='error'
+              sx={{ margin: 1 }}
+              onClick={() => onDelete()}
+            >
+              Delete World
+            </Button>
+          </>
         ) : (
           <Button
             variant='contained'
             sx={{ margin: 1 }}
             onClick={() => onCreate()}
           >
-            Create Campaign
+            Create World
           </Button>
         )}
         <Button onClick={() => router.back()}>Cancel</Button>
@@ -197,4 +221,4 @@ const CampaignForm = ({ sessionEmail, campaign, worldID }: Props) => {
   );
 };
 
-export default CampaignForm;
+export default WorldForm;

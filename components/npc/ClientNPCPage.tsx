@@ -6,10 +6,10 @@ import { useRouter } from 'next/navigation';
 
 interface Props {
   npc: NPC;
-  settingID: string;
+  worldID: string;
 }
 
-const ClientNPCPage = ({ npc, settingID }: Props) => {
+const ClientNPCPage = ({ npc, worldID }: Props) => {
   const router = useRouter();
   const onDelete = async () => {
     try {
@@ -17,10 +17,10 @@ const ClientNPCPage = ({ npc, settingID }: Props) => {
         method: 'POST',
         body: JSON.stringify({
           npcID: npc.id,
-          settingID,
+          worldID,
         }),
       });
-      router.push(`/setting/${settingID}`);
+      router.push(`/world/${worldID}`);
       router.refresh();
     } catch (error) {
       console.log('error deleting npc: ', error);
@@ -53,12 +53,12 @@ const ClientNPCPage = ({ npc, settingID }: Props) => {
       </Button>
       <Button
         variant='contained'
-        onClick={() => router.push(`/setting/${settingID}/npc/${npc.id}/edit`)}
+        onClick={() => router.push(`/world/${worldID}/npc/${npc.id}/edit`)}
       >
         Edit NPC
       </Button>
-      <Button onClick={() => router.push(`/setting/${settingID}`)}>
-        Return To Setting
+      <Button onClick={() => router.push(`/world/${worldID}`)}>
+        Return To World
       </Button>
     </>
   );

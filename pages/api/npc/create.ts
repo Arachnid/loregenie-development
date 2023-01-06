@@ -6,20 +6,21 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { npcData, settingID }: { npcData: NPC; settingID: string } =
-    JSON.parse(request.body);
+  const { npcData, worldID }: { npcData: NPC; worldID: string } = JSON.parse(
+    request.body
+  );
   try {
-    await db
-      .collection('settings')
-      .doc(settingID)
+    const npc = await db
+      .collection('worlds')
+      .doc(worldID)
       .collection('plotPoints')
       .withConverter(new Converter<PlotPoints>())
       .add(npcData);
+    response.json(npc.id);
   } catch (error) {
     console.log('error writing npc to database: ', error);
     response.statusCode = 500;
     response.send({});
     return;
   }
-  response.send({});
 }

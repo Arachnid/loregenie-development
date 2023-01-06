@@ -9,13 +9,13 @@ export default async function handler(
   const {
     campaignData,
     campaignID,
-    settingID,
-  }: { campaignData: Campaign; campaignID: string; settingID: string } =
+    worldID,
+  }: { campaignData: Campaign; campaignID: string; worldID: string } =
     JSON.parse(request.body);
   try {
     await db
-      .collection('settings')
-      .doc(settingID)
+      .collection('worlds')
+      .doc(worldID)
       .collection('campaigns')
       .doc(campaignID)
       .withConverter(new Converter<Campaign>())

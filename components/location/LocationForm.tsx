@@ -1,6 +1,6 @@
 'use client';
 
-import { Location } from '@/types';
+import { Location, LocationForm } from '@/types';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -12,25 +12,24 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 
 interface Props {
-  settingID: string;
+  worldID: string;
   location?: Location;
+  parent?: string;
 }
 
-const editExistingOrNewLocation = (location: Location | undefined) => {
-  if (location) {
-    return location;
-  }
+const createNewLocation = (parent: string | undefined): LocationForm => {
   return {
     name: '',
     description: '',
     public: false,
     plotPoint: 'Location' as const,
+    parent,
   };
 };
 
-const LocationForm = ({ settingID, location }: Props) => {
-  const [locationForm, setLocationForm] = useState<Location>(
-    editExistingOrNewLocation(location)
+const LocationForm = ({ worldID, location, parent }: Props) => {
+  const [locationForm, setLocationForm] = useState<Location | LocationForm>(
+    location ? location : createNewLocation(parent)
   );
 
   const router = useRouter();
@@ -39,10 +38,13 @@ const LocationForm = ({ settingID, location }: Props) => {
     try {
       await fetch('/api/location/create', {
         method: 'POST',
-        body: JSON.stringify({ locationData: locationForm, settingID }),
-      });
-      router.push(`/setting/${settingID}`);
-      router.refresh();
+        body: JSON.stringify({ locationData: locationForm, worldID }),
+      }).then((res) =>
+        res.json().then((locationID: string) => {
+          router.push(`/world/${worldID}/location/${locationID}`);
+          router.refresh();
+        })
+      );
     } catch (error) {
       console.log('error creating location: ', error);
     }
@@ -55,10 +57,10 @@ const LocationForm = ({ settingID, location }: Props) => {
         body: JSON.stringify({
           locationData: locationForm,
           locationID: location?.id,
-          settingID,
+          worldID,
         }),
       });
-      router.push(`/setting/${settingID}/location/${location?.id}`);
+      router.push(`/world/${worldID}/location/${location?.id}`);
       router.refresh();
     } catch (error) {
       console.log('error updating location: ', error);

@@ -1,7 +1,8 @@
 export type PlotPoints = Location | NPC;
+export type Forms = WorldForm | CampaignForm | LocationForm | NPCForm;
 
-export interface Setting {
-  readonly id?: string;
+export interface World {
+  readonly id: string;
   name: string;
   description: string;
   readers: string[];
@@ -12,9 +13,10 @@ export interface Setting {
   locations?: Location[];
   npcs?: NPC[];
 }
+export type WorldForm = Omit<World, 'id'>;
 
 export interface Campaign {
-  readonly id?: string;
+  readonly id: string;
   name: string;
   description: string;
   readers: string[];
@@ -22,18 +24,20 @@ export interface Campaign {
   admins: string[];
   public: boolean;
 }
+export type CampaignForm = Omit<Campaign, 'id'>
 
 export interface Location {
-  readonly id?: string;
+  readonly id: string;
   name: string;
   description: string;
   public: boolean;
   parent?: string;
   plotPoint: 'Location';
 }
+export type LocationForm = Omit<Location, 'id'>;
 
 export interface NPC {
-  readonly id?: string;
+  readonly id: string;
   name: string;
   gender: string;
   age: number;
@@ -49,5 +53,7 @@ export interface NPC {
   ideals: string[];
   flaws: string[];
   public: boolean;
+  parent?: string;
   plotPoint: 'NPC';
 }
+export type NPCForm = Omit<NPC, 'id'>;

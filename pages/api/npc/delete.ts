@@ -6,14 +6,14 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { npcID, settingID }: { npcID: string; settingID: string } = JSON.parse(
+  const { npcID, worldID }: { npcID: string; worldID: string } = JSON.parse(
     request.body
   );
 
   try {
     await db
-      .collection('settings')
-      .doc(settingID)
+      .collection('worlds')
+      .doc(worldID)
       .collection('plotPoints')
       .doc(npcID)
       .withConverter(new Converter<NPC>())

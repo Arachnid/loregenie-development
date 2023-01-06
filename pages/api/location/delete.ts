@@ -6,13 +6,13 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { locationID, settingID }: { locationID: string; settingID: string } =
+  const { locationID, worldID }: { locationID: string; worldID: string } =
     JSON.parse(request.body);
 
   try {
     await db
-      .collection('settings')
-      .doc(settingID)
+      .collection('worlds')
+      .doc(worldID)
       .collection('plotPoints')
       .doc(locationID)
       .withConverter(new Converter<Location>())

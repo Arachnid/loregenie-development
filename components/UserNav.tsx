@@ -1,18 +1,18 @@
 import { Session } from 'next-auth';
-import { getSettings } from '@/lib/db';
+import { getWorlds } from '@/lib/db';
 import ClientUserNav from '@/components/ClientUserNav';
-import { Setting } from '@/types';
-import SettingsList from '@/components/setting/SettingsList';
+import { World } from '@/types';
+import WorldsList from '@/components/world/WorldList';
 
 interface Props {
   session: Session;
 }
 
 export default async function UserNav({ session }: Props) {
-  const settings: Setting[] = await getSettings(session?.user?.email as string);
+  const worlds: World[] = await getWorlds(session?.user?.email as string);
   return (
     <ClientUserNav>
-      <SettingsList settings={settings} />
+      <WorldsList worlds={worlds} />
     </ClientUserNav>
   );
 }

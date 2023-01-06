@@ -5,7 +5,7 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { Campaign, PlotPoints, Location, NPC, Setting } from '@/types';
+import { Campaign, PlotPoints, Location, NPC, World } from '@/types';
 
 if (!admin.apps.length) {
   try {
@@ -31,36 +31,36 @@ export class Converter<U> implements FirestoreDataConverter<U> {
   }
 }
 
-export async function getSettings(email: string): Promise<Setting[]> {
-  const settings = await db
-    .collection('settings')
+export async function getWorlds(email: string): Promise<World[]> {
+  const worlds = await db
+    .collection('worlds')
     .where('readers', 'array-contains', email)
-    .withConverter(new Converter<Setting>())
+    .withConverter(new Converter<World>())
     .get();
-  return settings.docs.map((setting) => setting.data());
+  return worlds.docs.map((world) => world.data());
 }
 
-export async function getSetting(id: string): Promise<{
-  setting: Setting | undefined;
+export async function getWorld(id: string): Promise<{
+  world: World | undefined;
   campaigns: Campaign[];
   locations: Location[];
   npcs: NPC[];
 }> {
-  const settingRef = db
-    .collection('settings')
+  const worldRef = db
+    .collection('worlds')
     .doc(id)
-    .withConverter(new Converter<Setting>());
+    .withConverter(new Converter<World>());
 
-  const setting = (await settingRef.get()).data();
+  const world = (await worldRef.get()).data();
 
   const campaigns = (
-    await settingRef
+    await worldRef
       .collection('campaigns')
       .withConverter(new Converter<Campaign>())
       .get()
   ).docs.map((campaign) => campaign.data());
 
-  const plotPoints = await settingRef
+  const plotPoints = await worldRef
     .collection('plotPoints')
     .withConverter(new Converter<PlotPoints>())
     .get();
@@ -89,7 +89,7 @@ export async function getSetting(id: string): Promise<{
   });
 
   return {
-    setting,
+    world,
     campaigns,
     locations: assertedLocations,
     npcs: assertedNPCs,
@@ -98,7 +98,7 @@ export async function getSetting(id: string): Promise<{
 
 export async function getCampaigns(id: string): Promise<Campaign[]> {
   const campaigns = await db
-    .collection('settings')
+    .collection('worlds')
     .doc(id)
     .collection('campaigns')
     .withConverter(new Converter<Campaign>())
@@ -107,13 +107,13 @@ export async function getCampaigns(id: string): Promise<Campaign[]> {
 }
 
 export async function getCampaign(
-  settingID: string,
+  worldID: string,
   campaignID: string
 ): Promise<Campaign | undefined> {
   const campaign = await db
-    .collection('settings')
-    .doc(settingID)
-    .withConverter(new Converter<Setting>())
+    .collection('worlds')
+    .doc(worldID)
+    .withConverter(new Converter<World>())
     .collection('campaigns')
     .doc(campaignID)
     .withConverter(new Converter<Campaign>())
@@ -122,10 +122,10 @@ export async function getCampaign(
   return campaign.data();
 }
 
-export async function getLocations(settingID: string): Promise<Location[]> {
+export async function getLocations(worldID: string): Promise<Location[]> {
   const locations = await db
-    .collection('settings')
-    .doc(settingID)
+    .collection('worlds')
+    .doc(worldID)
     .collection('locations')
     .withConverter(new Converter<Location>())
     .get();
@@ -133,12 +133,12 @@ export async function getLocations(settingID: string): Promise<Location[]> {
 }
 
 export async function getLocation(
-  settingID: string,
+  worldID: string,
   locationID: string
 ): Promise<Location | undefined> {
   const location = await db
-    .collection('settings')
-    .doc(settingID)
+    .collection('worlds')
+    .doc(worldID)
     .collection('plotPoints')
     .doc(locationID)
     .withConverter(new Converter<Location>())
@@ -147,12 +147,12 @@ export async function getLocation(
 }
 
 export async function getNPC(
-  settingID: string,
+  worldID: string,
   npcID: string
 ): Promise<NPC | undefined> {
   const npc = await db
-    .collection('settings')
-    .doc(settingID)
+    .collection('worlds')
+    .doc(worldID)
     .collection('plotPoints')
     .doc(npcID)
     .withConverter(new Converter<NPC>())
@@ -160,10 +160,10 @@ export async function getNPC(
   return npc.data();
 }
 
-export async function getNPCs(settingID: string): Promise<NPC[]> {
+export async function getNPCs(worldID: string): Promise<NPC[]> {
   const npcs = await db
-    .collection('settings')
-    .doc(settingID)
+    .collection('worlds')
+    .doc(worldID)
     .collection('plotPoints')
     .withConverter(new Converter<NPC>())
     .get();

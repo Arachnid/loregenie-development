@@ -6,13 +6,13 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { campaignID, settingID }: { campaignID: string; settingID: string } =
+  const { campaignID, worldID }: { campaignID: string; worldID: string } =
     JSON.parse(request.body);
 
   try {
     await db
-      .collection('settings')
-      .doc(settingID)
+      .collection('worlds')
+      .doc(worldID)
       .collection('campaigns')
       .doc(campaignID)
       .withConverter(new Converter<Campaign>())

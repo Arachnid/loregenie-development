@@ -1,5 +1,5 @@
 import { Converter, db } from '@/lib/db';
-import { PlotPoints, Location } from '@/types';
+import { LocationForm, Forms } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -8,20 +8,20 @@ export default async function handler(
 ) {
   const {
     locationData,
-    settingID,
-  }: { locationData: Location; settingID: string } = JSON.parse(request.body);
+    worldID,
+  }: { locationData: LocationForm; worldID: string } = JSON.parse(request.body);
   try {
-    await db
-      .collection('settings')
-      .doc(settingID)
+    const location = await db
+      .collection('worlds')
+      .doc(worldID)
       .collection('plotPoints')
-      .withConverter(new Converter<PlotPoints>())
+      .withConverter(new Converter<Forms>())
       .add(locationData);
+    response.json(location.id);
   } catch (error) {
     console.log('error writing location to database: ', error);
     response.statusCode = 500;
     response.send({});
     return;
   }
-  response.send({});
 }

@@ -9,10 +9,10 @@ import { useRouter } from 'next/navigation';
 
 type Props = {
   npcs: NPC[];
-  settingID: string;
+  worldID: string;
 };
 
-const NPCList = ({ npcs, settingID }: Props) => {
+const NPCList = ({ npcs, worldID }: Props) => {
   const router = useRouter();
   return (
     <>
@@ -21,14 +21,14 @@ const NPCList = ({ npcs, settingID }: Props) => {
         {npcs.map((npc: NPC, index) => {
           return (
             <ListItem key={index}>
-              <Link href={`/setting/${settingID}/npc/${npc.id}`}>
+              <Link href={`/world/${worldID}/npc/${npc.id}`}>
                 {npc.name}
               </Link>
             </ListItem>
           );
         })}
       </List>
-      <Button onClick={() => router.push(`setting/${settingID}/npc/new`)}>
+      <Button onClick={() => router.push(`world/${worldID}/npc/new`)}>
         Create NPC
       </Button>
     </>

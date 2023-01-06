@@ -7,21 +7,18 @@ import FormControl from '@mui/material/FormControl';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import { NPC } from '@/types';
+import { NPC, NPCForm } from '@/types';
 import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import { useRouter } from 'next/navigation';
 
 interface Props {
-  settingID: string;
+  worldID: string;
   npc?: NPC;
 }
 
-const editExistingOrNewNPC = (npc: NPC | undefined) => {
-  if (npc) {
-    return npc;
-  }
+const createNewNPC = (): NPCForm => {
   return {
     name: '',
     gender: '',
@@ -42,8 +39,10 @@ const editExistingOrNewNPC = (npc: NPC | undefined) => {
   };
 };
 
-const NPCForm = ({ settingID, npc }: Props) => {
-  const [npcForm, setNpcForm] = useState<NPC>(editExistingOrNewNPC(npc));
+const NPCForm = ({ worldID, npc }: Props) => {
+  const [npcForm, setNpcForm] = useState<NPC | NPCForm>(
+    npc ? npc : createNewNPC()
+  );
 
   const router = useRouter();
 
@@ -54,10 +53,10 @@ const NPCForm = ({ settingID, npc }: Props) => {
         body: JSON.stringify({
           npcData: npcForm,
           npcID: npc?.id,
-          settingID,
+          worldID,
         }),
       });
-      router.push(`/setting/${settingID}/npc/${npc?.id}`);
+      router.push(`/world/${worldID}/npc/${npc?.id}`);
       router.refresh();
     } catch (error) {
       console.log('error updating npc: ', error);
@@ -67,10 +66,13 @@ const NPCForm = ({ settingID, npc }: Props) => {
     try {
       await fetch('/api/npc/create', {
         method: 'POST',
-        body: JSON.stringify({ npcData: npcForm, settingID }),
-      });
-      router.push(`/setting/${settingID}`);
-      router.refresh();
+        body: JSON.stringify({ npcData: npcForm, worldID }),
+      }).then((res) =>
+        res.json().then((npcID: string) => {
+          router.push(`/world/${worldID}/npc/${npcID}`);
+          router.refresh();
+        })
+      );
     } catch (error) {
       console.log('error creating npc: ', error);
     }

@@ -2,14 +2,15 @@
 
 import { Location } from '@/types';
 import Button from '@mui/material/Button';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface Props {
   location: Location;
-  settingID: string;
+  worldID: string;
 }
 
-const ClientLocationPage = ({ location, settingID }: Props) => {
+const ClientLocationPage = ({ location, worldID }: Props) => {
   const router = useRouter();
 
   const onDelete = async () => {
@@ -18,10 +19,10 @@ const ClientLocationPage = ({ location, settingID }: Props) => {
         method: 'POST',
         body: JSON.stringify({
           locationID: location.id,
-          settingID,
+          worldID,
         }),
       });
-      router.push(`/setting/${settingID}`);
+      router.push(`/world/${worldID}`);
       router.refresh();
     } catch (error) {
       console.log('error deleting location: ', error);
@@ -44,14 +45,23 @@ const ClientLocationPage = ({ location, settingID }: Props) => {
       <Button
         variant='contained'
         onClick={() =>
-          router.push(`/setting/${settingID}/location/${location.id}/edit`)
+          router.push(`/world/${worldID}/location/${location.id}/edit`)
         }
       >
         Edit Location
       </Button>
-      <Button onClick={() => router.push(`/setting/${settingID}`)}>
-        Return To Setting
+      <Button onClick={() => router.push(`/world/${worldID}`)}>
+        Return To World
       </Button>
+      <br />
+      <Link
+        href={{
+          pathname: `/world/${worldID}/location/new`,
+          query: {parent: location.id},
+        }}
+      >
+        Add Sub Location
+      </Link>
     </>
   );
 };

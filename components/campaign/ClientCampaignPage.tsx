@@ -6,19 +6,19 @@ import { useRouter } from 'next/navigation';
 
 interface Props {
   campaign: Campaign;
-  settingID: string;
+  worldID: string;
 }
 
-const ClientCampaignPage = ({ campaign, settingID }: Props) => {
+const ClientCampaignPage = ({ campaign, worldID }: Props) => {
   const router = useRouter();
 
   const onDelete = async () => {
     try {
       await fetch('/api/campaign/delete', {
         method: 'POST',
-        body: JSON.stringify({ campaignID: campaign.id, settingID }),
+        body: JSON.stringify({ campaignID: campaign.id, worldID }),
       });
-      router.push(`/setting/${settingID}`);
+      router.push(`/world/${worldID}`);
       router.refresh();
     } catch (error) {
       console.log('error deleting campaign: ', error);
@@ -37,7 +37,7 @@ const ClientCampaignPage = ({ campaign, settingID }: Props) => {
         variant='contained'
         sx={{ margin: 1 }}
         onClick={() =>
-          router.push(`/setting/${settingID}/campaign/${campaign.id}/edit`)
+          router.push(`/world/${worldID}/campaign/${campaign.id}/edit`)
         }
       >
         Edit Campaign
@@ -50,8 +50,8 @@ const ClientCampaignPage = ({ campaign, settingID }: Props) => {
       >
         Delete Campaign
       </Button>
-      <Button onClick={() => router.push(`/setting/${settingID}`)}>
-        Return To Setting
+      <Button onClick={() => router.push(`/world/${worldID}`)}>
+        Return To World
       </Button>
     </>
   );
