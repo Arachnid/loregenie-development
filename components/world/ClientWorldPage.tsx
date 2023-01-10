@@ -1,7 +1,6 @@
 'use client';
 
 import { World } from '@/types';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/navigation';
 
@@ -27,6 +26,9 @@ const WorldPage = ({ world }: Props) => {
     <>
       <h1>{world.name}</h1>
       <div>{world.description}</div>
+      <div>admins: {world.admins.join(', ')}</div>
+      <div>writers: {world.writers.join(', ')}</div>
+      <div>readers: {world.readers.join(', ')}</div>
       <Button
         variant='contained'
         color='error'

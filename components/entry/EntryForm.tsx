@@ -20,23 +20,19 @@ interface Props {
   entries: Entry[];
 }
 
-const createNewEntry = (world: World): EntryForm => {
+const createNewEntry = (): EntryForm => {
   return {
     name: '',
     description: '',
     image: '',
     public: false,
-    parent: {
-      name: world.name,
-      id: world.id,
-    },
     category: Category.NPC,
   };
 };
 
 const EntryForm = ({ currentEntry, world, entries }: Props) => {
   const [entryForm, setEntryForm] = useState<Entry | EntryForm>(
-    currentEntry ? currentEntry : createNewEntry(world)
+    currentEntry ? currentEntry : createNewEntry()
   );
 
   const router = useRouter();
@@ -68,6 +64,7 @@ const EntryForm = ({ currentEntry, world, entries }: Props) => {
         }),
       });
       router.push(`/world/${world.id}/entry/${currentEntry?.id}`);
+      router.refresh();
     } catch (error) {
       console.log('error updating entry: ', error);
     }
@@ -75,10 +72,15 @@ const EntryForm = ({ currentEntry, world, entries }: Props) => {
 
   const handleParent = (value: string) => {
     const parentValue = JSON.parse(value);
-    setEntryForm({
-      ...entryForm,
-      parent: { name: parentValue.name, id: parentValue.id },
-    });
+    if (!parentValue) {
+      const { parent, ...state } = entryForm;
+      setEntryForm(state);
+    } else {
+      setEntryForm({
+        ...entryForm,
+        parent: { name: parentValue.name, id: parentValue.id },
+      });
+    }
   };
 
   const handleCategory = (value: string) => {
@@ -130,7 +132,7 @@ const EntryForm = ({ currentEntry, world, entries }: Props) => {
         <FormControl margin='normal'>
           <InputLabel>Parent</InputLabel>
           <Select
-            value={JSON.stringify(entryForm.parent)}
+            value={entryForm.parent ? JSON.stringify(entryForm.parent) : ''}
             label='Parent'
             onChange={(e) => handleParent(e.target.value)}
           >
@@ -144,11 +146,7 @@ const EntryForm = ({ currentEntry, world, entries }: Props) => {
                 </MenuItem>
               );
             })}
-            <MenuItem
-              value={JSON.stringify({ name: world.name, id: world.id })}
-            >
-              {world.name}
-            </MenuItem>
+            <MenuItem value={JSON.stringify('')}>None</MenuItem>
           </Select>
         </FormControl>
         <FormControl component='fieldset'>

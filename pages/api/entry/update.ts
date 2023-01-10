@@ -20,7 +20,7 @@ export default async function handler(
       .collection('entries')
       .doc(entryID)
       .withConverter(new Converter<Entry>())
-      .update(entryData);
+      .set(entryData);
   } catch (error) {
     console.log('error updating entry to database: ', error);
     response.statusCode = 500;

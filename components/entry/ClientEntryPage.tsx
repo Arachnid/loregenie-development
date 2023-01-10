@@ -30,7 +30,7 @@ const ClientEntryPage = ({ entry, worldID }: Props) => {
       <h1>name: {entry.name}</h1>
       <div>description: {entry.description}</div>
       <div>image: {entry.image}</div>
-      <div>parent: {entry.parent.name}</div>
+      {entry.parent && <div>parent: {entry.parent.name}</div>}
       <div>visibility: {entry.public ? 'public' : 'private'}</div>
       <Button
         variant='contained'
@@ -39,7 +39,7 @@ const ClientEntryPage = ({ entry, worldID }: Props) => {
           router.push(`/world/${worldID}/entry/${entry.id}/edit`)
         }
       >
-        Edit Entry
+        Edit {entry.category}
       </Button>
       <Button
         variant='contained'
@@ -47,7 +47,7 @@ const ClientEntryPage = ({ entry, worldID }: Props) => {
         color='error'
         onClick={() => onDelete()}
       >
-        Delete Entry
+        Delete {entry.category}
       </Button>
     </>
   );

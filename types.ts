@@ -16,7 +16,7 @@ export interface Entry {
   description: string;
   image: string;
   public: boolean;
-  parent: {
+  parent?: {
     id: string;
     name: string;
   };
