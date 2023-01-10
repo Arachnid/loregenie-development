@@ -20,6 +20,16 @@ export interface Entry {
     id: string;
     name: string;
   };
-  category: 'NPC' | 'Location' | 'Lore' | 'Journal';
+  category: Category;
 }
 export type EntryForm = Omit<Entry, 'id'>;
+
+export enum Category {
+  NPC = 'NPC',
+  Location = 'Location',
+  Lore = 'Lore',
+  Journal = 'Journal',
+}
+export const isCategory = (value: string): value is Category => {
+  return Object.values<string>(Category).includes(value);
+};

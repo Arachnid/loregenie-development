@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { Entry, EntryForm, World } from '@/types';
+import { Category, Entry, EntryForm, isCategory, World } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -30,7 +30,7 @@ const createNewEntry = (world: World): EntryForm => {
       name: world.name,
       id: world.id,
     },
-    category: 'NPC' as const,
+    category: Category.NPC,
   };
 };
 
@@ -80,19 +80,14 @@ const EntryForm = ({ currentEntry, world, entries }: Props) => {
       parent: { name: parentValue.name, id: parentValue.id },
     });
   };
+
   const handleCategory = (value: string) => {
-    let category;
-    
-    if (value === 'NPC') {
-      category = 'NPC' as const;
-    } else if (value === 'Location') {
-      category = 'Location' as const;
-    } else if (value === 'Lore') {
-      category = 'Lore' as const;
-    } else {
-      category = 'Journal' as const;
+    if (isCategory(value)) {
+      setEntryForm({
+        ...entryForm,
+        category: value,
+      });
     }
-    setEntryForm({ ...entryForm, category });
   };
 
   return (
