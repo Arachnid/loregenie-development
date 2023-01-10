@@ -26,6 +26,7 @@ const createNewWorld = (sessionEmail: string): WorldForm => {
     writers: [sessionEmail],
     admins: [sessionEmail],
     public: false,
+    entries: [],
   };
 };
 
@@ -91,6 +92,7 @@ const WorldForm = ({ sessionEmail, world }: Props) => {
         component='form'
         sx={{
           '& .MuiTextField-root': { m: 1, width: '75ch' },
+          width: '75ch'
         }}
       >
         <TextField

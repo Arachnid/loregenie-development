@@ -5,7 +5,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { ReactNode } from 'react';
 
 interface Props {
-  nav: ReactNode;
+  nav: JSX.Element;
   children: ReactNode;
 }
 
