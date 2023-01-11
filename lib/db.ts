@@ -80,3 +80,20 @@ export async function getEntry(worldID: string, entryID: string) {
     .get();
   return entry.data();
 }
+
+export async function getPermissions(worldID: string, email: string) {
+  const world = await db
+    .collection('worlds')
+    .doc(worldID)
+    .withConverter(new Converter<World>())
+    .get();
+  if (world.data()?.admins.includes(email)) {
+    return ['admin', 'writer', 'reader'];
+  } else if (world.data()?.writers.includes(email)) {
+    return ['writer', 'reader'];
+  } else if (world.data()?.readers.includes(email)) {
+    return ['reader'];
+  } else {
+    return [];
+  }
+}

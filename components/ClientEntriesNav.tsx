@@ -5,13 +5,16 @@ import Link from 'next/link';
 interface Props {
   children: JSX.Element;
   worldID: string;
+  permissions: string[];
 }
 
-const ClientEntriesNav = ({ children, worldID }: Props) => {
+const ClientEntriesNav = ({ children, worldID, permissions }: Props) => {
   return (
     <>
       {children}
-      <Link href={`/world/${worldID}/entry/new`}>New Page</Link>
+      {permissions.includes('writer') && (
+        <Link href={`/world/${worldID}/entry/new`}>New Page</Link>
+      )}
     </>
   );
 };

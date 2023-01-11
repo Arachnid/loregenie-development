@@ -6,15 +6,16 @@ import { useRouter } from 'next/navigation';
 
 type Props = {
   world: World;
+  permissions: string[];
 };
 
-const WorldPage = ({ world }: Props) => {
+const WorldPage = ({ world, permissions }: Props) => {
   const router = useRouter();
   const onDelete = async () => {
     try {
       await fetch('/api/world/delete', {
         method: 'POST',
-        body: world.id,
+        body: JSON.stringify({ worldID: world.id, permissions }),
       });
       router.push('/');
       router.refresh();
@@ -29,20 +30,25 @@ const WorldPage = ({ world }: Props) => {
       <div>admins: {world.admins.join(', ')}</div>
       <div>writers: {world.writers.join(', ')}</div>
       <div>readers: {world.readers.join(', ')}</div>
-      <Button
-        variant='contained'
-        color='error'
-        sx={{ margin: '8px' }}
-        onClick={() => onDelete()}
-      >
-        Delete World
-      </Button>
-      <Button
-        sx={{ margin: '8px' }}
-        onClick={() => router.push(`/world/${world.id}/edit`)}
-      >
-        Edit World
-      </Button>
+      {permissions.includes('admin') && (
+        <Button
+          variant='contained'
+          color='error'
+          sx={{ margin: '8px' }}
+          onClick={() => onDelete()}
+        >
+          Delete World
+        </Button>
+      )}
+
+      {permissions.includes('writer') && (
+        <Button
+          sx={{ margin: '8px' }}
+          onClick={() => router.push(`/world/${world.id}/edit`)}
+        >
+          Edit World
+        </Button>
+      )}
     </>
   );
 };

@@ -18,6 +18,7 @@ interface Props {
   world: World;
   currentEntry?: Entry;
   entries: Entry[];
+  permissions: string[];
 }
 
 const createNewEntry = (): EntryForm => {
@@ -30,7 +31,7 @@ const createNewEntry = (): EntryForm => {
   };
 };
 
-const EntryForm = ({ currentEntry, world, entries }: Props) => {
+const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
   const [entryForm, setEntryForm] = useState<Entry | EntryForm>(
     currentEntry ? currentEntry : createNewEntry()
   );
@@ -41,7 +42,7 @@ const EntryForm = ({ currentEntry, world, entries }: Props) => {
     try {
       await fetch('/api/entry/create', {
         method: 'POST',
-        body: JSON.stringify({ entryData: entryForm, worldID: world.id }),
+        body: JSON.stringify({ entryData: entryForm, worldID: world.id, permissions }),
       }).then((res) =>
         res.json().then((entryID: string) => {
           router.push(`/world/${world.id}/entry/${entryID}`);

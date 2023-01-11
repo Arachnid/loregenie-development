@@ -18,7 +18,14 @@ export default async function Layout({ children, params }: Props) {
   }
 
   return (
-    <BaseLayout nav={<EntriesNav worldID={params.worldID} />}>
+    <BaseLayout
+      nav={
+        <EntriesNav
+          worldID={params.worldID}
+          email={session?.user?.email as string}
+        />
+      }
+    >
       {children}
     </BaseLayout>
   );

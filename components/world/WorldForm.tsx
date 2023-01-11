@@ -16,6 +16,7 @@ import Radio from '@mui/material/Radio';
 interface Props {
   sessionEmail: string;
   world?: World;
+  permissions?: string[];
 }
 
 const createNewWorld = (sessionEmail: string): WorldForm => {
@@ -30,7 +31,7 @@ const createNewWorld = (sessionEmail: string): WorldForm => {
   };
 };
 
-const WorldForm = ({ sessionEmail, world }: Props) => {
+const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
   const [worldForm, setWorldForm] = useState<World | WorldForm>(
     world ? world : createNewWorld(sessionEmail)
   );
@@ -43,11 +44,11 @@ const WorldForm = ({ sessionEmail, world }: Props) => {
         method: 'POST',
         body: JSON.stringify(worldForm),
       }).then((res) =>
-      res.json().then((worldID: string) => {
-        router.push(`/world/${worldID}`);
-        router.refresh();
-      })
-    );
+        res.json().then((worldID: string) => {
+          router.push(`/world/${worldID}`);
+          router.refresh();
+        })
+      );
     } catch (error) {
       console.log('error creating world: ', error);
     }
@@ -61,6 +62,7 @@ const WorldForm = ({ sessionEmail, world }: Props) => {
           body: JSON.stringify({
             worldData: worldForm,
             worldID: world.id,
+            permissions,
           }),
         });
         router.push(`/world/${world.id}`);
@@ -71,28 +73,13 @@ const WorldForm = ({ sessionEmail, world }: Props) => {
     }
   };
 
-  const onDelete = async () => {
-    if (world) {
-      try {
-        await fetch('/api/world/delete', {
-          method: 'POST',
-          body: world.id,
-        });
-        router.push('/');
-        router.refresh();
-      } catch (error) {
-        console.log('error deleting world: ', error);
-      }
-    }
-  };
-
   return (
     <>
       <Box
         component='form'
         sx={{
           '& .MuiTextField-root': { m: 1, width: '75ch' },
-          width: '75ch'
+          width: '75ch',
         }}
       >
         <TextField
@@ -109,87 +96,100 @@ const WorldForm = ({ sessionEmail, world }: Props) => {
             setWorldForm({ ...worldForm, description: e.target.value })
           }
         />
-        <Autocomplete
-          multiple
-          id='tags-filled'
-          options={[]}
-          freeSolo
-          value={worldForm.readers}
-          onChange={(event, value) =>
-            setWorldForm({ ...worldForm, readers: value })
-          }
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                variant='outlined'
-                label={option}
-                {...getTagProps({ index })}
-              />
-            ))
-          }
-          renderInput={(params) => (
-            <TextField {...params} variant='filled' placeholder='readers' />
-          )}
-        />
-        <Autocomplete
-          multiple
-          id='tags-filled'
-          options={[]}
-          freeSolo
-          value={worldForm.writers}
-          onChange={(event, value) =>
-            setWorldForm({ ...worldForm, writers: value })
-          }
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                variant='outlined'
-                label={option}
-                {...getTagProps({ index })}
-              />
-            ))
-          }
-          renderInput={(params) => (
-            <TextField {...params} variant='filled' placeholder='writers' />
-          )}
-        />
-        <Autocomplete
-          multiple
-          id='tags-filled'
-          options={[]}
-          freeSolo
-          value={worldForm.admins}
-          onChange={(event, value) =>
-            setWorldForm({ ...worldForm, admins: value })
-          }
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                variant='outlined'
-                label={option}
-                {...getTagProps({ index })}
-              />
-            ))
-          }
-          renderInput={(params) => (
-            <TextField {...params} variant='filled' placeholder='admins' />
-          )}
-        />
-        <FormControl component='fieldset'>
-          <RadioGroup
-            value={worldForm.public}
-            onChange={() =>
-              setWorldForm({ ...worldForm, public: !worldForm.public })
-            }
-          >
-            <FormControlLabel
-              value={false}
-              control={<Radio />}
-              label='Private'
+        {permissions?.includes('admin') && (
+          <>
+            <Autocomplete
+              multiple
+              id='tags-filled'
+              options={[]}
+              freeSolo
+              value={worldForm.admins}
+              onChange={(event, value) =>
+                setWorldForm({
+                  ...worldForm,
+                  admins: value,
+                  writers: value,
+                  readers: value,
+                })
+              }
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant='outlined'
+                    label={option}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField {...params} variant='filled' placeholder='admins' />
+              )}
             />
-            <FormControlLabel value={true} control={<Radio />} label='Public' />
-          </RadioGroup>
-        </FormControl>
+            <Autocomplete
+              multiple
+              id='tags-filled'
+              options={[]}
+              freeSolo
+              value={worldForm.writers}
+              onChange={(event, value) =>
+                setWorldForm({ ...worldForm, writers: value, readers: value })
+              }
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant='outlined'
+                    label={option}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField {...params} variant='filled' placeholder='writers' />
+              )}
+            />
+            <Autocomplete
+              multiple
+              id='tags-filled'
+              options={[]}
+              freeSolo
+              value={worldForm.readers}
+              onChange={(event, value) =>
+                setWorldForm({ ...worldForm, readers: value })
+              }
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant='outlined'
+                    label={option}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField {...params} variant='filled' placeholder='readers' />
+              )}
+            />
+            <FormControl component='fieldset'>
+              <RadioGroup
+                value={worldForm.public}
+                onChange={() =>
+                  setWorldForm({ ...worldForm, public: !worldForm.public })
+                }
+              >
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label='Private'
+                />
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label='Public'
+                />
+              </RadioGroup>
+            </FormControl>
+          </>
+        )}
         {world ? (
           <>
             <Button
@@ -198,14 +198,6 @@ const WorldForm = ({ sessionEmail, world }: Props) => {
               onClick={() => onUpdate()}
             >
               Update World
-            </Button>
-            <Button
-              variant='contained'
-              color='error'
-              sx={{ margin: 1 }}
-              onClick={() => onDelete()}
-            >
-              Delete World
             </Button>
           </>
         ) : (

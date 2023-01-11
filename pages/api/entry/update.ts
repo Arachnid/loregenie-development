@@ -10,10 +10,18 @@ export default async function handler(
     entryData,
     entryID,
     worldID,
-  }: { entryData: Entry; entryID: string; worldID: string } = JSON.parse(
-    request.body
-  );
+    permissions,
+  }: {
+    entryData: Entry;
+    entryID: string;
+    worldID: string;
+    permissions: string[];
+  } = JSON.parse(request.body);
   try {
+    if (!permissions.includes('writer')) {
+      console.log('user does not have permission for that action.');
+      return;
+    }
     await db
       .collection('worlds')
       .doc(worldID)

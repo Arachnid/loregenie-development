@@ -6,11 +6,19 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { entryID, worldID }: { entryID: string; worldID: string } = JSON.parse(
+  const {
+    entryID,
+    worldID,
+    permissions,
+  }: { entryID: string; worldID: string; permissions: string[] } = JSON.parse(
     request.body
   );
 
   try {
+    if (!permissions.includes('admin')) {
+      console.log('user does not have permission for that action.');
+      return;
+    }
     await db
       .collection('worlds')
       .doc(worldID)

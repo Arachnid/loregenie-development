@@ -1,4 +1,4 @@
-import { getWorld } from '@/lib/db';
+import { getPermissions, getWorld } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Session, unstable_getServerSession } from 'next-auth';
@@ -22,10 +22,11 @@ export default async function WorldPage({ params }: Props) {
   if (!world || !session?.user?.email) {
     notFound();
   }
+  const permissions = await getPermissions(params.worldID, session.user.email);
 
   return (
     <>
-      <ClientWorldPage world={world} />
+      <ClientWorldPage world={world} permissions={permissions} />
     </>
   );
 }
