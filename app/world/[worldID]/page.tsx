@@ -17,8 +17,8 @@ export default async function WorldPage({ params }: Props) {
     world,
   }: {
     world: World | undefined;
-  } = await getWorld(params.worldID);
-
+  } = await getWorld(params.worldID, session?.user?.email as string);
+  
   if (!world || !session?.user?.email) {
     notFound();
   }

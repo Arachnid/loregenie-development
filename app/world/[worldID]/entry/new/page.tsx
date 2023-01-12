@@ -14,7 +14,7 @@ interface Props {
 export default async function NewEntryPage({ params }: Props) {
   const session = await unstable_getServerSession(authOptions);
   const { world, entries }: { world: World | undefined; entries: Entry[] } =
-    await getWorld(params.worldID);
+    await getWorld(params.worldID, session?.user?.email as string);
   if (!session?.user?.email || !world) {
     notFound();
   }

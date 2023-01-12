@@ -20,7 +20,7 @@ import Radio from '@mui/material/Radio';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { createParentHierarchy } from '@/utils/createParentHierarchy';
+import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
 interface Props {
   world: World;
@@ -108,7 +108,7 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
 
   const getParents = (entries: Entry[]): EntryHierarchy[] => {
     const result: EntryHierarchy[] = [];
-    const parentHierarchy: EntryHierarchy[] = createParentHierarchy(entries);
+    const parentHierarchy: EntryHierarchy[] = createEntryHierarchy(entries);
 
     const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
       entriesHierarchy.map((entry: EntryHierarchy) => {
@@ -138,19 +138,21 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
           width: '75ch',
         }}
       >
-        <FormControl>
-          <InputLabel>Category</InputLabel>
-          <Select
-            value={entryForm.category}
-            label='Category'
-            onChange={(e) => handleCategory(e.target.value)}
-          >
-            <MenuItem value={'NPC' as const}>NPC</MenuItem>
-            <MenuItem value={'Location' as const}>Location</MenuItem>
-            <MenuItem value={'Lore' as const}>Lore</MenuItem>
-            <MenuItem value={'Journal' as const}>Journal</MenuItem>
-          </Select>
-        </FormControl>
+        {!currentEntry && (
+          <FormControl margin='normal'>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={entryForm.category}
+              label='Category'
+              onChange={(e) => handleCategory(e.target.value)}
+            >
+              <MenuItem value={'NPC' as const}>NPC</MenuItem>
+              <MenuItem value={'Location' as const}>Location</MenuItem>
+              <MenuItem value={'Lore' as const}>Lore</MenuItem>
+              <MenuItem value={'Journal' as const}>Journal</MenuItem>
+            </Select>
+          </FormControl>
+        )}
         <TextField
           label='name'
           margin='normal'
@@ -159,6 +161,7 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
         />
         <TextField
           label='description'
+          margin='normal'
           multiline
           value={entryForm.description}
           onChange={(e) =>

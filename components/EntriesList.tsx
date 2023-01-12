@@ -1,7 +1,7 @@
 'use client';
 
 import { Entry, EntryHierarchy, World } from '@/types';
-import { createParentHierarchy } from '@/utils/createParentHierarchy';
+import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import {
   Collapse,
@@ -82,7 +82,7 @@ const RecursiveEntries = ({
 };
 
 const EntriesList = ({ entries, world }: Props) => {
-  const entryHierarchy = createParentHierarchy(entries);
+  const entryHierarchy = createEntryHierarchy(entries);
   return (
     <List>
       <ListItemButton component={Link} href={`/world/${world.id}`}>

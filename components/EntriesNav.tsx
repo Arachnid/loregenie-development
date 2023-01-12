@@ -11,7 +11,7 @@ interface Props {
 
 export default async function EntriesNav({ worldID, email }: Props) {
   const { world, entries }: { world: World | undefined; entries: Entry[] } =
-    await getWorld(worldID);
+    await getWorld(worldID, email);
 
   if (!world) {
     notFound();

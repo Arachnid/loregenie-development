@@ -13,10 +13,10 @@ interface Props {
 }
 
 export default async function EditLocationPage({ params }: Props) {
-  const { world, entries }: { world: World | undefined; entries: Entry[] } =
-    await getWorld(params.worldID);
   const currentEntry = await getEntry(params.worldID, params.entryID);
   const session: Session | null = await unstable_getServerSession(authOptions);
+  const { world, entries }: { world: World | undefined; entries: Entry[] } =
+    await getWorld(params.worldID, session?.user?.email as string);
   if (!currentEntry || !world || !session?.user?.email) {
     notFound();
   }

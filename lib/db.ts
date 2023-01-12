@@ -5,7 +5,8 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
-import { World, Entry } from '@/types';
+import { World, Entry, EntryHierarchy } from '@/types';
+import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
 if (!admin.apps.length) {
   try {
@@ -41,7 +42,10 @@ export async function getWorlds(email: string): Promise<World[]> {
   return worlds.docs.map((world) => world.data());
 }
 
-export async function getWorld(worldID: string): Promise<{
+export async function getWorld(
+  worldID: string,
+  email: string
+): Promise<{
   world: World | undefined;
   entries: Entry[];
 }> {
@@ -52,21 +56,58 @@ export async function getWorld(worldID: string): Promise<{
     .get();
 
   const world = worldRef.data();
-  const entries = await getEntries(worldID);
 
+  if (!world?.readers.includes(email) && !world?.public) {
+    return {
+      world: undefined,
+      entries: [],
+    };
+  }
+  if (!world.readers.includes(email) && world.public) {
+    return {
+      world,
+      entries: await getEntries(worldID, true),
+    };
+  }
   return {
     world,
-    entries,
+    entries: await getEntries(worldID, false),
   };
 }
 
-export async function getEntries(worldID: string): Promise<Entry[]> {
+export async function getEntries(
+  worldID: string,
+  publicWorld: boolean
+): Promise<Entry[]> {
   const entries = await db
     .collection('worlds')
     .doc(worldID)
     .collection('entries')
     .withConverter(new Converter<Entry>())
     .get();
+
+  if (publicWorld) {
+    const entryHierarchy: EntryHierarchy[] = createEntryHierarchy(
+      entries.docs.map((entry) => entry.data())
+    );
+    const publicEntryIDs: string[] = [];
+    const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
+      entriesHierarchy.map((entry: EntryHierarchy) => {
+        if (entry.public) {
+          if (entry.children) {
+            publicEntryIDs.push(entry.id);
+            return recursiveEntryHierarchy(entry.children);
+          }
+          publicEntryIDs.push(entry.id);
+        }
+      });
+    };
+    recursiveEntryHierarchy(entryHierarchy);
+
+    return entries.docs
+      .filter((entry) => publicEntryIDs.includes(entry.data().id))
+      .map((entry) => entry.data());
+  }
   return entries.docs.map((entry) => entry.data());
 }
 

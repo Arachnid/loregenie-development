@@ -14,7 +14,8 @@ interface Props {
 const EditWorldPage = async ({ params }: Props) => {
   const session: Session | null = await unstable_getServerSession(authOptions);
   const { world }: { world: World | undefined } = await getWorld(
-    params.worldID
+    params.worldID,
+    session?.user?.email as string
   );
 
   if (!world || !session?.user?.email) {
@@ -22,7 +23,13 @@ const EditWorldPage = async ({ params }: Props) => {
   }
   const permissions = await getPermissions(params.worldID, session.user.email);
 
-  return <WorldForm sessionEmail={session.user.email} world={world} permissions={permissions} />;
+  return (
+    <WorldForm
+      sessionEmail={session.user.email}
+      world={world}
+      permissions={permissions}
+    />
+  );
 };
 
 export default EditWorldPage;

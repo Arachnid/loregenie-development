@@ -1,6 +1,6 @@
 import { Entry, EntryHierarchy } from '@/types';
 
-export const createParentHierarchy = (entries: Entry[]): EntryHierarchy[] => {
+export const createEntryHierarchy = (entries: Entry[]): EntryHierarchy[] => {
   const result: EntryHierarchy[] = [];
   const mappedEntries: Record<string, EntryHierarchy> = {};
   entries.forEach((entry: Entry) => {

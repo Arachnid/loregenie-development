@@ -30,6 +30,16 @@ const WorldPage = ({ world, permissions }: Props) => {
       <div>admins: {world.admins.join(', ')}</div>
       <div>writers: {world.writers.join(', ')}</div>
       <div>readers: {world.readers.join(', ')}</div>
+      <div>visibility: {world.public ? 'public' : 'private'}</div>
+      {permissions.includes('writer') && (
+        <Button
+          variant='contained'
+          sx={{ margin: '8px' }}
+          onClick={() => router.push(`/world/${world.id}/edit`)}
+        >
+          Edit World
+        </Button>
+      )}
       {permissions.includes('admin') && (
         <Button
           variant='contained'
@@ -38,15 +48,6 @@ const WorldPage = ({ world, permissions }: Props) => {
           onClick={() => onDelete()}
         >
           Delete World
-        </Button>
-      )}
-
-      {permissions.includes('writer') && (
-        <Button
-          sx={{ margin: '8px' }}
-          onClick={() => router.push(`/world/${world.id}/edit`)}
-        >
-          Edit World
         </Button>
       )}
     </>
