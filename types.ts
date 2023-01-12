@@ -33,3 +33,7 @@ export enum Category {
 export const isCategory = (value: string): value is Category => {
   return Object.values<string>(Category).includes(value);
 };
+
+export interface EntryHierarchy extends Entry {
+  children?: EntryHierarchy[];
+}

@@ -3,7 +3,14 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { Category, Entry, EntryForm, isCategory, World } from '@/types';
+import {
+  Category,
+  Entry,
+  EntryForm,
+  EntryHierarchy,
+  isCategory,
+  World,
+} from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -13,6 +20,7 @@ import Radio from '@mui/material/Radio';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { createParentHierarchy } from '@/utils/createParentHierarchy';
 
 interface Props {
   world: World;
@@ -42,7 +50,11 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
     try {
       await fetch('/api/entry/create', {
         method: 'POST',
-        body: JSON.stringify({ entryData: entryForm, worldID: world.id, permissions }),
+        body: JSON.stringify({
+          entryData: entryForm,
+          worldID: world.id,
+          permissions,
+        }),
       }).then((res) =>
         res.json().then((entryID: string) => {
           router.push(`/world/${world.id}/entry/${entryID}`);
@@ -62,6 +74,7 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
           entryData: entryForm,
           entryID: currentEntry?.id,
           worldID: world.id,
+          permissions,
         }),
       });
       router.push(`/world/${world.id}/entry/${currentEntry?.id}`);
@@ -91,6 +104,28 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
         category: value,
       });
     }
+  };
+
+  const getParents = (entries: Entry[]): EntryHierarchy[] => {
+    const result: EntryHierarchy[] = [];
+    const parentHierarchy: EntryHierarchy[] = createParentHierarchy(entries);
+
+    const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
+      entriesHierarchy.map((entry: EntryHierarchy) => {
+        if (
+          entry.id !== currentEntry?.id &&
+          entry.category === Category.Location
+        ) {
+          if (entry.children) {
+            result.push(entry);
+            return recursiveEntryHierarchy(entry.children);
+          }
+          result.push(entry);
+        }
+      });
+    };
+    recursiveEntryHierarchy(parentHierarchy);
+    return result;
   };
 
   return (
@@ -137,7 +172,7 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
             label='Parent'
             onChange={(e) => handleParent(e.target.value)}
           >
-            {entries.map((entry, index) => {
+            {getParents(entries).map((entry, index) => {
               return (
                 <MenuItem
                   key={index}

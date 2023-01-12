@@ -1,6 +1,7 @@
 'use client';
 
-import { Entry, World } from '@/types';
+import { Entry, EntryHierarchy, World } from '@/types';
+import { createParentHierarchy } from '@/utils/createParentHierarchy';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import {
   Collapse,
@@ -15,34 +16,6 @@ import { Dispatch, SetStateAction, useState } from 'react';
 type Props = {
   entries: Entry[];
   world: World;
-};
-
-interface EntryHierarchy extends Entry {
-  children?: EntryHierarchy[];
-}
-
-const createParentHierarchy = (entries: Entry[]): EntryHierarchy[] => {
-  const result: EntryHierarchy[] = [];
-  const mappedEntries: Record<string, EntryHierarchy> = {};
-  entries.forEach((entry: Entry) => {
-    const id: string = entry.id;
-    if (!mappedEntries.hasOwnProperty(id)) {
-      mappedEntries[id] = entry;
-      mappedEntries[id].children = [];
-    }
-  });
-  for (const id in mappedEntries) {
-    if (mappedEntries.hasOwnProperty(id)) {
-      const mappedEntry: EntryHierarchy = mappedEntries[id];
-      if (mappedEntry.parent) {
-        const parentID: string = mappedEntry.parent.id;
-        mappedEntries[parentID].children?.push(mappedEntry);
-      } else {
-        result.push(mappedEntry);
-      }
-    }
-  }
-  return result;
 };
 
 interface Open {
