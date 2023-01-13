@@ -3,6 +3,8 @@
 import { Entry } from '@/types';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import AlertDialog from '../AlertDialog';
 
 interface Props {
   entry: Entry;
@@ -11,6 +13,7 @@ interface Props {
 }
 
 const ClientEntryPage = ({ entry, worldID, permissions }: Props) => {
+  const [alertOpen, setAlertOpen] = useState(false);
   const router = useRouter();
 
   const onDelete = async () => {
@@ -49,10 +52,18 @@ const ClientEntryPage = ({ entry, worldID, permissions }: Props) => {
           variant='contained'
           sx={{ margin: 1 }}
           color='error'
-          onClick={() => onDelete()}
+          onClick={() => setAlertOpen(true)}
         >
           Delete {entry.category}
         </Button>
+      )}
+      {alertOpen && (
+        <AlertDialog
+          title={`Delete ${entry.name}?`}
+          alertOpen={alertOpen}
+          setAlertOpen={setAlertOpen}
+          action={onDelete}
+        />
       )}
     </>
   );

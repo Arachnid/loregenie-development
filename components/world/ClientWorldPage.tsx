@@ -3,6 +3,8 @@
 import { World } from '@/types';
 import Button from '@mui/material/Button';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import AlertDialog from '../AlertDialog';
 
 type Props = {
   world: World;
@@ -10,7 +12,9 @@ type Props = {
 };
 
 const WorldPage = ({ world, permissions }: Props) => {
+  const [alertOpen, setAlertOpen] = useState(false);
   const router = useRouter();
+
   const onDelete = async () => {
     try {
       await fetch('/api/world/delete', {
@@ -45,10 +49,23 @@ const WorldPage = ({ world, permissions }: Props) => {
           variant='contained'
           color='error'
           sx={{ margin: '8px' }}
-          onClick={() => onDelete()}
+          onClick={() => setAlertOpen(true)}
         >
           Delete World
         </Button>
+      )}
+      {alertOpen && (
+        <AlertDialog
+          title={'Delete this World?'}
+          description={
+            'Doing so will permanently delete the data in this world, including all nested entries.'
+          }
+          confirmText={`Confirm that you want to delete this world by typing in its name:`}
+          confirmValue={world.name}
+          alertOpen={alertOpen}
+          setAlertOpen={setAlertOpen}
+          action={onDelete}
+        />
       )}
     </>
   );
