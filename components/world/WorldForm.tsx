@@ -107,9 +107,9 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
               onChange={(event, value) =>
                 setWorldForm({
                   ...worldForm,
-                  admins: value,
-                  writers: value,
-                  readers: value,
+                  admins: [...value],
+                  writers: [...new Set([...worldForm.writers, ...value])],
+                  readers: [...new Set([...worldForm.readers, ...value])],
                 })
               }
               renderTags={(value, getTagProps) =>
@@ -118,6 +118,7 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
                     variant='outlined'
                     label={option}
                     {...getTagProps({ index })}
+                    disabled={option === sessionEmail}
                   />
                 ))
               }
@@ -132,7 +133,11 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
               freeSolo
               value={worldForm.writers}
               onChange={(event, value) =>
-                setWorldForm({ ...worldForm, writers: value, readers: value })
+                setWorldForm({
+                  ...worldForm,
+                  writers: [...value],
+                  readers: [...new Set([...worldForm.readers, ...value])],
+                })
               }
               renderTags={(value, getTagProps) =>
                 value.map((option, index) => (
@@ -140,6 +145,7 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
                     variant='outlined'
                     label={option}
                     {...getTagProps({ index })}
+                    disabled={worldForm.admins.includes(option)}
                   />
                 ))
               }
@@ -154,7 +160,7 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
               freeSolo
               value={worldForm.readers}
               onChange={(event, value) =>
-                setWorldForm({ ...worldForm, readers: value })
+                setWorldForm({ ...worldForm, readers: [...value] })
               }
               renderTags={(value, getTagProps) =>
                 value.map((option, index) => (
@@ -162,6 +168,10 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
                     variant='outlined'
                     label={option}
                     {...getTagProps({ index })}
+                    disabled={
+                      worldForm.admins.includes(option) ||
+                      worldForm.writers.includes(option)
+                    }
                   />
                 ))
               }
