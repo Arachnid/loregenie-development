@@ -82,144 +82,163 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
           width: '75ch',
         }}
       >
-        <TextField
-          label='name'
-          margin='normal'
-          value={worldForm.name}
-          onChange={(e) => setWorldForm({ ...worldForm, name: e.target.value })}
-        />
-        <TextField
-          label='description'
-          multiline
-          value={worldForm.description}
-          onChange={(e) =>
-            setWorldForm({ ...worldForm, description: e.target.value })
-          }
-        />
-        {permissions?.includes('admin') && (
-          <>
-            <Autocomplete
-              multiple
-              id='tags-filled'
-              options={[]}
-              freeSolo
-              value={worldForm.admins}
-              onChange={(event, value) =>
-                setWorldForm({
-                  ...worldForm,
-                  admins: [...value],
-                  writers: [...new Set([...worldForm.writers, ...value])],
-                  readers: [...new Set([...worldForm.readers, ...value])],
-                })
-              }
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant='outlined'
-                    label={option}
-                    {...getTagProps({ index })}
-                    disabled={option === sessionEmail}
-                  />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField {...params} variant='filled' placeholder='admins' />
-              )}
-            />
-            <Autocomplete
-              multiple
-              id='tags-filled'
-              options={[]}
-              freeSolo
-              value={worldForm.writers}
-              onChange={(event, value) =>
-                setWorldForm({
-                  ...worldForm,
-                  writers: [...value],
-                  readers: [...new Set([...worldForm.readers, ...value])],
-                })
-              }
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant='outlined'
-                    label={option}
-                    {...getTagProps({ index })}
-                    disabled={worldForm.admins.includes(option)}
-                  />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField {...params} variant='filled' placeholder='writers' />
-              )}
-            />
-            <Autocomplete
-              multiple
-              id='tags-filled'
-              options={[]}
-              freeSolo
-              value={worldForm.readers}
-              onChange={(event, value) =>
-                setWorldForm({ ...worldForm, readers: [...value] })
-              }
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    variant='outlined'
-                    label={option}
-                    {...getTagProps({ index })}
-                    disabled={
-                      worldForm.admins.includes(option) ||
-                      worldForm.writers.includes(option)
-                    }
-                  />
-                ))
-              }
-              renderInput={(params) => (
-                <TextField {...params} variant='filled' placeholder='readers' />
-              )}
-            />
-            <FormControl component='fieldset'>
-              <RadioGroup
-                value={worldForm.public}
-                onChange={() =>
-                  setWorldForm({ ...worldForm, public: !worldForm.public })
+        <FormControl>
+          <TextField
+            required
+            label='name'
+            margin='normal'
+            value={worldForm.name}
+            onChange={(e) =>
+              setWorldForm({ ...worldForm, name: e.target.value })
+            }
+          />
+          <TextField
+            label='description'
+            multiline
+            value={worldForm.description}
+            onChange={(e) =>
+              setWorldForm({ ...worldForm, description: e.target.value })
+            }
+          />
+          {(permissions?.includes('admin') || !world) && (
+            <>
+              <Autocomplete
+                multiple
+                id='tags-filled'
+                options={[]}
+                freeSolo
+                value={worldForm.admins}
+                onChange={(event, value) =>
+                  setWorldForm({
+                    ...worldForm,
+                    admins: [...value],
+                    writers: [...new Set([...worldForm.writers, ...value])],
+                    readers: [...new Set([...worldForm.readers, ...value])],
+                  })
                 }
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant='outlined'
+                      label={option}
+                      {...getTagProps({ index })}
+                      disabled={option === sessionEmail}
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant='filled'
+                    placeholder='admins'
+                  />
+                )}
+              />
+              <Autocomplete
+                multiple
+                id='tags-filled'
+                options={[]}
+                freeSolo
+                value={worldForm.writers}
+                onChange={(event, value) =>
+                  setWorldForm({
+                    ...worldForm,
+                    writers: [...value],
+                    readers: [...new Set([...worldForm.readers, ...value])],
+                  })
+                }
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant='outlined'
+                      label={option}
+                      {...getTagProps({ index })}
+                      disabled={worldForm.admins.includes(option)}
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant='filled'
+                    placeholder='writers'
+                  />
+                )}
+              />
+              <Autocomplete
+                multiple
+                id='tags-filled'
+                options={[]}
+                freeSolo
+                value={worldForm.readers}
+                onChange={(event, value) =>
+                  setWorldForm({ ...worldForm, readers: [...value] })
+                }
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip
+                      variant='outlined'
+                      label={option}
+                      {...getTagProps({ index })}
+                      disabled={
+                        worldForm.admins.includes(option) ||
+                        worldForm.writers.includes(option)
+                      }
+                    />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant='filled'
+                    placeholder='readers'
+                  />
+                )}
+              />
+              <FormControl component='fieldset'>
+                <RadioGroup
+                  value={worldForm.public}
+                  onChange={() =>
+                    setWorldForm({ ...worldForm, public: !worldForm.public })
+                  }
+                >
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio />}
+                    label='Private'
+                  />
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio />}
+                    label='Public'
+                  />
+                </RadioGroup>
+              </FormControl>
+            </>
+          )}
+          {world ? (
+            <>
+              <Button
+                type='submit'
+                variant='contained'
+                sx={{ margin: 1 }}
+                onSubmit={() => onUpdate()}
               >
-                <FormControlLabel
-                  value={false}
-                  control={<Radio />}
-                  label='Private'
-                />
-                <FormControlLabel
-                  value={true}
-                  control={<Radio />}
-                  label='Public'
-                />
-              </RadioGroup>
-            </FormControl>
-          </>
-        )}
-        {world ? (
-          <>
+                Update World
+              </Button>
+            </>
+          ) : (
             <Button
+              type='submit'
               variant='contained'
               sx={{ margin: 1 }}
-              onClick={() => onUpdate()}
+              onSubmit={() => onCreate()}
             >
-              Update World
+              Create World
             </Button>
-          </>
-        ) : (
-          <Button
-            variant='contained'
-            sx={{ margin: 1 }}
-            onClick={() => onCreate()}
-          >
-            Create World
-          </Button>
-        )}
-        <Button onClick={() => router.back()}>Cancel</Button>
+          )}
+          <Button onClick={() => router.back()}>Cancel</Button>
+        </FormControl>
       </Box>
     </>
   );

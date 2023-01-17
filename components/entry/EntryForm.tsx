@@ -138,89 +138,103 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
           width: '75ch',
         }}
       >
-        {!currentEntry && (
-          <FormControl margin='normal'>
-            <InputLabel>Category</InputLabel>
-            <Select
-              value={entryForm.category}
-              label='Category'
-              onChange={(e) => handleCategory(e.target.value)}
-            >
-              <MenuItem value={'NPC' as const}>NPC</MenuItem>
-              <MenuItem value={'Location' as const}>Location</MenuItem>
-              <MenuItem value={'Lore' as const}>Lore</MenuItem>
-              <MenuItem value={'Journal' as const}>Journal</MenuItem>
-            </Select>
-          </FormControl>
-        )}
-        <TextField
-          label='name'
-          margin='normal'
-          value={entryForm.name}
-          onChange={(e) => setEntryForm({ ...entryForm, name: e.target.value })}
-        />
-        <TextField
-          label='description'
-          margin='normal'
-          multiline
-          value={entryForm.description}
-          onChange={(e) =>
-            setEntryForm({ ...entryForm, description: e.target.value })
-          }
-        />
-        <FormControl margin='normal'>
-          <InputLabel>Parent</InputLabel>
-          <Select
-            value={entryForm.parent ? JSON.stringify(entryForm.parent) : ''}
-            label='Parent'
-            onChange={(e) => handleParent(e.target.value)}
-          >
-            {getParents(entries).map((entry, index) => {
-              return (
-                <MenuItem
-                  key={index}
-                  value={JSON.stringify({ name: entry.name, id: entry.id })}
-                >
-                  {entry.name}
-                </MenuItem>
-              );
-            })}
-            <MenuItem value={JSON.stringify('')}>None</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl component='fieldset'>
-          <RadioGroup
-            value={entryForm.public}
-            onChange={() =>
-              setEntryForm({ ...entryForm, public: !entryForm.public })
+        <FormControl>
+          {!currentEntry && (
+            <FormControl margin='normal'>
+              <InputLabel>Category</InputLabel>
+              <Select
+                value={entryForm.category}
+                label='Category'
+                onChange={(e) => handleCategory(e.target.value)}
+              >
+                <MenuItem value={Category.NPC}>NPC</MenuItem>
+                <MenuItem value={Category.Location}>Location</MenuItem>
+                <MenuItem value={Category.Lore}>Lore</MenuItem>
+                <MenuItem value={Category.Journal}>Journal</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          <TextField
+            required
+            label='name'
+            margin='normal'
+            value={entryForm.name}
+            onChange={(e) =>
+              setEntryForm({ ...entryForm, name: e.target.value })
             }
-          >
-            <FormControlLabel
-              value={false}
-              control={<Radio />}
-              label='Private'
-            />
-            <FormControlLabel value={true} control={<Radio />} label='Public' />
-          </RadioGroup>
+          />
+          <TextField
+            label='description'
+            margin='normal'
+            multiline
+            value={entryForm.description}
+            onChange={(e) =>
+              setEntryForm({ ...entryForm, description: e.target.value })
+            }
+          />
+          {(entryForm.category === Category.Location ||
+            entryForm.category === Category.NPC) && (
+            <FormControl margin='normal'>
+              <InputLabel>Parent</InputLabel>
+              <Select
+                value={entryForm.parent ? JSON.stringify(entryForm.parent) : ''}
+                label='Parent'
+                onChange={(e) => handleParent(e.target.value)}
+              >
+                {getParents(entries).map((entry, index) => {
+                  return (
+                    <MenuItem
+                      key={index}
+                      value={JSON.stringify({ name: entry.name, id: entry.id })}
+                    >
+                      {entry.name}
+                    </MenuItem>
+                  );
+                })}
+                <MenuItem value={JSON.stringify('')}>None</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          <FormControl component='fieldset'>
+            <RadioGroup
+              value={entryForm.public}
+              onChange={() =>
+                setEntryForm({ ...entryForm, public: !entryForm.public })
+              }
+            >
+              <FormControlLabel
+                value={false}
+                control={<Radio />}
+                label='Private'
+              />
+              <FormControlLabel
+                value={true}
+                control={<Radio />}
+                label='Public'
+              />
+            </RadioGroup>
+          </FormControl>
+          {currentEntry ? (
+            <Button
+              type='submit'
+              variant='contained'
+              sx={{ margin: 1 }}
+              onSubmit={() => onUpdate()}
+            >
+              Update Entry
+            </Button>
+          ) : (
+            <Button
+              type='submit'
+              variant='contained'
+              sx={{ margin: 1 }}
+              onSubmit={() => onCreate()}
+            >
+              Create Entry
+            </Button>
+          )}
+          <Button onClick={() => router.back()}>Cancel</Button>
         </FormControl>
-        {currentEntry ? (
-          <Button
-            variant='contained'
-            sx={{ margin: 1 }}
-            onClick={() => onUpdate()}
-          >
-            Update Entry
-          </Button>
-        ) : (
-          <Button
-            variant='contained'
-            sx={{ margin: 1 }}
-            onClick={() => onCreate()}
-          >
-            Create Entry
-          </Button>
-        )}
-        <Button onClick={() => router.back()}>Cancel</Button>
       </Box>
     </>
   );
