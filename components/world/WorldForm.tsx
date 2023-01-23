@@ -39,36 +39,40 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
   const router = useRouter();
 
   const onCreate = async () => {
-    try {
-      await fetch('/api/world/create', {
-        method: 'POST',
-        body: JSON.stringify(worldForm),
-      }).then((res) =>
-        res.json().then((worldID: string) => {
-          router.push(`/world/${worldID}`);
-          router.refresh();
-        })
-      );
-    } catch (error) {
-      console.log('error creating world: ', error);
+    if (worldForm.name) {
+      try {
+        await fetch('/api/world/create', {
+          method: 'POST',
+          body: JSON.stringify(worldForm),
+        }).then((res) =>
+          res.json().then((worldID: string) => {
+            router.push(`/world/${worldID}`);
+            router.refresh();
+          })
+        );
+      } catch (error) {
+        console.log('error creating world: ', error);
+      }
     }
   };
 
   const onUpdate = async () => {
     if (world) {
-      try {
-        await fetch('/api/world/update', {
-          method: 'POST',
-          body: JSON.stringify({
-            worldData: worldForm,
-            worldID: world.id,
-            permissions,
-          }),
-        });
-        router.push(`/world/${world.id}`);
-        router.refresh();
-      } catch (error) {
-        console.log('error updating world: ', error);
+      if (worldForm.name) {
+        try {
+          await fetch('/api/world/update', {
+            method: 'POST',
+            body: JSON.stringify({
+              worldData: worldForm,
+              worldID: world.id,
+              permissions,
+            }),
+          });
+          router.push(`/world/${world.id}`);
+          router.refresh();
+        } catch (error) {
+          console.log('error updating world: ', error);
+        }
       }
     }
   };
@@ -219,20 +223,18 @@ const WorldForm = ({ sessionEmail, world, permissions }: Props) => {
           {world ? (
             <>
               <Button
-                type='submit'
                 variant='contained'
                 sx={{ margin: 1 }}
-                onSubmit={() => onUpdate()}
+                onClick={() => onUpdate()}
               >
                 Update World
               </Button>
             </>
           ) : (
             <Button
-              type='submit'
               variant='contained'
               sx={{ margin: 1 }}
-              onSubmit={() => onCreate()}
+              onClick={() => onCreate()}
             >
               Create World
             </Button>

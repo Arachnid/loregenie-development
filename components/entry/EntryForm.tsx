@@ -47,40 +47,44 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
   const router = useRouter();
 
   const onCreate = async () => {
-    try {
-      await fetch('/api/entry/create', {
-        method: 'POST',
-        body: JSON.stringify({
-          entryData: entryForm,
-          worldID: world.id,
-          permissions,
-        }),
-      }).then((res) =>
-        res.json().then((entryID: string) => {
-          router.push(`/world/${world.id}/entry/${entryID}`);
-          router.refresh();
-        })
-      );
-    } catch (error) {
-      console.log('error submitting entry: ', error);
+    if (entryForm.name) {
+      try {
+        await fetch('/api/entry/create', {
+          method: 'POST',
+          body: JSON.stringify({
+            entryData: entryForm,
+            worldID: world.id,
+            permissions,
+          }),
+        }).then((res) =>
+          res.json().then((entryID: string) => {
+            router.push(`/world/${world.id}/entry/${entryID}`);
+            router.refresh();
+          })
+        );
+      } catch (error) {
+        console.log('error submitting entry: ', error);
+      }
     }
   };
 
   const onUpdate = async () => {
-    try {
-      await fetch('/api/entry/update', {
-        method: 'POST',
-        body: JSON.stringify({
-          entryData: entryForm,
-          entryID: currentEntry?.id,
-          worldID: world.id,
-          permissions,
-        }),
-      });
-      router.push(`/world/${world.id}/entry/${currentEntry?.id}`);
-      router.refresh();
-    } catch (error) {
-      console.log('error updating entry: ', error);
+    if (entryForm.name) {
+      try {
+        await fetch('/api/entry/update', {
+          method: 'POST',
+          body: JSON.stringify({
+            entryData: entryForm,
+            entryID: currentEntry?.id,
+            worldID: world.id,
+            permissions,
+          }),
+        });
+        router.push(`/world/${world.id}/entry/${currentEntry?.id}`);
+        router.refresh();
+      } catch (error) {
+        console.log('error updating entry: ', error);
+      }
     }
   };
 
@@ -216,19 +220,17 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
           </FormControl>
           {currentEntry ? (
             <Button
-              type='submit'
               variant='contained'
               sx={{ margin: 1 }}
-              onSubmit={() => onUpdate()}
+              onClick={() => onUpdate()}
             >
               Update Entry
             </Button>
           ) : (
             <Button
-              type='submit'
               variant='contained'
               sx={{ margin: 1 }}
-              onSubmit={() => onCreate()}
+              onClick={() => onCreate()}
             >
               Create Entry
             </Button>
