@@ -1,5 +1,5 @@
 import { Converter, db } from '@/lib/db';
-import { Campaign } from '@/types';
+import { Entry } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -7,14 +7,14 @@ export default async function handler(
   response: NextApiResponse
 ) {
   const {
-    campaignData,
-    campaignID,
+    entryData,
     worldID,
+    campaignID,
     permissions,
   }: {
-    campaignData: Campaign;
-    campaignID: string;
+    entryData: Entry;
     worldID: string;
+    campaignID: string;
     permissions: string[];
   } = JSON.parse(request.body);
   try {
@@ -22,18 +22,19 @@ export default async function handler(
       console.log('user does not have permission for that action.');
       return;
     }
-    await db
+    const entry = await db
       .collection('worlds')
       .doc(worldID)
       .collection('campaigns')
       .doc(campaignID)
-      .withConverter(new Converter<Campaign>())
-      .update(campaignData);
+      .collection('entries')
+      .withConverter(new Converter<Entry>())
+      .add(entryData);
+    response.json(entry.id);
   } catch (error) {
-    console.log('error updating campaign to database: ', error);
+    console.log('error writing campaign entry to database: ', error);
     response.statusCode = 500;
     response.send({});
     return;
   }
-  response.send({});
 }

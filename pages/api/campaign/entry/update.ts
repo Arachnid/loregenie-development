@@ -1,5 +1,5 @@
 import { Converter, db } from '@/lib/db';
-import { Campaign } from '@/types';
+import { Entry } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -7,14 +7,16 @@ export default async function handler(
   response: NextApiResponse
 ) {
   const {
-    campaignData,
-    campaignID,
+    entryData,
+    entryID,
     worldID,
+    campaignID,
     permissions,
   }: {
-    campaignData: Campaign;
-    campaignID: string;
+    entryData: Entry;
+    entryID: string;
     worldID: string;
+    campaignID: string;
     permissions: string[];
   } = JSON.parse(request.body);
   try {
@@ -27,10 +29,12 @@ export default async function handler(
       .doc(worldID)
       .collection('campaigns')
       .doc(campaignID)
-      .withConverter(new Converter<Campaign>())
-      .update(campaignData);
+      .collection('entries')
+      .doc(entryID)
+      .withConverter(new Converter<Entry>())
+      .set(entryData);
   } catch (error) {
-    console.log('error updating campaign to database: ', error);
+    console.log('error updating campaign entry to database: ', error);
     response.statusCode = 500;
     response.send({});
     return;

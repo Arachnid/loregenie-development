@@ -9,7 +9,6 @@ import {
   EntryForm,
   EntryHierarchy,
   isCategory,
-  World,
 } from '@/types';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -23,9 +22,10 @@ import MenuItem from '@mui/material/MenuItem';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
 interface Props {
-  world: World;
+  worldID: string;
+  campaignID: string;
   currentEntry?: Entry;
-  entries: Entry[];
+  campaignEntries: Entry[];
   permissions: string[];
 }
 
@@ -35,11 +35,17 @@ const createNewEntry = (): EntryForm => {
     description: '',
     image: '',
     public: false,
-    category: Category.NPC,
+    category: Category.Journal,
   };
 };
 
-const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
+const CampaignEntryForm = ({
+  currentEntry,
+  worldID,
+  campaignID,
+  campaignEntries,
+  permissions,
+}: Props) => {
   const [entryForm, setEntryForm] = useState<Entry | EntryForm>(
     currentEntry ? currentEntry : createNewEntry()
   );
@@ -49,21 +55,24 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
   const onCreate = async () => {
     if (entryForm.name) {
       try {
-        await fetch('/api/entry/create', {
+        await fetch('/api/campaign/entry/create', {
           method: 'POST',
           body: JSON.stringify({
             entryData: entryForm,
-            worldID: world.id,
+            worldID,
+            campaignID,
             permissions,
           }),
         }).then((res) =>
           res.json().then((entryID: string) => {
-            router.push(`/world/${world.id}/entry/${entryID}`);
+            router.push(
+              `/world/${worldID}/campaign/${campaignID}/entry/${entryID}`
+            );
             router.refresh();
           })
         );
       } catch (error) {
-        console.log('error submitting entry: ', error);
+        console.log('error submitting campaign entry: ', error);
       }
     }
   };
@@ -71,19 +80,22 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
   const onUpdate = async () => {
     if (entryForm.name) {
       try {
-        await fetch('/api/entry/update', {
+        await fetch('/api/campaign/entry/update', {
           method: 'POST',
           body: JSON.stringify({
             entryData: entryForm,
             entryID: currentEntry?.id,
-            worldID: world.id,
+            worldID: worldID,
+            campaignID,
             permissions,
           }),
         });
-        router.push(`/world/${world.id}/entry/${currentEntry?.id}`);
+        router.push(
+          `/world/${worldID}/campaign/${campaignID}/entry/${currentEntry?.id}`
+        );
         router.refresh();
       } catch (error) {
-        console.log('error updating entry: ', error);
+        console.log('error updating campaign entry: ', error);
       }
     }
   };
@@ -117,8 +129,7 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
     const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
       entriesHierarchy.map((entry: EntryHierarchy) => {
         if (
-          entry.id !== currentEntry?.id &&
-          entry.category === Category.Location
+          entry.id !== currentEntry?.id
         ) {
           if (entry.children) {
             result.push(entry);
@@ -151,9 +162,7 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
                 label='Category'
                 onChange={(e) => handleCategory(e.target.value)}
               >
-                <MenuItem value={Category.NPC}>NPC</MenuItem>
-                <MenuItem value={Category.Location}>Location</MenuItem>
-                <MenuItem value={Category.Lore}>Lore</MenuItem>
+                <MenuItem value={Category.Journal}>Journal</MenuItem>
               </Select>
             </FormControl>
           )}
@@ -175,29 +184,26 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
               setEntryForm({ ...entryForm, description: e.target.value })
             }
           />
-          {(entryForm.category === Category.Location ||
-            entryForm.category === Category.NPC) && (
-            <FormControl margin='normal'>
-              <InputLabel>Parent</InputLabel>
-              <Select
-                value={entryForm.parent ? JSON.stringify(entryForm.parent) : ''}
-                label='Parent'
-                onChange={(e) => handleParent(e.target.value)}
-              >
-                {getParents(entries).map((entry, index) => {
-                  return (
-                    <MenuItem
-                      key={index}
-                      value={JSON.stringify({ name: entry.name, id: entry.id })}
-                    >
-                      {entry.name}
-                    </MenuItem>
-                  );
-                })}
-                <MenuItem value={JSON.stringify('')}>None</MenuItem>
-              </Select>
-            </FormControl>
-          )}
+          <FormControl margin='normal'>
+            <InputLabel>Parent</InputLabel>
+            <Select
+              value={entryForm.parent ? JSON.stringify(entryForm.parent) : ''}
+              label='Parent'
+              onChange={(e) => handleParent(e.target.value)}
+            >
+              {getParents(campaignEntries).map((entry, index) => {
+                return (
+                  <MenuItem
+                    key={index}
+                    value={JSON.stringify({ name: entry.name, id: entry.id })}
+                  >
+                    {entry.name}
+                  </MenuItem>
+                );
+              })}
+              <MenuItem value={JSON.stringify('')}>None</MenuItem>
+            </Select>
+          </FormControl>
           <FormControl component='fieldset'>
             <RadioGroup
               value={entryForm.public}
@@ -241,4 +247,4 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
   );
 };
 
-export default EntryForm;
+export default CampaignEntryForm;

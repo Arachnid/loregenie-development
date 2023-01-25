@@ -2,21 +2,26 @@
 
 import { Campaign } from '@/types';
 import Button from '@mui/material/Button';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import AlertDialog from '../AlertDialog';
 
 interface Props {
   campaign: Campaign;
   worldID: string;
+  permissions: string[];
 }
 
-const ClientCampaignPage = ({ campaign, worldID }: Props) => {
+const ClientCampaignPage = ({ campaign, worldID, permissions }: Props) => {
+  const [alertOpen, setAlertOpen] = useState(false);
   const router = useRouter();
 
   const onDelete = async () => {
     try {
       await fetch('/api/campaign/delete', {
         method: 'POST',
-        body: JSON.stringify({ campaignID: campaign.id, worldID }),
+        body: JSON.stringify({ campaignID: campaign.id, worldID, permissions }),
       });
       router.push(`/world/${worldID}`);
       router.refresh();
@@ -33,26 +38,43 @@ const ClientCampaignPage = ({ campaign, worldID }: Props) => {
       <div>writers: {campaign.writers.join(', ')}</div>
       <div>admins: {campaign.admins.join(', ')}</div>
       <div>visibility: {campaign.public ? 'public' : 'private'}</div>
-      <Button
-        variant='contained'
-        sx={{ margin: 1 }}
-        onClick={() =>
-          router.push(`/world/${worldID}/campaign/${campaign.id}/edit`)
-        }
-      >
-        Edit Campaign
-      </Button>
-      <Button
-        variant='contained'
-        sx={{ margin: 1 }}
-        color='error'
-        onClick={() => onDelete()}
-      >
-        Delete Campaign
-      </Button>
-      <Button onClick={() => router.push(`/world/${worldID}`)}>
-        Return To World
-      </Button>
+      {permissions.includes('writer') && (
+        <Link href={`/world/${worldID}/campaign/${campaign.id}/entry/new`}>
+          New Campaign Entry
+        </Link>
+      )}
+      {permissions.includes('writer') && (
+        <Button
+          variant='contained'
+          sx={{ margin: 1 }}
+          onClick={() =>
+            router.push(`/world/${worldID}/campaign/${campaign.id}/edit`)
+          }
+        >
+          Edit Campaign
+        </Button>
+      )}
+      {permissions.includes('admin') && (
+        <Button
+          variant='contained'
+          sx={{ margin: 1 }}
+          color='error'
+          onClick={() => setAlertOpen(true)}
+        >
+          Delete Campaign
+        </Button>
+      )}
+      {alertOpen && (
+        <AlertDialog
+          title={`Delete this Campaign?`}
+          description={
+            'Doing so will permanently delete the data in this campaign, including all nested entries.'
+          }
+          alertOpen={alertOpen}
+          setAlertOpen={setAlertOpen}
+          action={onDelete}
+        />
+      )}
     </>
   );
 };

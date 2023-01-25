@@ -1,22 +1,29 @@
-import { Converter, db } from '@/lib/db';
-import { Campaign } from '@/types';
+import { db } from '@/lib/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { campaignID, worldID }: { campaignID: string; worldID: string } =
+  const {
+    campaignID,
+    worldID,
+    permissions,
+  }: { campaignID: string; worldID: string; permissions: string[] } =
     JSON.parse(request.body);
 
   try {
-    await db
-      .collection('worlds')
-      .doc(worldID)
-      .collection('campaigns')
-      .doc(campaignID)
-      .withConverter(new Converter<Campaign>())
-      .delete();
+    if (!permissions.includes('admin')) {
+      console.log('user does not have permission for that action.');
+      return;
+    }
+    await db.recursiveDelete(
+      db
+        .collection('worlds')
+        .doc(worldID)
+        .collection('campaigns')
+        .doc(campaignID)
+    );
   } catch (error) {
     console.log('error deleting campaign from database: ', error);
     response.statusCode = 500;

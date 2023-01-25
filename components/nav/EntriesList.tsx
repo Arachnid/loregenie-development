@@ -1,6 +1,6 @@
 'use client';
 
-import { Entry, EntryHierarchy, World } from '@/types';
+import { Campaign, Entry, EntryHierarchy, World } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import {
@@ -16,6 +16,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 
 type Props = {
   entries: Entry[];
+  campaigns: Campaign[];
   world: World;
 };
 
@@ -53,12 +54,16 @@ const RecursiveEntries = ({
   entries,
   selected,
   setSelected,
+  campaign,
+  campaignID,
 }: {
   entryHierarchy: EntryHierarchy[];
   world: World;
   entries: Entry[];
   selected: string | undefined;
   setSelected: Dispatch<SetStateAction<string | undefined>>;
+  campaign?: Campaign;
+  campaignID?: string;
 }) => {
   const setParentToOpen = (entry: Entry | undefined, initialState: Open) => {
     if (entry) {
@@ -70,7 +75,13 @@ const RecursiveEntries = ({
           initialState
         );
       }
+      if (campaignID) {
+        initialState[campaignID] = true;
+      }
       initialState[entry.id] = true;
+    }
+    if (campaign && selected === campaign.id) {
+      initialState[campaign.id] = true;
     }
   };
 
@@ -88,6 +99,47 @@ const RecursiveEntries = ({
 
   const [open, setOpen] = useState<Open>(() => initializeOpenEntries());
 
+  if (campaign) {
+    return (
+      <List disablePadding sx={{ pl: 1 }}>
+        <ListItem>
+          <ListItemButton
+            component={Link}
+            href={`/world/${world.id}/campaign/${campaign.id}`}
+            onClick={() => {
+              setSelected(campaign.id);
+              setOpen({ ...open, [campaign.id]: true });
+            }}
+            selected={campaign.id === selected}
+          >
+            <ListItemText primary={campaign.name} />
+          </ListItemButton>
+          {campaign.entries && campaign.entries.length > 0 ? (
+            <a onClick={() => expandHandler(campaign.id, open, setOpen)}>
+              {open[campaign.id] ? <ExpandLess /> : <ExpandMore />}
+            </a>
+          ) : (
+            ''
+          )}
+        </ListItem>
+        {campaign.entries && campaign.entries.length > 0 ? (
+          <Collapse in={open[campaign.id]} timeout='auto' unmountOnExit>
+            <RecursiveEntries
+              entryHierarchy={createEntryHierarchy(campaign.entries)}
+              world={world}
+              entries={entries}
+              selected={selected}
+              setSelected={setSelected}
+              campaignID={campaign.id}
+            />
+          </Collapse>
+        ) : (
+          ''
+        )}
+      </List>
+    );
+  }
+
   return (
     <List disablePadding sx={{ pl: 1 }}>
       {entryHierarchy.map((entry: EntryHierarchy, index) => {
@@ -96,7 +148,11 @@ const RecursiveEntries = ({
             <ListItem>
               <ListItemButton
                 component={Link}
-                href={`/world/${world.id}/entry/${entry.id}`}
+                href={
+                  campaignID
+                    ? `/world/${world.id}/campaign/${campaignID}/entry/${entry.id}`
+                    : `/world/${world.id}/entry/${entry.id}`
+                }
                 onClick={() => {
                   setSelected(entry.id);
                   setOpen({ ...open, [entry.id]: true });
@@ -121,6 +177,7 @@ const RecursiveEntries = ({
                   entries={entries}
                   selected={selected}
                   setSelected={setSelected}
+                  campaignID={campaignID}
                 />
               </Collapse>
             ) : (
@@ -133,26 +190,49 @@ const RecursiveEntries = ({
   );
 };
 
-const EntriesList = ({ entries, world }: Props) => {
+const EntriesList = ({ entries, campaigns, world }: Props) => {
   const pathname = usePathname();
   const [selected, setSelected] = useState<string | undefined>(
     getActiveEntryID(pathname)
   );
-  const entryHierarchy = createEntryHierarchy(entries);
 
   return (
-    <List>
-      <ListItemButton component={Link} href={`/world/${world.id}`}>
-        <ListItemText primary={world.name} />
-      </ListItemButton>
+    <>
+      <List disablePadding sx={{ pl: 1 }}>
+        <ListItem>
+          <ListItemButton
+            component={Link}
+            href={`/world/${world.id}`}
+            onClick={() => {
+              setSelected(world.id);
+            }}
+            selected={world.id === selected}
+          >
+            <ListItemText primary={world.name} />
+          </ListItemButton>
+        </ListItem>
+      </List>
       <RecursiveEntries
         entries={entries}
-        entryHierarchy={entryHierarchy}
+        entryHierarchy={createEntryHierarchy(entries)}
         world={world}
         selected={selected}
         setSelected={setSelected}
       />
-    </List>
+      {campaigns.map((campaign, index) => (
+        <div key={index}>
+          <RecursiveEntries
+            entries={campaign.entries}
+            entryHierarchy={createEntryHierarchy(campaign.entries)}
+            world={world}
+            selected={selected}
+            setSelected={setSelected}
+            campaign={campaign}
+            campaignID={campaign.id}
+          />
+        </div>
+      ))}
+    </>
   );
 };
 

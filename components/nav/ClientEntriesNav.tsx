@@ -13,7 +13,11 @@ const ClientEntriesNav = ({ children, worldID, permissions }: Props) => {
     <>
       {children}
       {permissions.includes('writer') && (
-        <Link href={`/world/${worldID}/entry/new`}>New Page</Link>
+        <>
+          <Link href={`/world/${worldID}/entry/new`}>New Entry</Link>
+          <br />
+          <Link href={`/world/${worldID}/campaign/new`}>New Campaign</Link>
+        </>
       )}
     </>
   );

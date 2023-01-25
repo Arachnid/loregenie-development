@@ -28,6 +28,7 @@ const createNewWorld = (sessionEmail: string): WorldForm => {
     admins: [sessionEmail],
     public: false,
     entries: [],
+    campaigns: [],
   };
 };
 

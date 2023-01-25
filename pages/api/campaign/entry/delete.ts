@@ -10,10 +10,14 @@ export default async function handler(
   const {
     entryID,
     worldID,
+    campaignID,
     permissions,
-  }: { entryID: string; worldID: string; permissions: string[] } = JSON.parse(
-    request.body
-  );
+  }: {
+    entryID: string;
+    worldID: string;
+    campaignID: string;
+    permissions: string[];
+  } = JSON.parse(request.body);
 
   try {
     if (!permissions.includes('admin')) {
@@ -23,6 +27,8 @@ export default async function handler(
     const entriesRef = db
       .collection('worlds')
       .doc(worldID)
+      .collection('campaigns')
+      .doc(campaignID)
       .collection('entries');
 
     const entries = entriesRef.withConverter(new Converter<Entry>()).get();
@@ -41,7 +47,7 @@ export default async function handler(
 
     entriesRef.doc(entryID).withConverter(new Converter<Entry>()).delete();
   } catch (error) {
-    console.log('error deleting entry from database: ', error);
+    console.log('error deleting campaign entry from database: ', error);
     response.statusCode = 500;
     response.send({});
     return;

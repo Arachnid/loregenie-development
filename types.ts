@@ -7,8 +7,12 @@ export interface World {
   admins: string[];
   public: boolean;
   entries: Entry[];
+  campaigns: Campaign[];
 }
 export type WorldForm = Omit<World, 'id'>;
+
+export type Campaign = Omit<World, 'campaigns'>;
+export type CampaignForm = Omit<Campaign, 'id'>;
 
 export interface Entry {
   readonly id: string;

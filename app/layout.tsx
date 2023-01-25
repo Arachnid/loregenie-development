@@ -1,7 +1,7 @@
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { ReactNode } from 'react';
-import NavBar from '@/components/NavBar';
+import NavBar from '@/components/nav/NavBar';
 
 export default async function RootLayout({
   children,

@@ -1,5 +1,5 @@
 import CampaignForm from '@/components/campaign/CampaignForm';
-import { getCampaign } from '@/lib/db';
+import { getCampaign, getCampaignPermissions } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Campaign } from '@/types';
 import { Session, unstable_getServerSession } from 'next-auth';
@@ -14,7 +14,7 @@ interface Props {
 }
 
 const EditCampaignPage = async ({ params }: Props) => {
-  const { campaign }: { campaign: Campaign | undefined } = await getCampaign(
+  const campaign: Campaign | undefined = await getCampaign(
     params.worldID,
     params.campaignID
   );
@@ -23,12 +23,18 @@ const EditCampaignPage = async ({ params }: Props) => {
   if (!campaign || !session?.user?.email) {
     notFound();
   }
+  const permissions = await getCampaignPermissions(
+    params.worldID,
+    params.campaignID,
+    session.user.email
+  );
 
   return (
     <CampaignForm
       sessionEmail={session.user.email}
       campaign={campaign}
       worldID={params.worldID}
+      permissions={permissions}
     />
   );
 };

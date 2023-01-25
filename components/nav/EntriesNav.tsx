@@ -1,7 +1,7 @@
 import { getPermissions, getWorld } from '@/lib/db';
-import ClientEntriesNav from '@/components/ClientEntriesNav';
-import { Entry, World } from '@/types';
-import EntriesList from '@/components/EntriesList';
+import ClientEntriesNav from '@/components/nav/ClientEntriesNav';
+import { Campaign, Entry, World } from '@/types';
+import EntriesList from '@/components/nav/EntriesList';
 import { notFound } from 'next/navigation';
 
 interface Props {
@@ -10,7 +10,11 @@ interface Props {
 }
 
 export default async function EntriesNav({ worldID, email }: Props) {
-  const { world, entries }: { world: World | undefined; entries: Entry[] } =
+  const {
+    world,
+    entries,
+    campaigns,
+  }: { world: World | undefined; entries: Entry[]; campaigns: Campaign[] } =
     await getWorld(worldID, email);
 
   if (!world) {
@@ -20,7 +24,7 @@ export default async function EntriesNav({ worldID, email }: Props) {
 
   return (
     <ClientEntriesNav worldID={worldID} permissions={permissions}>
-      <EntriesList entries={entries} world={world} />
+      <EntriesList entries={entries} campaigns={campaigns} world={world} />
     </ClientEntriesNav>
   );
 }

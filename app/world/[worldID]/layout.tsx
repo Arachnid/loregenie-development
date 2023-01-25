@@ -1,7 +1,7 @@
 import BaseLayout from '@/components/BaseLayout';
 import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import EntriesNav from '@/components/EntriesNav';
+import EntriesNav from '@/components/nav/EntriesNav';
 import { notFound } from 'next/navigation';
 
 interface Props {
