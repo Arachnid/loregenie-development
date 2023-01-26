@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { RiSearchLine } from 'react-icons/ri';
 
 interface Props {
   children: JSX.Element;
@@ -10,16 +11,22 @@ interface Props {
 
 const ClientEntriesNav = ({ children, worldID, permissions }: Props) => {
   return (
-    <>
-      {children}
-      {permissions.includes('writer') && (
-        <>
-          <Link href={`/world/${worldID}/entry/new`}>New Entry</Link>
-          <br />
-          <Link href={`/world/${worldID}/campaign/new`}>New Campaign</Link>
-        </>
-      )}
-    </>
+    <div className='flex flex-col h-full w-full'>
+      <div className='flex justify-between items-center bg-white p-3 mb-[3px] text-lore-blue font-light'>
+        <div>Search</div>
+        <RiSearchLine />
+      </div>
+      <div className='flex flex-col justify-between h-full bg-lore-light-beige'>
+        <div className=''>{children}</div>
+        {permissions.includes('writer') && (
+          <div>
+            <Link href={`/world/${worldID}/entry/new`}>New Entry</Link>
+            <br />
+            <Link href={`/world/${worldID}/campaign/new`}>New Campaign</Link>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

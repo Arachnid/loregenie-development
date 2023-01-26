@@ -1,6 +1,5 @@
 'use client';
 
-import Button from '@mui/material/Button';
 import { Session } from 'next-auth';
 import { signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
@@ -11,18 +10,18 @@ type Props = {
 
 const NavBar = ({ session }: Props) => {
   return (
-    <>
+    <div className='flex justify-between p-3'>
+      <Link className='text-lore-red text-lg' href='/'>
+        Lore Genie
+      </Link>
       {session ? (
-        <>
-          <Button onClick={() => signOut()}>Sign Out</Button>
-          <Link href='/' style={{ textDecoration: 'none' }}>
-            <Button>Home</Button>
-          </Link>
-        </>
+        <button className='' onClick={() => signOut()}>
+          Sign Out
+        </button>
       ) : (
-        <Button onClick={() => signIn()}>Sign In</Button>
+        <button onClick={() => signIn()}>Sign In</button>
       )}
-    </>
+    </div>
   );
 };
 
