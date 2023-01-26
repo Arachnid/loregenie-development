@@ -1,18 +1,26 @@
 'use client';
 
-import { Campaign, Entry, EntryHierarchy, World } from '@/types';
+import { Campaign, Category, Entry, EntryHierarchy, World } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
-import {
-  Collapse,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material';
-import List from '@mui/material/List';
+import { Collapse } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
+import { MdLocationOn, MdOutlineLocationOn } from 'react-icons/md';
+import {
+  AiFillFolder,
+  AiOutlineFolder,
+  AiOutlinePlus,
+  AiOutlineMinus,
+  AiFillHome,
+  AiOutlineHome,
+} from 'react-icons/ai';
+import {
+  BsBookmarkStar,
+  BsBookmarkStarFill,
+  BsPerson,
+  BsPersonFill,
+} from 'react-icons/bs';
 
 type Props = {
   entries: Entry[];
@@ -101,28 +109,39 @@ const RecursiveEntries = ({
 
   if (campaign) {
     return (
-      <List disablePadding sx={{ pl: 1 }}>
-        <ListItem>
-          <ListItemButton
-            component={Link}
-            href={`/world/${world.id}/campaign/${campaign.id}`}
-            onClick={() => {
-              setSelected(campaign.id);
-              setOpen({ ...open, [campaign.id]: true });
-            }}
-            selected={campaign.id === selected}
-          >
-            <ListItemText primary={campaign.name} />
-          </ListItemButton>
-          {campaign.entries && campaign.entries.length > 0 ? (
-            <a onClick={() => expandHandler(campaign.id, open, setOpen)}>
-              {open[campaign.id] ? <ExpandLess /> : <ExpandMore />}
-            </a>
-          ) : (
-            ''
-          )}
-        </ListItem>
-        {campaign.entries && campaign.entries.length > 0 ? (
+      <>
+        <ul className='pl-[5px] m-2'>
+          <li className='flex justify-between items-center'>
+            <Link
+              className={`flex items-center ${
+                selected === campaign.id ? 'text-lore-red' : 'text-lore-blue'
+              }`}
+              href={`/world/${world.id}/campaign/${campaign.id}`}
+              onClick={() => {
+                setSelected(campaign.id);
+                setOpen({ ...open, [campaign.id]: true });
+              }}
+            >
+              {selected === campaign.id ? (
+                <AiFillFolder />
+              ) : (
+                <AiOutlineFolder />
+              )}
+              <div className='pl-2'>{campaign.name}</div>
+            </Link>
+            {campaign.entries && campaign.entries.length > 0 && (
+              <div
+                className={`flex m-2 cursor-pointer ${
+                  selected === campaign.id ? 'text-lore-red' : 'text-lore-blue'
+                }`}
+                onClick={() => expandHandler(campaign.id, open, setOpen)}
+              >
+                {open[campaign.id] ? <AiOutlineMinus /> : <AiOutlinePlus />}
+              </div>
+            )}
+          </li>
+        </ul>
+        {campaign.entries && campaign.entries.length > 0 && (
           <Collapse in={open[campaign.id]} timeout='auto' unmountOnExit>
             <RecursiveEntries
               entryHierarchy={createEntryHierarchy(campaign.entries)}
@@ -133,60 +152,86 @@ const RecursiveEntries = ({
               campaignID={campaign.id}
             />
           </Collapse>
-        ) : (
-          ''
         )}
-      </List>
+      </>
     );
   }
 
   return (
-    <List disablePadding sx={{ pl: 1 }}>
-      {entryHierarchy.map((entry: EntryHierarchy, index) => {
-        return (
-          <div key={index}>
-            <ListItem>
-              <ListItemButton
-                component={Link}
-                href={
-                  campaignID
-                    ? `/world/${world.id}/campaign/${campaignID}/entry/${entry.id}`
-                    : `/world/${world.id}/entry/${entry.id}`
-                }
-                onClick={() => {
-                  setSelected(entry.id);
-                  setOpen({ ...open, [entry.id]: true });
-                }}
-                selected={entry.id === selected}
-              >
-                <ListItemText primary={entry.name} />
-              </ListItemButton>
+    <div className='flex'>
+      <div className='flex flex-col mb-[21px]'>
+        <div className='ml-[19px] bg-lore-beige w-[3px] h-full' />
+      </div>
+      <ul className='flex flex-col w-full'>
+        {entryHierarchy.map((entry: EntryHierarchy, index) => {
+          return (
+            <div key={index}>
+              <div className='flex items-center'>
+                <div className='w-2 h-[3px] bg-lore-beige border-l-4 border-lore-beige rounded-bl -ml-[3px]' />
+                <li className='flex justify-between items-center m-2 w-full'>
+                  <Link
+                    className={`flex items-center ${
+                      selected === entry.id ? 'text-lore-red' : 'text-lore-blue'
+                    }`}
+                    href={
+                      campaignID
+                        ? `/world/${world.id}/campaign/${campaignID}/entry/${entry.id}`
+                        : `/world/${world.id}/entry/${entry.id}`
+                    }
+                    onClick={() => {
+                      setSelected(entry.id);
+                      setOpen({ ...open, [entry.id]: true });
+                    }}
+                  >
+                    {entry.category === Category.NPC &&
+                      (selected === entry.id ? <BsPersonFill /> : <BsPerson />)}
+                    {entry.category === Category.Location &&
+                      (selected === entry.id ? (
+                        <MdLocationOn />
+                      ) : (
+                        <MdOutlineLocationOn />
+                      ))}
+                    {entry.category === Category.Journal &&
+                      (selected === entry.id ? (
+                        <BsBookmarkStarFill />
+                      ) : (
+                        <BsBookmarkStar />
+                      ))}
+                    <div className='pl-2'>{entry.name}</div>
+                  </Link>
+                  {entry.children && entry.children.length > 0 && (
+                    <div
+                      className={`flex m-2 cursor-pointer ${
+                        selected === entry.id
+                          ? 'text-lore-red'
+                          : 'text-lore-blue'
+                      }`}
+                      onClick={() => expandHandler(entry.id, open, setOpen)}
+                    >
+                      {open[entry.id] ? <AiOutlineMinus /> : <AiOutlinePlus />}
+                    </div>
+                  )}
+                </li>
+              </div>
               {entry.children && entry.children.length > 0 ? (
-                <a onClick={() => expandHandler(entry.id, open, setOpen)}>
-                  {open[entry.id] ? <ExpandLess /> : <ExpandMore />}
-                </a>
+                <Collapse in={open[entry.id]} timeout='auto' unmountOnExit>
+                  <RecursiveEntries
+                    entryHierarchy={entry.children}
+                    world={world}
+                    entries={entries}
+                    selected={selected}
+                    setSelected={setSelected}
+                    campaignID={campaignID}
+                  />
+                </Collapse>
               ) : (
                 ''
               )}
-            </ListItem>
-            {entry.children && entry.children.length > 0 ? (
-              <Collapse in={open[entry.id]} timeout='auto' unmountOnExit>
-                <RecursiveEntries
-                  entryHierarchy={entry.children}
-                  world={world}
-                  entries={entries}
-                  selected={selected}
-                  setSelected={setSelected}
-                  campaignID={campaignID}
-                />
-              </Collapse>
-            ) : (
-              ''
-            )}
-          </div>
-        );
-      })}
-    </List>
+            </div>
+          );
+        })}
+      </ul>
+    </div>
   );
 };
 
@@ -197,21 +242,23 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
   );
 
   return (
-    <>
-      <List disablePadding sx={{ pl: 1 }}>
-        <ListItem>
-          <ListItemButton
-            component={Link}
+    <div className='pr-2 font-medium'>
+      <ul className='pl-[5px] m-2'>
+        <li>
+          <Link
+            className={`flex items-center mt-2 ${
+              selected === world.id ? 'text-lore-red' : 'text-lore-blue'
+            }`}
             href={`/world/${world.id}`}
             onClick={() => {
               setSelected(world.id);
             }}
-            selected={world.id === selected}
           >
-            <ListItemText primary={world.name} />
-          </ListItemButton>
-        </ListItem>
-      </List>
+            {selected === world.id ? <AiFillHome /> : <AiOutlineHome />}
+            <div className='pl-2'>{world.name}</div>
+          </Link>
+        </li>
+      </ul>
       <RecursiveEntries
         entries={entries}
         entryHierarchy={createEntryHierarchy(entries)}
@@ -232,7 +279,7 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
           />
         </div>
       ))}
-    </>
+    </div>
   );
 };
 

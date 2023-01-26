@@ -1,7 +1,5 @@
 'use client';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Unstable_Grid2';
 import { ReactNode } from 'react';
 
 interface Props {
@@ -11,13 +9,13 @@ interface Props {
 
 export default function BaseLayout({ nav, children }: Props) {
   return (
-    <Grid container spacing={2}>
-      <Grid xs={4}>
-        <Box sx={{ bgcolor: 'background.paper' }}>
-          <nav>{nav}</nav>
-        </Box>
-      </Grid>
-      <Grid xs={8}>{children}</Grid>
-    </Grid>
+    <div className='flex flex-col w-full h-full'>
+      <div className='flex h-full'>
+        <div className='flex max-w-fit min-w-[300px]'>
+          <nav className='flex w-full'>{nav}</nav>
+        </div>
+        <div className='flex bg-white w-full ml-[3px]'>{children}</div>
+      </div>
+    </div>
   );
 }
