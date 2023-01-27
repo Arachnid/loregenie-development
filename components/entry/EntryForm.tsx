@@ -176,7 +176,8 @@ const EntryForm = ({ currentEntry, world, entries, permissions }: Props) => {
             }
           />
           {(entryForm.category === Category.Location ||
-            entryForm.category === Category.NPC) && (
+            entryForm.category === Category.NPC ||
+            entryForm.category === Category.Lore) && (
             <FormControl margin='normal'>
               <InputLabel>Parent</InputLabel>
               <Select

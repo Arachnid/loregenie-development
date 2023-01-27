@@ -2,6 +2,7 @@
 
 import { World } from '@/types';
 import Button from '@mui/material/Button';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import AlertDialog from '../AlertDialog';
@@ -28,46 +29,66 @@ const WorldPage = ({ world, permissions }: Props) => {
     }
   };
   return (
-    <>
-      <h1>{world.name}</h1>
-      <div>{world.description}</div>
-      <div>admins: {world.admins.join(', ')}</div>
-      <div>writers: {world.writers.join(', ')}</div>
-      <div>readers: {world.readers.join(', ')}</div>
-      <div>visibility: {world.public ? 'public' : 'private'}</div>
-      {permissions.includes('writer') && (
-        <Button
-          variant='contained'
-          sx={{ margin: '8px' }}
-          onClick={() => router.push(`/world/${world.id}/edit`)}
-        >
-          Edit World
-        </Button>
-      )}
-      {permissions.includes('admin') && (
-        <Button
-          variant='contained'
-          color='error'
-          sx={{ margin: '8px' }}
-          onClick={() => setAlertOpen(true)}
-        >
-          Delete World
-        </Button>
-      )}
-      {alertOpen && (
-        <AlertDialog
-          title={'Delete this World?'}
-          description={
-            'Doing so will permanently delete the data in this world, including all nested entries.'
-          }
-          confirmText={`Confirm that you want to delete this world by typing in its name:`}
-          confirmValue={world.name}
-          alertOpen={alertOpen}
-          setAlertOpen={setAlertOpen}
-          action={onDelete}
-        />
-      )}
-    </>
+    <div className='flex flex-col w-full h-full'>
+      <div className='flex justify-end items-center w-full h-14 bg-white mb-[3px]'>
+        <div className='flex mr-4'>
+        <div className='relative border border-black rounded-full h-5 w-5 ml-1'>
+          <Image src={'/favicon.ico'} alt='' fill />
+        </div>
+        <div className='relative border border-black rounded-full h-5 w-5 ml-1'>
+          <Image src={'/favicon.ico'} alt='' fill />
+        </div>
+        <div className='relative border border-black rounded-full h-5 w-5 ml-1'>
+          <Image src={'/favicon.ico'} alt='' fill />
+        </div>
+        </div>
+        <button className='p-2 mr-4 w-20 rounded-lg border-2 text-sm font-medium border-lore-beige text-lore-blue'>Sharing</button>
+        <button className='p-2 mr-4 w-20 rounded-lg border-2 text-sm font-medium border-lore-red bg-lore-red text-white'>Save</button>
+      </div>
+      <div className='flex flex-col bg-white'>
+        <div className='relative'>
+          <Image src={''} alt='' />
+        </div>
+        <h1>{world.name}</h1>
+        <div>{world.description}</div>
+        <div>admins: {world.admins.join(', ')}</div>
+        <div>writers: {world.writers.join(', ')}</div>
+        <div>readers: {world.readers.join(', ')}</div>
+        <div>visibility: {world.public ? 'public' : 'private'}</div>
+        {permissions.includes('writer') && (
+          <Button
+            variant='contained'
+            sx={{ margin: '8px' }}
+            onClick={() => router.push(`/world/${world.id}/edit`)}
+          >
+            Edit World
+          </Button>
+        )}
+        {permissions.includes('admin') && (
+          <Button
+            variant='contained'
+            color='error'
+            sx={{ margin: '8px' }}
+            onClick={() => setAlertOpen(true)}
+          >
+            Delete World
+          </Button>
+        )}
+        {alertOpen && (
+          <AlertDialog
+            title={'Delete this World?'}
+            description={
+              'Doing so will permanently delete the data in this world, including all nested entries.'
+            }
+            confirmText={`Confirm that you want to delete this world by typing in its name:`}
+            confirmValue={world.name}
+            alertOpen={alertOpen}
+            setAlertOpen={setAlertOpen}
+            action={onDelete}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 
