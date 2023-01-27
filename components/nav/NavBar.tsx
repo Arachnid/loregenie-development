@@ -12,32 +12,38 @@ type Props = {
 
 const NavBar = ({ session, worldName }: Props) => {
   return (
-    <div className='flex justify-between px-3 py-2 min-w-max'>
-      <div className='flex'>
-        <Link className='relative w-40 mt-1' href='/'>
-          <Image src={'/lore-genie-logo.svg'} alt='Lore Genie' fill />
+    <div className='flex justify-between items-center min-w-max p-4 gap-4 h-16'>
+      <div className='flex gap-6 h-6'>
+        <Link href='/'>
+          <Image
+            src={'/lore-genie-logo.svg'}
+            alt='Lore Genie'
+            width={175}
+            height={26}
+            className='items-baseline'
+          />
         </Link>
         {worldName && (
-          <div className='flex items-center ml-6 font-medium text-lore-blue'>
+          <div className='flex items-center font-medium text-[20px] text-lore-blue'>
             {worldName}
           </div>
         )}
       </div>
-      <div className='flex items-center text-lore-blue'>
-        <span className='material-icons-outlined m-2'>notifications</span>
-        <span className='material-icons-outlined m-2'>settings</span>
-        <div className='relative border border-black rounded-full h-5 w-5 m-2'>
-          <Image src={'/favicon.ico'} alt='' fill />
-        </div>
+      <div className='flex items-center text-lore-blue gap-4 h-8'>
         {session ? (
-          <button className='m-1' onClick={() => signOut()}>
+          <button onClick={() => signOut()}>
             Sign Out
           </button>
         ) : (
-          <button className='m-1' onClick={() => signIn()}>
+          <button onClick={() => signIn()}>
             Sign In
           </button>
         )}
+        <span className='material-icons-outlined'>notifications</span>
+        <span className='material-icons-outlined'>settings</span>
+        <div className='relative border border-black rounded-full h-8 w-8'>
+          <Image src={'/favicon.ico'} alt='' fill />
+        </div>
       </div>
     </div>
   );
