@@ -6,21 +6,6 @@ import { Collapse } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { MdLocationOn, MdOutlineLocationOn } from 'react-icons/md';
-import {
-  AiFillFolder,
-  AiOutlineFolder,
-  AiOutlinePlus,
-  AiOutlineMinus,
-  AiFillHome,
-  AiOutlineHome,
-} from 'react-icons/ai';
-import {
-  BsBookmarkStar,
-  BsBookmarkStarFill,
-  BsPerson,
-  BsPersonFill,
-} from 'react-icons/bs';
 
 type Props = {
   entries: Entry[];
@@ -110,7 +95,7 @@ const RecursiveEntries = ({
   if (campaign) {
     return (
       <>
-        <ul className='pl-[5px] m-2'>
+        <ul className='pl-[5px] m-2 mt-4'>
           <li className='flex justify-between items-center'>
             <Link
               className={`flex items-center ${
@@ -123,9 +108,9 @@ const RecursiveEntries = ({
               }}
             >
               {selected === campaign.id ? (
-                <AiFillFolder />
+                <span className='material-icons-'>folder</span>
               ) : (
-                <AiOutlineFolder />
+                <span className='material-icons-outlined'>folder</span>
               )}
               <div className='pl-2'>{campaign.name}</div>
             </Link>
@@ -136,7 +121,11 @@ const RecursiveEntries = ({
                 }`}
                 onClick={() => expandHandler(campaign.id, open, setOpen)}
               >
-                {open[campaign.id] ? <AiOutlineMinus /> : <AiOutlinePlus />}
+                {open[campaign.id] ? (
+                  <span className='material-icons'>remove</span>
+                ) : (
+                  <span className='material-icons'>add</span>
+                )}
               </div>
             )}
           </li>
@@ -159,8 +148,8 @@ const RecursiveEntries = ({
 
   return (
     <div className='flex'>
-      <div className='flex flex-col mb-[21px]'>
-        <div className='ml-[19px] bg-lore-beige w-[3px] h-full' />
+      <div className='flex flex-col mb-[20px]'>
+        <div className='ml-[23px] bg-lore-beige w-[3px] h-full' />
       </div>
       <ul className='flex flex-col w-full'>
         {entryHierarchy.map((entry: EntryHierarchy, index) => {
@@ -184,18 +173,32 @@ const RecursiveEntries = ({
                     }}
                   >
                     {entry.category === Category.NPC &&
-                      (selected === entry.id ? <BsPersonFill /> : <BsPerson />)}
+                      (selected === entry.id ? (
+                        <span className='material-icons'>person</span>
+                      ) : (
+                        <span className='material-icons-outlined'>person</span>
+                      ))}
                     {entry.category === Category.Location &&
                       (selected === entry.id ? (
-                        <MdLocationOn />
+                        <span className='material-icons'>location_on</span>
                       ) : (
-                        <MdOutlineLocationOn />
+                        <span className='material-icons-outlined'>
+                          location_on
+                        </span>
+                      ))}
+                    {entry.category === Category.Lore &&
+                      (selected === entry.id ? (
+                        <span className='material-icons'>history_edu</span>
+                      ) : (
+                        <span className='material-icons-outlined'>
+                          history_edu
+                        </span>
                       ))}
                     {entry.category === Category.Journal &&
                       (selected === entry.id ? (
-                        <BsBookmarkStarFill />
+                        <span className='material-icons'>class</span>
                       ) : (
-                        <BsBookmarkStar />
+                        <span className='material-icons-outlined'>class</span>
                       ))}
                     <div className='pl-2'>{entry.name}</div>
                   </Link>
@@ -208,7 +211,11 @@ const RecursiveEntries = ({
                       }`}
                       onClick={() => expandHandler(entry.id, open, setOpen)}
                     >
-                      {open[entry.id] ? <AiOutlineMinus /> : <AiOutlinePlus />}
+                      {open[entry.id] ? (
+                        <span className='material-icons'>remove</span>
+                      ) : (
+                        <span className='material-icons'>add</span>
+                      )}
                     </div>
                   )}
                 </li>
@@ -242,7 +249,7 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
   );
 
   return (
-    <div className='pr-2 font-medium'>
+    <div className='font-medium'>
       <ul className='pl-[5px] m-2'>
         <li>
           <Link
@@ -254,7 +261,11 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
               setSelected(world.id);
             }}
           >
-            {selected === world.id ? <AiFillHome /> : <AiOutlineHome />}
+            {selected === world.id ? (
+              <span className='material-icons'>home</span>
+            ) : (
+              <span className='material-icons-outlined'>home</span>
+            )}
             <div className='pl-2'>{world.name}</div>
           </Link>
         </li>

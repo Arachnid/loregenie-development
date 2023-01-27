@@ -4,6 +4,7 @@ import { Inter } from '@next/font/google';
 import HomePage from '@/components/HomePage';
 import { getWorlds } from '@/lib/db';
 import { World } from '@/types';
+import NavBar from '@/components/nav/NavBar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,5 +16,10 @@ export default async function Home() {
     worlds = await getWorlds(session?.user?.email as string);
   }
 
-  return <HomePage worlds={worlds} />;
+  return (
+    <>
+      <NavBar session={session} />
+      <HomePage worlds={worlds} />
+    </>
+  );
 }

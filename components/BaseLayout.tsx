@@ -14,7 +14,7 @@ export default function BaseLayout({ nav, children }: Props) {
         <div className='flex max-w-fit min-w-[300px]'>
           <nav className='flex w-full'>{nav}</nav>
         </div>
-        <div className='flex bg-white w-full ml-[3px]'>{children}</div>
+        <div className='flex w-full ml-[3px]'>{children}</div>
       </div>
     </div>
   );

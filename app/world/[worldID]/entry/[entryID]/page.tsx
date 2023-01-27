@@ -14,19 +14,17 @@ interface Props {
 export default async function EntryPage({ params }: Props) {
   const entry = await getEntry(params.worldID, params.entryID);
   const session: Session | null = await unstable_getServerSession(authOptions);
-  
+
   if (!entry || !session?.user?.email) {
     notFound();
   }
   const permissions = await getPermissions(params.worldID, session.user.email);
 
   return (
-    <div>
-      <ClientEntryPage
-        entry={entry}
-        worldID={params.worldID}
-        permissions={permissions}
-      />
-    </div>
+    <ClientEntryPage
+      entry={entry}
+      worldID={params.worldID}
+      permissions={permissions}
+    />
   );
 }
