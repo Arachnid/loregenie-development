@@ -10,13 +10,13 @@ interface Props {
 
 const ClientEntriesNav = ({ children, worldID, permissions }: Props) => {
   return (
-    <div className='flex flex-col h-full w-full'>
-      <div className='flex justify-between items-center bg-white p-4 mb-[3px] text-lore-blue font-light'>
+    <div className='flex justify-between flex-col h-full w-full'>
+      <div className='flex justify-between items-center bg-white px-4 py-[18px] mb-[2px] text-lore-blue'>
         <div>Search</div>
         <span className='material-icons-outlined'>search</span>
       </div>
       <div className='flex flex-col justify-between h-full bg-lore-light-beige'>
-        <div className='m-2'>{children}</div>
+        <div className='p-4 gap-4'>{children}</div>
         {permissions.includes('writer') && (
           <div>
             <Link href={`/world/${worldID}/entry/new`}>New Entry</Link>

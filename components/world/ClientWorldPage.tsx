@@ -30,20 +30,26 @@ const WorldPage = ({ world, permissions }: Props) => {
   };
   return (
     <div className='flex flex-col w-full h-full'>
-      <div className='flex justify-end items-center w-full h-14 bg-white mb-[3px]'>
-        <div className='flex mr-4'>
-        <div className='relative border border-black rounded-full h-5 w-5 ml-1'>
-          <Image src={'/favicon.ico'} alt='' fill />
+      <div className='flex justify-end items-center w-full py-2 px-4 bg-white mb-[2px]'>
+        <div className='flex items-center gap-4 h-11'>
+          <div className='flex items-center gap-2 h-8'>
+            <div className='relative border border-black rounded-full h-8 w-8'>
+              <Image src={'/favicon.ico'} alt='' fill />
+            </div>
+            <div className='relative border border-black rounded-full h-8 w-8'>
+              <Image src={'/favicon.ico'} alt='' fill />
+            </div>
+            <div className='relative border border-black rounded-full h-8 w-8'>
+              <Image src={'/favicon.ico'} alt='' fill />
+            </div>
+          </div>
+          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-beige text-lore-blue'>
+            Sharing
+          </button>
+          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-red bg-lore-red text-white'>
+            Save
+          </button>
         </div>
-        <div className='relative border border-black rounded-full h-5 w-5 ml-1'>
-          <Image src={'/favicon.ico'} alt='' fill />
-        </div>
-        <div className='relative border border-black rounded-full h-5 w-5 ml-1'>
-          <Image src={'/favicon.ico'} alt='' fill />
-        </div>
-        </div>
-        <button className='p-2 mr-4 w-20 rounded-lg border-2 text-sm font-medium border-lore-beige text-lore-blue'>Sharing</button>
-        <button className='p-2 mr-4 w-20 rounded-lg border-2 text-sm font-medium border-lore-red bg-lore-red text-white'>Save</button>
       </div>
       <div className='flex flex-col bg-white'>
         <div className='relative'>
