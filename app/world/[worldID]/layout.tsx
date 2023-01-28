@@ -3,7 +3,6 @@ import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import EntriesNav from '@/components/nav/EntriesNav';
 import { notFound } from 'next/navigation';
-import NavBar from '@/components/nav/NavBar';
 import { getWorld } from '@/lib/db';
 import { World } from '@/types';
 
@@ -26,7 +25,6 @@ export default async function Layout({ children, params }: Props) {
 
   return (
     <>
-      <NavBar session={session} worldName={world?.name} />
       <BaseLayout
         nav={
           <EntriesNav
@@ -34,6 +32,8 @@ export default async function Layout({ children, params }: Props) {
             email={session?.user?.email as string}
           />
         }
+        session={session}
+        worldName={world?.name}
       >
         {children}
       </BaseLayout>

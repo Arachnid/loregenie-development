@@ -53,9 +53,11 @@ const ClientEntryPage = ({ entry, worldID, permissions }: Props) => {
           </button>
         </div>
       </div>
-      <div className='flex flex-col bg-white'>
+      <div className='flex flex-col h-full bg-white py-6 px-16 gap-10 isolate overflow-y-scroll'>
         <h1>name: {entry.name}</h1>
-        <div>description: {entry.description}</div>
+        <div className=''>
+          Lorem ipsum, dolor sit amet consectetur asdas wadasdsd dwsdsd awasdsd wasdasd wdasdsds
+        </div>
         <div>image: {entry.image}</div>
         {entry.parent && <div>parent: {entry.parent.name}</div>}
         <div>visibility: {entry.public ? 'public' : 'private'}</div>
