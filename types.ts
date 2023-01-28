@@ -2,6 +2,7 @@ export interface World {
   readonly id: string;
   name: string;
   description: string;
+  image: string;
   readers: string[];
   writers: string[];
   admins: string[];

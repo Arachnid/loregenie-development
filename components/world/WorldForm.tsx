@@ -23,6 +23,7 @@ const createNewWorld = (sessionEmail: string): WorldForm => {
   return {
     name: '',
     description: '',
+    image: '',
     readers: [sessionEmail],
     writers: [sessionEmail],
     admins: [sessionEmail],

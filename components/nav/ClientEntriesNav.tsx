@@ -10,7 +10,7 @@ interface Props {
 
 const ClientEntriesNav = ({ children, worldID, permissions }: Props) => {
   return (
-    <div className='flex justify-between flex-col h-full w-full'>
+    <div className='flex flex-col w-full'>
       <div className='flex justify-between items-center bg-white px-4 py-[18px] mb-[2px] text-lore-blue'>
         <div>Search</div>
         <span className='material-icons-outlined'>search</span>
