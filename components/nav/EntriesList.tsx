@@ -294,7 +294,7 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
   );
 
   return (
-    <div className='font-medium text-[16px]'>
+    <div className='font-medium text-[16px] mb-24'>
       <div className='flex'>
         <ul className='flex flex-col w-full'>
           <div className='flex items-center h-9 gap-2 p-2'>
@@ -324,20 +324,20 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
         </ul>
       </div>
       <div className='mt-3'>
-      {campaigns.map((campaign, index) => (
-        <div key={index}>
-          <RecursiveEntries
-            entries={campaign.entries}
-            entryHierarchy={createEntryHierarchy(campaign.entries)}
-            world={world}
-            selected={selected}
-            setSelected={setSelected}
-            campaign={campaign}
-            campaignID={campaign.id}
-            iteration={2}
-          />
-        </div>
-      ))}
+        {campaigns.map((campaign, index) => (
+          <div key={index}>
+            <RecursiveEntries
+              entries={campaign.entries}
+              entryHierarchy={createEntryHierarchy(campaign.entries)}
+              world={world}
+              selected={selected}
+              setSelected={setSelected}
+              campaign={campaign}
+              campaignID={campaign.id}
+              iteration={2}
+            />
+          </div>
+        ))}
       </div>
       <div className='mt-4'>
         <RecursiveEntries

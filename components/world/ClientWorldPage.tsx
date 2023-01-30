@@ -1,11 +1,11 @@
 'use client';
 
 import { World } from '@/types';
-import Button from '@mui/material/Button';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import AlertDialog from '../AlertDialog';
+import AlertDialog from '@/components/AlertDialog';
+import PageHeader from '@/components/PageHeader';
+import ReactMarkdown from 'react-markdown';
 
 type Props = {
   world: World;
@@ -29,62 +29,30 @@ const WorldPage = ({ world, permissions }: Props) => {
     }
   };
   return (
-    <div className='flex flex-col w-full h-full'>
-      <div className='flex justify-end items-center w-full py-2 px-4 bg-white mb-[2px] min-w-max'>
-        <div className='flex items-center gap-4 h-11'>
-          <div className='flex items-center gap-2 h-8'>
-            <img
-              className='relative rounded-full h-8 w-8'
-              src={'/favicon.ico'}
-              alt=''
-            />
-            <img
-              className='relative rounded-full h-8 w-8'
-              src={'/favicon.ico'}
-              alt=''
-            />
-            <img
-              className='relative rounded-full h-8 w-8'
-              src={'/favicon.ico'}
-              alt=''
-            />
+    <div className='flex flex-col w-full h-full mb-12'>
+      <PageHeader />
+      <div className='flex flex-col grow items-start bg-white py-6 px-16 gap-10 isolate overflow-y-scroll scrollbar-hide'>
+        <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl'>
+          <img
+            className='h-full w-full object-cover rounded-lg'
+            src='/eryndor.svg'
+            alt=''
+          />
+          <div className='flex justify-center items-center p-3 gap-2 absolute w-11 h-11 right-4 bottom-4 bg-lore-red rounded-full'>
+            <span className='text-[20px] text-white material-icons'>
+              more_vert
+            </span>
           </div>
-          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-beige text-lore-blue'>
-            Sharing
-          </button>
-          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-red bg-lore-red text-white'>
-            Save
-          </button>
         </div>
-      </div>
-      <div className='flex flex-col bg-white'>
-        <div className='relative'>
-          <Image src={''} alt='' />
-        </div>
-        <h1>{world.name}</h1>
-        <div>{world.description}</div>
-        <div>admins: {world.admins.join(', ')}</div>
-        <div>writers: {world.writers.join(', ')}</div>
-        <div>readers: {world.readers.join(', ')}</div>
-        <div>visibility: {world.public ? 'public' : 'private'}</div>
+        <h1 className='text-[40px] font-bold'>{world.name}</h1>
+        <ReactMarkdown>{world.description}</ReactMarkdown>
         {permissions.includes('writer') && (
-          <Button
-            variant='contained'
-            sx={{ margin: '8px' }}
-            onClick={() => router.push(`/world/${world.id}/edit`)}
-          >
+          <button onClick={() => router.push(`/world/${world.id}/edit`)}>
             Edit World
-          </Button>
+          </button>
         )}
         {permissions.includes('admin') && (
-          <Button
-            variant='contained'
-            color='error'
-            sx={{ margin: '8px' }}
-            onClick={() => setAlertOpen(true)}
-          >
-            Delete World
-          </Button>
+          <button onClick={() => setAlertOpen(true)}>Delete World</button>
         )}
         {alertOpen && (
           <AlertDialog

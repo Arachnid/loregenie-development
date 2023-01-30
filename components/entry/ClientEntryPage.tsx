@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import AlertDialog from '@/components/AlertDialog';
+import PageHeader from '@/components/PageHeader';
 
 interface Props {
   entry: Entry;
@@ -35,21 +36,7 @@ const ClientEntryPage = ({ entry, world, permissions }: Props) => {
 
   return (
     <div className='flex flex-col w-full h-full mb-12'>
-      <div className='flex justify-end items-center w-full py-2 px-4 bg-white mb-[2px]'>
-        <div className='flex items-center gap-4 h-11'>
-          <div className='flex items-center gap-2 h-8'>
-            <img className='rounded-full h-8 w-8' src='/favicon.ico' alt='' />
-            <img className='rounded-full h-8 w-8' src='/favicon.ico' alt='' />
-            <img className='rounded-full h-8 w-8' src='/favicon.ico' alt='' />
-          </div>
-          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-beige text-lore-blue'>
-            Sharing
-          </button>
-          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-red bg-lore-red text-white'>
-            Save
-          </button>
-        </div>
-      </div>
+      <PageHeader />
       <div className='flex flex-col items-start h-full bg-white py-6 px-16 gap-10 isolate overflow-y-scroll scrollbar-hide'>
         <div className='flex items-start self-stretch gap-6 h-[170px] min-w-max'>
           <div className='flex flex-col grow items-start p-6 gap-4 bg-lore-light-beige rounded-lg'>
@@ -82,23 +69,20 @@ const ClientEntryPage = ({ entry, world, permissions }: Props) => {
         </div>
         <h1 className='text-[40px] font-bold'>{entry.name}</h1>
         <ReactMarkdown className='markdown'>{entry.description}</ReactMarkdown>
-        <div className='flex'>
-          {permissions.includes('writer') && (
-            <button
-              onClick={() =>
-                router.push(`/world/${world.id}/entry/${entry.id}/edit`)
-              }
-            >
-              Edit {entry.category}
-            </button>
-          )}
-          {permissions.includes('admin') && (
-            <button onClick={() => setAlertOpen(true)}>
-              Delete {entry.category}
-            </button>
-          )}
-        </div>
-        <div>visibility: {entry.public ? 'public' : 'private'}</div>
+        {permissions.includes('writer') && (
+          <button
+            onClick={() =>
+              router.push(`/world/${world.id}/entry/${entry.id}/edit`)
+            }
+          >
+            Edit {entry.category}
+          </button>
+        )}
+        {permissions.includes('admin') && (
+          <button onClick={() => setAlertOpen(true)}>
+            Delete {entry.category}
+          </button>
+        )}
         {alertOpen && (
           <AlertDialog
             title={`Delete ${entry.name}?`}
