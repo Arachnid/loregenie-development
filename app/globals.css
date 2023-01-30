@@ -3,3 +3,7 @@
 @tailwind utilities;
 
 @import 'material-icons/iconfont/material-icons.css';
+
+.markdown > * {
+  all: revert;
+}
