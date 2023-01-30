@@ -1,19 +1,18 @@
 'use client';
 
-import { Entry } from '@/types';
-import Button from '@mui/material/Button';
-import Image from 'next/image';
+import { Entry, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import AlertDialog from '../AlertDialog';
+import ReactMarkdown from 'react-markdown';
+import AlertDialog from '@/components/AlertDialog';
 
 interface Props {
   entry: Entry;
-  worldID: string;
+  world: World;
   permissions: string[];
 }
 
-const ClientEntryPage = ({ entry, worldID, permissions }: Props) => {
+const ClientEntryPage = ({ entry, world, permissions }: Props) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const router = useRouter();
 
@@ -21,9 +20,13 @@ const ClientEntryPage = ({ entry, worldID, permissions }: Props) => {
     try {
       await fetch('/api/entry/delete', {
         method: 'POST',
-        body: JSON.stringify({ entryID: entry.id, worldID, permissions }),
+        body: JSON.stringify({
+          entryID: entry.id,
+          worldID: world.id,
+          permissions,
+        }),
       });
-      router.push(`/world/${worldID}`);
+      router.push(`/world/${world.id}`);
       router.refresh();
     } catch (error) {
       console.log('error deleting entry: ', error);
@@ -31,19 +34,13 @@ const ClientEntryPage = ({ entry, worldID, permissions }: Props) => {
   };
 
   return (
-    <div className='flex flex-col w-full h-full'>
+    <div className='flex flex-col w-full h-full mb-12'>
       <div className='flex justify-end items-center w-full py-2 px-4 bg-white mb-[2px]'>
         <div className='flex items-center gap-4 h-11'>
           <div className='flex items-center gap-2 h-8'>
-            <div className='relative border border-black rounded-full h-8 w-8'>
-              <Image src={'/favicon.ico'} alt='' fill />
-            </div>
-            <div className='relative border border-black rounded-full h-8 w-8'>
-              <Image src={'/favicon.ico'} alt='' fill />
-            </div>
-            <div className='relative border border-black rounded-full h-8 w-8'>
-              <Image src={'/favicon.ico'} alt='' fill />
-            </div>
+            <img className='rounded-full h-8 w-8' src='/favicon.ico' alt='' />
+            <img className='rounded-full h-8 w-8' src='/favicon.ico' alt='' />
+            <img className='rounded-full h-8 w-8' src='/favicon.ico' alt='' />
           </div>
           <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-beige text-lore-blue'>
             Sharing
@@ -53,35 +50,55 @@ const ClientEntryPage = ({ entry, worldID, permissions }: Props) => {
           </button>
         </div>
       </div>
-      <div className='flex flex-col h-full bg-white py-6 px-16 gap-10 isolate overflow-y-scroll'>
-        <h1>name: {entry.name}</h1>
-        <div className=''>
-          Lorem ipsum, dolor sit amet consectetur asdas wadasdsd dwsdsd awasdsd wasdasd wdasdsds
+      <div className='flex flex-col items-start h-full bg-white py-6 px-16 gap-10 isolate overflow-y-scroll scrollbar-hide'>
+        <div className='flex items-start self-stretch gap-6 h-[170px] min-w-max'>
+          <div className='flex flex-col grow items-start p-6 gap-4 bg-lore-light-beige rounded-lg'>
+            <div className='flex items-center gap-4 self-stretch'>
+              <div className='font-medium w-[54px]'>Parent</div>
+              <div className='flex grow justify-center items-center h-11 py-3 px-4 gap-2 bg-white rounded-lg'>
+                <div className='grow'>
+                  {entry.parent?.name ? entry.parent.name : world.name}
+                </div>
+                <span className='text-[20px] material-icons'>expand_more</span>
+              </div>
+            </div>
+            <div className='bg-lore-beige h-[2px] self-stretch' />
+            <div className='flex items-center gap-4 self-stretch'>
+              <div className='font-medium w-[54px]'>Type</div>
+              <div className='flex grow justify-center items-center h-11 py-3 px-4 gap-2 bg-white rounded-lg'>
+                <div className='grow'>{entry.category}</div>
+                <span className='text-[20px] material-icons'>expand_more</span>
+              </div>
+            </div>
+          </div>
+          <div className='relative w-[170px] h-full rounded-lg'>
+            <div className='flex justify-center items-center p-3 gap-2 absolute w-11 h-11 right-2 bottom-2 bg-lore-red rounded-full'>
+              <span className='text-[20px] text-white material-icons'>
+                more_vert
+              </span>
+            </div>
+            <img className='w-full h-full' src='/drogon.svg' alt='' />
+          </div>
         </div>
-        <div>image: {entry.image}</div>
-        {entry.parent && <div>parent: {entry.parent.name}</div>}
+        <h1 className='text-[40px] font-bold'>{entry.name}</h1>
+        <ReactMarkdown className='markdown'>{entry.description}</ReactMarkdown>
+        <div className='flex'>
+          {permissions.includes('writer') && (
+            <button
+              onClick={() =>
+                router.push(`/world/${world.id}/entry/${entry.id}/edit`)
+              }
+            >
+              Edit {entry.category}
+            </button>
+          )}
+          {permissions.includes('admin') && (
+            <button onClick={() => setAlertOpen(true)}>
+              Delete {entry.category}
+            </button>
+          )}
+        </div>
         <div>visibility: {entry.public ? 'public' : 'private'}</div>
-        {permissions.includes('writer') && (
-          <Button
-            variant='contained'
-            sx={{ margin: 1 }}
-            onClick={() =>
-              router.push(`/world/${worldID}/entry/${entry.id}/edit`)
-            }
-          >
-            Edit {entry.category}
-          </Button>
-        )}
-        {permissions.includes('admin') && (
-          <Button
-            variant='contained'
-            sx={{ margin: 1 }}
-            color='error'
-            onClick={() => setAlertOpen(true)}
-          >
-            Delete {entry.category}
-          </Button>
-        )}
         {alertOpen && (
           <AlertDialog
             title={`Delete ${entry.name}?`}

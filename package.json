@@ -27,6 +27,8 @@
     "next-auth": "^4.18.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-markdown": "^8.0.5",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "typescript": "4.9.4"
   },
   "devDependencies": {
