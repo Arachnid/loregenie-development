@@ -15,7 +15,7 @@ const ClientEntriesNav = ({ children, worldID, permissions }: Props) => {
         <div>Search</div>
         <span className='material-icons-outlined'>search</span>
       </div>
-      <div className='flex flex-col h-full bg-lore-light-beige overflow-y-scroll scrollbar-hide mb-16'>
+      <div className='flex flex-col h-full bg-lore-light-beige overflow-y-scroll scrollbar-hide'>
         <div className='p-4 gap-4'>{children}</div>
         <div className='absolute bottom-0'>
           {permissions.includes('writer') && (
