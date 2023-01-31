@@ -16,6 +16,7 @@ module.exports = {
     },
     fontFamily: {
       sans: ['"Helvetica Neue"'],
+      cinzel: ['Cinzel'],
     },
   },
   darkMode: 'class',
