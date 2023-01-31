@@ -13,12 +13,12 @@ type Props = {
 const NavBar = ({ session, worldName }: Props) => {
   return (
       <div className='flex justify-between items-center min-w-max p-4 gap-4 h-16'>
-        <div className='flex gap-6 items-end'>
-          <Link href='/'>
+        <div className='flex gap-6 h-6 items-center'>
+          <Link className='h-5' href='/'>
             <img src={'/lore-genie-logo.svg'} alt='Lore Genie' />
           </Link>
           {worldName && (
-            <div className='flex items-center font-medium text-[20px] text-lore-blue'>
+            <div className='self-center font-medium text-[20px] leading-6 text-lore-blue'>
               {worldName}
             </div>
           )}

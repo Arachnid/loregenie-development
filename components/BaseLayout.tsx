@@ -20,7 +20,7 @@ export default function BaseLayout({
   return (
     <div className='flex flex-col h-screen overflow-hidden'>
       <NavBar session={session} worldName={worldName} />
-      <div className='flex h-full'>
+      <div className='flex h-full overflow-hidden'>
         <div className='flex max-w-fit w-full min-w-[320px]'>
           <nav className='flex w-full'>{nav}</nav>
         </div>
