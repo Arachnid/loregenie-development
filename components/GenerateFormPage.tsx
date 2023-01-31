@@ -19,7 +19,7 @@ const GenerateFormPage = ({ worldID, permissions }: Props) => {
   const router = useRouter();
 
   return (
-    <div className='flex flex-col grow justify-center items-center bg-white py-6 px-16 gap-10 isolate overflow-y-scroll'>
+    <div className='flex flex-col grow justify-center items-center bg-white py-6 px-16 gap-10 isolate overflow-y-scroll scrollbar-hide'>
       <div className='flex flex-col pt-20 gap-10 w-[640px]'>
         <div className='relative flex flex-col p-10 gap-8 isolate bg-lore-light-beige rounded-2xl self-stretch'>
           <img

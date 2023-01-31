@@ -1,20 +1,56 @@
 'use client';
 
-import { Entry, World } from '@/types';
+import { Category, Entry, EntryHierarchy, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import AlertDialog from '@/components/AlertDialog';
 import PageHeader from '@/components/PageHeader';
+import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
 interface Props {
-  entry: Entry;
+  currentEntry: Entry;
   world: World;
+  entries: Entry[];
   permissions: string[];
 }
 
-const ClientEntryPage = ({ entry, world, permissions }: Props) => {
+const getIcon = (category: Category): JSX.Element => {
+  switch (category) {
+    case 'Location':
+      return (
+        <span className='text-[20px] material-icons-outlined'>location_on</span>
+      );
+    case 'NPC':
+      return (
+        <span className='text-[20px] material-icons-outlined'>person</span>
+      );
+    case 'Lore':
+      return (
+        <span className='text-[20px] material-icons-outlined'>history_edu</span>
+      );
+    case 'Journal':
+      return <span className='text-[20px] material-icons-outlined'>class</span>;
+    default:
+      return (
+        <span className='text-[20px] material-icons-outlined'>
+          question_mark
+        </span>
+      );
+  }
+};
+
+const ClientEntryPage = ({
+  currentEntry,
+  world,
+  entries,
+  permissions,
+}: Props) => {
   const [alertOpen, setAlertOpen] = useState(false);
+  const [parentDropDownOpen, setParentDropDownOpen] = useState(false);
+  const [parentField, setParentField] = useState(
+    currentEntry.parent?.name ? currentEntry.parent.name : world.name
+  );
   const router = useRouter();
 
   const onDelete = async () => {
@@ -22,7 +58,7 @@ const ClientEntryPage = ({ entry, world, permissions }: Props) => {
       await fetch('/api/entry/delete', {
         method: 'POST',
         body: JSON.stringify({
-          entryID: entry.id,
+          entryID: currentEntry.id,
           worldID: world.id,
           permissions,
         }),
@@ -34,6 +70,28 @@ const ClientEntryPage = ({ entry, world, permissions }: Props) => {
     }
   };
 
+  const getParents = (entries: Entry[]): EntryHierarchy[] => {
+    const result: EntryHierarchy[] = [];
+    const parentHierarchy: EntryHierarchy[] = createEntryHierarchy(entries);
+
+    const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
+      entriesHierarchy.map((entry: EntryHierarchy) => {
+        if (
+          entry.id !== currentEntry?.id &&
+          entry.category === Category.Location
+        ) {
+          if (entry.children) {
+            result.push(entry);
+            return recursiveEntryHierarchy(entry.children);
+          }
+          result.push(entry);
+        }
+      });
+    };
+    recursiveEntryHierarchy(parentHierarchy);
+    return result;
+  };
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader />
@@ -42,18 +100,63 @@ const ClientEntryPage = ({ entry, world, permissions }: Props) => {
           <div className='flex flex-col grow items-start p-6 gap-4 bg-lore-light-beige rounded-lg'>
             <div className='flex items-center gap-4 self-stretch'>
               <div className='font-medium w-[54px]'>Parent</div>
-              <div className='flex grow justify-center items-center h-11 py-3 px-4 gap-2 bg-white rounded-lg'>
-                <div className='grow'>
-                  {entry.parent?.name ? entry.parent.name : world.name}
-                </div>
-                <span className='text-[20px] material-icons'>expand_more</span>
+              <div className='relative flex flex-col items-center gap-4 self-stretch w-full'>
+                <button
+                  className='flex w-full justify-center items-center h-11 py-3 px-4 gap-2 bg-white rounded-lg cursor-pointer'
+                  onClick={() => setParentDropDownOpen(!parentDropDownOpen)}
+                >
+                  <div className='flex grow'>{parentField}</div>
+                  <span className='text-[20px] material-icons'>
+                    expand_more
+                  </span>
+                </button>
+                {parentDropDownOpen && (
+                  <div className='absolute flex flex-col w-full bg-white border-2 border-lore-beige rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'>
+                    <div className='flex justify-center items-center py-3 px-4 self-stretch border-b-2 border-lore-beige'>
+                      <div className='font-light leading-5 grow'>Search</div>
+                      <span className='text-[20px] material-icons'>search</span>
+                    </div>
+                    <div className='flex flex-col p-2 self-stretch grow overflow-y-scroll scrollbar-hide'>
+                      <div className='flex flex-col self-stretch grow text-lore-blue'>
+                        <button
+                          className='flex items-center p-2 gap-2 self-stretch'
+                          onClick={() => {
+                            setParentField(world.name);
+                            setParentDropDownOpen(false);
+                          }}
+                        >
+                          <span className='text-[20px] material-icons-outlined'>
+                            home
+                          </span>
+                          <div className='flex font-medium leading-5 grow'>
+                            {world.name}
+                          </div>
+                        </button>
+                        {getParents(entries).map((entry) => (
+                          <button
+                            className='flex items-center p-2 gap-2 self-stretch'
+                            onClick={() => {
+                              setParentField(entry.name);
+                              setParentDropDownOpen(false);
+                            }}
+                          >
+                            {getIcon(entry.category)}
+                            <div className='flex font-medium leading-5 grow'>
+                              {entry.name}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <div className='bg-lore-beige h-[2px] self-stretch' />
             <div className='flex items-center gap-4 self-stretch'>
               <div className='font-medium w-[54px]'>Type</div>
               <div className='flex grow justify-center items-center h-11 py-3 px-4 gap-2 bg-white rounded-lg'>
-                <div className='grow'>{entry.category}</div>
+                <div className='grow'>{currentEntry.category}</div>
                 <span className='text-[20px] material-icons'>expand_more</span>
               </div>
             </div>
@@ -67,25 +170,27 @@ const ClientEntryPage = ({ entry, world, permissions }: Props) => {
             <img className='w-full h-full' src='/drogon.svg' alt='' />
           </div>
         </div>
-        <h1 className='text-[40px] font-bold'>{entry.name}</h1>
-        <ReactMarkdown className='markdown'>{entry.description}</ReactMarkdown>
+        <h1 className='text-[40px] font-bold'>{currentEntry.name}</h1>
+        <ReactMarkdown className='markdown'>
+          {currentEntry.description}
+        </ReactMarkdown>
         {permissions.includes('writer') && (
           <button
             onClick={() =>
-              router.push(`/world/${world.id}/entry/${entry.id}/edit`)
+              router.push(`/world/${world.id}/entry/${currentEntry.id}/edit`)
             }
           >
-            Edit {entry.category}
+            Edit {currentEntry.category}
           </button>
         )}
         {permissions.includes('admin') && (
           <button onClick={() => setAlertOpen(true)}>
-            Delete {entry.category}
+            Delete {currentEntry.category}
           </button>
         )}
         {alertOpen && (
           <AlertDialog
-            title={`Delete ${entry.name}?`}
+            title={`Delete ${currentEntry.name}?`}
             alertOpen={alertOpen}
             setAlertOpen={setAlertOpen}
             action={onDelete}
