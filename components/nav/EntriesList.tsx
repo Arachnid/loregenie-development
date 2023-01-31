@@ -294,7 +294,7 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
   );
 
   return (
-    <div className='font-medium text-[16px] mb-24'>
+    <div className='font-medium text-[16px]'>
       <div className='flex'>
         <ul className='flex flex-col w-full'>
           <div className='flex items-center h-9 gap-2 p-2'>
