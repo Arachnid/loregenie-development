@@ -4,7 +4,9 @@
 
 - Create Firebase project
 - Generate your Firebase Admin SDK Private Key
-- Save your ```private-key.json``` into ```/node_modules```
+- Store the Private Key JSON file in the project
+- Set the env ```GOOGLE_SERVICE_ACCOUNT``` to the file path of the key. For example, ```GOOGLE_SERVICE_ACCOUNT='./private-key.json'```
+- (Make sure your private key is in the .gitignore if the project is public)
 
 ## Firebase Local Emulator
 
@@ -31,7 +33,7 @@
 - create a ```.env.local``` file
 - env file template example:
 ```
-GOOGLE_SERVICE_ACCOUNT='./node_modules/private-key.json'
+GOOGLE_SERVICE_ACCOUNT='./private-key.json'
 DISCORD_CLIENT_ID='discord-client-id'
 DISCORD_CLIENT_SECRET='dicord-client-secret'
 TWITCH_CLIENT_ID='twitch-client-id'

@@ -43,3 +43,4 @@ firebase-debug.log
 firestore-debug.log
 ui-debug.log
 /exported-firebase-data
+firebase-private-key.json

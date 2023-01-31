@@ -18,7 +18,7 @@ export default function BaseLayout({
   children,
 }: Props) {
   return (
-    <div className='flex flex-col h-screen overflow-hidden'>
+    <div className='flex flex-col h-screen'>
       <NavBar session={session} worldName={worldName} />
       <div className='flex h-full overflow-hidden'>
         <div className='flex max-w-fit w-full min-w-[320px]'>

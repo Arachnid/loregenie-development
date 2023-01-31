@@ -9,7 +9,7 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <head />
-      <body className='bg-lore-beige'>
+      <body className='bg-lore-beige tracking-wide'>
         {children}
       </body>
     </html>
