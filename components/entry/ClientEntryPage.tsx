@@ -2,11 +2,12 @@
 
 import { Category, Entry, EntryHierarchy, World } from '@/types';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import AlertDialog from '@/components/AlertDialog';
 import PageHeader from '@/components/PageHeader';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
+import { getIcon } from '@/utils/getIcon';
 
 interface Props {
   currentEntry: Entry;
@@ -14,31 +15,6 @@ interface Props {
   entries: Entry[];
   permissions: string[];
 }
-
-const getIcon = (category: Category): JSX.Element => {
-  switch (category) {
-    case 'Location':
-      return (
-        <span className='text-[20px] material-icons-outlined'>location_on</span>
-      );
-    case 'NPC':
-      return (
-        <span className='text-[20px] material-icons-outlined'>person</span>
-      );
-    case 'Lore':
-      return (
-        <span className='text-[20px] material-icons-outlined'>history_edu</span>
-      );
-    case 'Journal':
-      return <span className='text-[20px] material-icons-outlined'>class</span>;
-    default:
-      return (
-        <span className='text-[20px] material-icons-outlined'>
-          question_mark
-        </span>
-      );
-  }
-};
 
 const ClientEntryPage = ({
   currentEntry,
@@ -52,6 +28,24 @@ const ClientEntryPage = ({
     currentEntry.parent?.name ? currentEntry.parent.name : world.name
   );
   const router = useRouter();
+  const parentDropDownRef = useRef();
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClicks);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClicks);
+    };
+  }, [parentDropDownOpen]);
+
+  const handleOutsideClicks = (event) => {
+    if (
+      parentDropDownOpen &&
+      parentDropDownRef.current &&
+      !parentDropDownRef.current.contains(event.target)
+    ) {
+      setParentDropDownOpen(false);
+    }
+  };
 
   const onDelete = async () => {
     try {
@@ -111,7 +105,7 @@ const ClientEntryPage = ({
                   </span>
                 </button>
                 {parentDropDownOpen && (
-                  <div className='absolute flex flex-col w-full bg-white border-2 border-lore-beige rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'>
+                  <div ref={parentDropDownRef} className='absolute flex flex-col w-full bg-white border-2 border-lore-beige rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'>
                     <div className='flex justify-center items-center py-3 px-4 self-stretch border-b-2 border-lore-beige'>
                       <div className='font-light leading-5 grow'>Search</div>
                       <span className='text-[20px] material-icons'>search</span>
@@ -125,9 +119,10 @@ const ClientEntryPage = ({
                             setParentDropDownOpen(false);
                           }}
                         >
-                          <span className='text-[20px] material-icons-outlined'>
-                            home
-                          </span>
+                          {getIcon(
+                            'Home',
+                            'material-icons-outlined text-[20px]'
+                          )}
                           <div className='flex font-medium leading-5 grow'>
                             {world.name}
                           </div>
@@ -140,7 +135,10 @@ const ClientEntryPage = ({
                               setParentDropDownOpen(false);
                             }}
                           >
-                            {getIcon(entry.category)}
+                            {getIcon(
+                              entry.category,
+                              'material-icons-outlined text-[20px]'
+                            )}
                             <div className='flex font-medium leading-5 grow'>
                               {entry.name}
                             </div>
