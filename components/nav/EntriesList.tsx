@@ -2,6 +2,7 @@
 
 import { Campaign, Category, Entry, EntryHierarchy, World } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
+import { getActiveID } from '@/utils/getActiveID';
 import { Collapse } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -24,21 +25,6 @@ const expandHandler = (
 ) => {
   const newOpen: Open = Object.assign({}, open, { [id]: !open[id] });
   setOpen(newOpen);
-};
-
-const getActiveEntryID = (pathname: string | null): string | undefined => {
-  const idAfterLastSlash = '([^/]+$)';
-  let activeID: string;
-
-  if (pathname) {
-    const regex: RegExpMatchArray | null = pathname.match(idAfterLastSlash);
-    if (regex !== null) {
-      activeID = regex[0];
-      return activeID;
-    }
-  }
-
-  return undefined;
 };
 
 const RecursiveEntries = ({
@@ -290,7 +276,7 @@ const RecursiveEntries = ({
 const EntriesList = ({ entries, campaigns, world }: Props) => {
   const pathname = usePathname();
   const [selected, setSelected] = useState<string | undefined>(
-    getActiveEntryID(pathname)
+    getActiveID(pathname)
   );
 
   return (
