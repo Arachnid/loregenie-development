@@ -105,7 +105,7 @@ const RecursiveEntries = ({
                     folder
                   </span>
                 )}
-                <div className=''>{campaign.name}</div>
+                <p>{campaign.name}</p>
               </Link>
               {campaign.entries && campaign.entries.length > 0 && (
                 <div
@@ -226,7 +226,7 @@ const RecursiveEntries = ({
                           class
                         </span>
                       ))}
-                    <div className='w-max'>{entry.name}</div>
+                    <p className='w-max'>{entry.name}</p>
                   </Link>
                   {entry.children && entry.children.length > 0 && (
                     <div
@@ -303,7 +303,7 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
                     home
                   </span>
                 )}
-                <div className=''>{world.name}</div>
+                <p>{world.name}</p>
               </Link>
             </li>
           </div>
