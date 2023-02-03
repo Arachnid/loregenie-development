@@ -18,12 +18,12 @@ const NavBar = ({ session, worldName }: Props) => {
             <img src={'/lore-genie-logo.svg'} alt='Lore Genie' />
           </Link>
           {worldName && (
-            <h2 className='self-center font-medium text-[20px] leading-6 text-lore-blue'>
+            <h2 className='self-center font-medium text-[20px] leading-6 text-lore-blue-400'>
               {worldName}
             </h2>
           )}
         </div>
-        <div className='flex items-center text-lore-blue gap-4 h-8'>
+        <div className='flex items-center text-lore-blue-400 gap-4 h-8'>
           {session ? (
             <button onClick={() => signOut()}>Sign Out</button>
           ) : (

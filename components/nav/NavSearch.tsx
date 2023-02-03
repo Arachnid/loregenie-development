@@ -80,9 +80,9 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
 
   return (
     <>
-      <div className='flex justify-between items-center bg-white py-[18px] px-4 gap-2 self-stretch mb-[2px] text-lore-blue'>
+      <div className='flex justify-between items-center bg-white py-[18px] px-4 gap-2 self-stretch mb-[2px] text-lore-blue-400'>
         <input
-          className='grow leading-5 placeholder:text-lore-blue focus-visible:outline-none'
+          className='leading-5 grow placeholder:text-lore-blue-400 focus-visible:outline-none'
           placeholder='Search'
           type='search'
           autoComplete='off'
@@ -91,21 +91,21 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
         />
         {searchValue ? (
           <span
-            className='material-icons cursor-pointer'
+            className='cursor-pointer material-icons'
             onClick={() => setSearchValue('')}
           >
             close
           </span>
         ) : (
-          <span className='material-icons-outlined'>search</span>
+          <span className='cursor-default material-icons-outlined'>search</span>
         )}
       </div>
       {searchValue ? (
-        <div className='bg-lore-light-beige p-4 gap-4 text-lore-blue overflow-y-scroll scrollbar-hide h-full'>
+        <div className='h-full gap-4 p-4 overflow-y-scroll bg-lore-beige-400 text-lore-blue-400 scrollbar-hide'>
           {filteredSearch.map((element) => (
             <button
               className={`flex items-center p-2  gap-2 self-stretch ${
-                element.id === activeID && 'text-lore-red'
+                element.id === activeID && 'text-lore-red-400'
               }`}
               onClick={() => router.push(element.url)}
             >
@@ -117,7 +117,7 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
           ))}
         </div>
       ) : (
-        <div className='bg-lore-light-beige p-4 gap-4 overflow-y-scroll scrollbar-hide h-full'>
+        <div className='h-full gap-4 p-4 overflow-y-scroll bg-lore-beige-400 scrollbar-hide'>
           {children}
         </div>
       )}

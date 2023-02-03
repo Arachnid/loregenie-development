@@ -5,6 +5,7 @@ import { Category, Entry, EntryHierarchy, World } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, RefObject, SetStateAction } from 'react';
+import EntriesList from '../nav/EntriesList';
 
 type Props = {
   world: World;
@@ -48,17 +49,17 @@ const ParentDropDown = ({
 
   return (
     <div
-      className='absolute flex flex-col w-full bg-white border-2 border-lore-beige rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'
+      className='absolute flex flex-col w-full bg-white border-2 border-lore-beige-500 rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'
       ref={parentDropDownRef}
     >
-      <div className='flex justify-center items-center py-3 px-4 self-stretch border-b-2 border-lore-beige'>
+      <div className='flex items-center self-stretch justify-center px-4 py-3 border-b-2 border-lore-beige-500'>
         <p className='font-light leading-5 grow'>Search</p>
         <span className='text-[20px] material-icons'>search</span>
       </div>
-      <div className='flex flex-col p-2 self-stretch grow overflow-y-scroll scrollbar-hide'>
-        <div className='flex flex-col self-stretch grow text-lore-blue'>
+      <div className='flex flex-col self-stretch p-2 overflow-y-scroll grow scrollbar-hide'>
+        <div className='flex flex-col self-stretch grow text-lore-blue-400'>
           <button
-            className='flex items-center p-2 gap-2 self-stretch'
+            className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
             onClick={() => {
               setParentField(world.name);
               setParentDropDownOpen(false);
@@ -67,9 +68,10 @@ const ParentDropDown = ({
             {getIcon('Home', 'material-icons-outlined text-[20px]')}
             <p className='flex font-medium leading-5 grow'>{world.name}</p>
           </button>
+          {/* <EntriesList entries={getParents(entries)} campaigns={[]} world={world} /> */}
           {getParents(entries).map((entry) => (
             <button
-              className='flex items-center p-2 gap-2 self-stretch'
+              className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
               onClick={() => {
                 setParentField(entry.name);
                 setParentDropDownOpen(false);

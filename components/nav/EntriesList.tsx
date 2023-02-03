@@ -84,11 +84,11 @@ const RecursiveEntries = ({
     return (
       <div className='flex'>
         <ul className='flex flex-col w-full'>
-          <div className='flex items-center h-9 gap-2 p-2'>
-            <li className='flex justify-between items-center w-full'>
+          <div className='flex items-center gap-2 p-2 transition-all duration-300 ease-out rounded-lg h-9 hover:bg-lore-beige-300'>
+            <li className='flex items-center justify-between w-full'>
               <Link
                 className={`flex items-center gap-2 ${
-                  selected === campaign.id ? 'text-lore-red' : 'text-lore-blue'
+                  selected === campaign.id ? 'text-lore-red-400' : 'text-lore-blue-400'
                 }`}
                 href={`/world/${world.id}/campaign/${campaign.id}`}
                 onClick={() => {
@@ -111,8 +111,8 @@ const RecursiveEntries = ({
                 <div
                   className={`flex cursor-pointer ${
                     selected === campaign.id
-                      ? 'text-lore-red'
-                      : 'text-lore-blue'
+                      ? 'text-lore-red-400'
+                      : 'text-lore-blue-400'
                   }`}
                   onClick={() => expandHandler(campaign.id, open, setOpen)}
                 >
@@ -151,30 +151,30 @@ const RecursiveEntries = ({
     <div className='flex'>
       {iteration === 2 && (
         <div className='flex flex-col mb-7 ml-[16px]'>
-          <div className='bg-lore-beige w-[2px] h-full' />
+          <div className='bg-lore-beige-500 w-[2px] h-full' />
         </div>
       )}
       {iteration > 2 && (
         <div className='flex flex-col mb-7 ml-[34px]'>
-          <div className='bg-lore-beige w-[2px] h-full' />
+          <div className='bg-lore-beige-500 w-[2px] h-full' />
         </div>
       )}
       <ul className='flex flex-col w-full'>
         {entryHierarchy.map((entry: EntryHierarchy, index) => {
           return (
             <div key={index}>
-              <div className='flex items-center h-9 gap-2 p-2'>
+              <div className='flex items-center'>
                 {iteration !== 1 && (
                   <img
-                    className='mb-5 -ml-[10px]'
+                    className='mb-5 -ml-[2px]'
                     src='/menu-line-curve.svg'
                     alt='-'
                   />
                 )}
-                <li className='flex justify-between items-center w-full'>
+                <li className='flex items-center justify-between w-full gap-2 p-2 transition-all duration-300 ease-out rounded-lg h-9 hover:bg-lore-beige-300'>
                   <Link
                     className={`flex items-center gap-2 ${
-                      selected === entry.id ? 'text-lore-red' : 'text-lore-blue'
+                      selected === entry.id ? 'text-lore-red-400' : 'text-lore-blue-400'
                     }`}
                     href={
                       campaignID
@@ -232,8 +232,8 @@ const RecursiveEntries = ({
                     <div
                       className={`flex cursor-pointer ${
                         selected === entry.id
-                          ? 'text-lore-red'
-                          : 'text-lore-blue'
+                          ? 'text-lore-red-400'
+                          : 'text-lore-blue-400'
                       }`}
                       onClick={() => expandHandler(entry.id, open, setOpen)}
                     >
@@ -283,11 +283,11 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
     <div className='font-medium text-[16px]'>
       <div className='flex'>
         <ul className='flex flex-col w-full'>
-          <div className='flex items-center h-9 gap-2 p-2'>
-            <li className='flex justify-between items-center w-full'>
+          <div className='flex items-center gap-2 p-2 rounded-lg h-9 hover:bg-lore-beige-300'>
+            <li className='flex items-center justify-between w-full'>
               <Link
                 className={`flex items-center gap-2 ${
-                  selected === world.id ? 'text-lore-red' : 'text-lore-blue'
+                  selected === world.id ? 'text-lore-red-400' : 'text-lore-blue-400'
                 }`}
                 href={`/world/${world.id}`}
                 onClick={() => {
@@ -295,11 +295,11 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
                 }}
               >
                 {selected === world.id ? (
-                  <span className='flex justify-center items-center h-5 w-5 material-icons'>
+                  <span className='flex items-center justify-center w-5 h-5 material-icons'>
                     home
                   </span>
                 ) : (
-                  <span className='flex justify-center items-center h-5 w-5 material-icons-outlined'>
+                  <span className='flex items-center justify-center w-5 h-5 material-icons-outlined'>
                     home
                   </span>
                 )}

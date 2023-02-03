@@ -8,10 +8,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'lore-beige': '#E7E3DA',
-        'lore-light-beige': '#F3F1EC',
-        'lore-red': '#DA5D49',
-        'lore-blue': '#445761',
+        'lore-beige': {
+          300: '#FBFAF9',
+          400: '#F3F1EC',
+          500: '#E7E3DA',
+        },
+        'lore-red': {
+          400: '#DA5D49',
+          500: '#C74225',
+        },
+        'lore-blue': {
+          400: '#445761',
+          500: '#303E45',
+        },
       },
     },
     fontFamily: {
