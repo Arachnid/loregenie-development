@@ -31,18 +31,18 @@ const WorldPage = ({ world, permissions }: Props) => {
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader />
-      <div className='flex flex-col grow items-start bg-white py-6 px-16 gap-10 isolate overflow-y-scroll scrollbar-hide'>
+      <div className='flex flex-col items-start gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
         <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl'>
           <img
-            className='h-full w-full object-cover rounded-lg'
+            className='object-cover w-full h-full rounded-lg'
             src='/eryndor.svg'
             alt=''
           />
-          <div className='flex justify-center items-center p-3 gap-2 absolute w-11 h-11 right-4 bottom-4 bg-lore-red rounded-full'>
+          <button className='absolute flex items-center justify-center gap-2 p-3 transition-all duration-300 ease-out rounded-full w-11 h-11 right-4 bottom-4 bg-lore-red-400 hover:bg-lore-red-500'>
             <span className='text-[20px] text-white material-icons'>
               more_vert
             </span>
-          </div>
+          </button>
         </div>
         <h1 className='text-[40px] font-bold'>{world.name}</h1>
         <ReactMarkdown>{world.description}</ReactMarkdown>

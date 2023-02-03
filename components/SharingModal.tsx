@@ -11,10 +11,10 @@ const SharingModal = ({ modalRef, setShowModal }: Props) => {
   return (
     <>
       <div
-        className='z-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-lore-light-beige'
+        className='z-20 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-lore-beige-400'
         ref={modalRef}
       >
-        <div className='flex justify-center items-center py-4 px-6 gap-2 rounded-t-lg bg-lore-beige self-stretch'>
+        <div className='flex justify-center items-center py-4 px-6 gap-2 rounded-t-lg bg-lore-beige-500 self-stretch'>
           <p className='font-medium text-2xl leading-7 grow'>
             Sharing settings
           </p>
@@ -30,7 +30,7 @@ const SharingModal = ({ modalRef, setShowModal }: Props) => {
             <div className='flex justify-center items-center py-2 pr-2 pl-4 gap-2 bg-white rounded-lg grow'>
               <p className='leading-5 grow'>Make public</p>
             </div>
-            <button className='flex justify-center items-center py-3 px-4 gap-2 bg-white border-2 border-lore-beige rounded-lg text-lore-blue'>
+            <button className='flex justify-center items-center py-3 px-4 gap-2 bg-white border-2 border-lore-beige-500 rounded-lg text-lore-blue-400'>
               <span className='text-[20px] material-icons'>link</span>
               <p className='font-medium leading-5'>Copy link</p>
             </button>
@@ -45,11 +45,11 @@ const SharingModal = ({ modalRef, setShowModal }: Props) => {
                 type='email'
                 placeholder='Enter email'
               />
-              <div className='flex justify-center items-center py-3 px-4 gap-2 bg-white rounded-lg text-lore-blue w-[140px]'>
+              <div className='flex justify-center items-center py-3 px-4 gap-2 bg-white rounded-lg text-lore-blue-400 w-[140px]'>
                 <p className='leading-5 grow'>Reader</p>
                 <span className='text-[20px] material-icons'>expand_more</span>
               </div>
-              <button className='flex justify-center items-center py-3 px-4 gap-2 bg-white border-2 border-lore-beige rounded-lg text-lore-blue'>
+              <button className='flex justify-center items-center py-3 px-4 gap-2 bg-white border-2 border-lore-beige-500 rounded-lg text-lore-blue-400'>
                 <span className='text-[20px] material-icons'>add</span>
                 <p className='font-medium leading-5'>Add</p>
               </button>

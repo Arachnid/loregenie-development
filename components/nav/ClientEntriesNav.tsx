@@ -24,7 +24,7 @@ const ClientEntriesNav = ({
 
   return (
     <div className='w-full'>
-      <div className='flex flex-col h-full justify-between'>
+      <div className='flex flex-col justify-between h-full'>
         <NavSearch
           children={children}
           entries={entries}
@@ -40,9 +40,9 @@ const ClientEntriesNav = ({
             </div>
           )}
         </div>
-        <div className='flex bg-lore-light-beige'>
+        <div className='flex bg-lore-beige-400'>
           <button
-            className='flex justify-center items-center text-white w-full py-3 px-4 m-4 gap-2 rounded-lg bg-lore-red'
+            className='flex items-center justify-center w-full gap-2 px-4 py-3 m-4 text-white transition-all duration-300 ease-out rounded-lg bg-lore-red-400 hover:bg-lore-red-500'
             onClick={() => router.push(`/world/${worldID}/page/generate`)}
           >
             <span className='text-[20px] material-icons'>add</span>
