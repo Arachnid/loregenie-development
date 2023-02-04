@@ -63,15 +63,23 @@ const ClientEntryPage = ({
               <p className='font-medium w-14'>Parent</p>
               <div className='relative flex flex-col items-center self-stretch w-full gap-4'>
                 <button
-                  className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11'
+                  className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11 disabled:cursor-default'
                   onClick={() => setParentDropDownOpen(!parentDropDownOpen)}
+                  disabled={!permissions.includes('writer')}
                 >
                   <p className='flex grow'>
                     {entryData.parent ? entryData.parent.name : world.name}
                   </p>
-                  <span className='text-[20px] material-icons'>
-                    expand_more
-                  </span>
+                  {permissions.includes('writer') &&
+                    (parentDropDownOpen ? (
+                      <span className='text-[20px] material-icons'>
+                        expand_less
+                      </span>
+                    ) : (
+                      <span className='text-[20px] material-icons'>
+                        expand_more
+                      </span>
+                    ))}
                 </button>
                 {parentDropDownOpen && (
                   <ParentDropDown
@@ -91,15 +99,23 @@ const ClientEntryPage = ({
               <p className='font-medium w-14'>Type</p>
               <div className='relative flex flex-col items-center self-stretch w-full gap-4'>
                 <button
-                  className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11'
+                  className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11 disabled:cursor-default'
                   onClick={() => setCategoryDropDownOpen(!categoryDropDownOpen)}
+                  disabled={!permissions.includes('writer')}
                 >
                   <p className='flex grow'>
                     {entryData.category ? entryData.category : 'Select one'}
                   </p>
-                  <span className='text-[20px] material-icons'>
-                    expand_more
-                  </span>
+                  {permissions.includes('writer') &&
+                    (categoryDropDownOpen ? (
+                      <span className='text-[20px] material-icons'>
+                        expand_less
+                      </span>
+                    ) : (
+                      <span className='text-[20px] material-icons'>
+                        expand_more
+                      </span>
+                    ))}
                 </button>
                 {categoryDropDownOpen && (
                   <CategoryDropDown
@@ -119,14 +135,16 @@ const ClientEntryPage = ({
                   setOpen={setEditImage}
                 />
               )}
-              <button
-                className='flex items-center justify-center gap-2 p-3 transition-all duration-300 ease-out rounded-full w-11 h-11 bg-lore-red-400 hover:bg-lore-red-500'
-                onClick={() => setEditImage(!editImage)}
-              >
-                <span className='text-[20px] text-white material-icons'>
-                  more_vert
-                </span>
-              </button>
+              {permissions.includes('writer') && (
+                <button
+                  className='flex items-center justify-center gap-2 p-3 transition-all duration-300 ease-out rounded-full w-11 h-11 bg-lore-red-400 hover:bg-lore-red-500'
+                  onClick={() => setEditImage(!editImage)}
+                >
+                  <span className='text-[20px] text-white material-icons'>
+                    more_vert
+                  </span>
+                </button>
+              )}
             </div>
             {entryData.image && (
               <img
@@ -138,10 +156,11 @@ const ClientEntryPage = ({
           </div>
         </div>
         <input
-          className='flex text-[40px] font-bold w-full placeholder:text-black/50 focus-visible:outline-none'
+          className='flex text-[40px] font-bold w-full placeholder:text-black/50 focus-visible:outline-none disabled:bg-white disabled:cursor-text'
           value={entryData.name}
           placeholder='Title'
           onChange={(e) => setEntryData({ ...entryData, name: e.target.value })}
+          disabled={!permissions.includes('writer')}
         />
         {permissions.includes('writer') && (
           <button

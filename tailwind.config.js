@@ -21,6 +21,9 @@ module.exports = {
           400: '#445761',
           500: '#303E45',
         },
+        'lore-gray': {
+          100: '#D9D9D9',
+        },
       },
     },
     fontFamily: {
