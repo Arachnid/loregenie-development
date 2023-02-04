@@ -1,16 +1,39 @@
 'use client';
 
 import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { Entry } from '@/types';
+import { useRouter } from 'next/navigation';
 import { RefObject, useState } from 'react';
 import SharingModal from './SharingModal';
 
-type Props = {};
+type Props = {
+  entryData: Entry;
+  permissions: string[];
+  worldID: string;
+};
 
-const PageHeader = (props: Props) => {
+const PageHeader = ({ entryData, permissions, worldID }: Props) => {
   const [showModal, setShowModal] = useState(false);
   const modalRef: RefObject<HTMLDivElement> = useOutsideClick<HTMLDivElement>(
     () => setShowModal(false)
   );
+  const router = useRouter();
+
+  const onSave = async () => {
+    try {
+      await fetch('/api/entry/update', {
+        method: 'POST',
+        body: JSON.stringify({
+          entryData,
+          worldID,
+          permissions,
+        }),
+      });
+      router.refresh();
+    } catch (error) {
+      console.log('error updating entry: ', error);
+    }
+  };
 
   return (
     <>
@@ -27,7 +50,7 @@ const PageHeader = (props: Props) => {
           >
             Sharing
           </button>
-          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-red-400 bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500 hover:border-lore-red-500'>
+          <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-red-400 bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500 hover:border-lore-red-500' onClick={() => onSave()}>
             Save
           </button>
         </div>

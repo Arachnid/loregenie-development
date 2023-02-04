@@ -31,16 +31,7 @@ const ClientEntriesNav = ({
           campaigns={campaigns}
           worldID={worldID}
         />
-        <div className='absolute bottom-20'>
-          {permissions.includes('writer') && (
-            <div>
-              <Link href={`/world/${worldID}/entry/new`}>New Entry</Link>
-              <br />
-              <Link href={`/world/${worldID}/campaign/new`}>New Campaign</Link>
-            </div>
-          )}
-        </div>
-        <div className='flex bg-lore-beige-400'>
+        {permissions.includes('writer') && <div className='flex bg-lore-beige-400'>
           <button
             className='flex items-center justify-center w-full gap-2 px-4 py-3 m-4 text-white transition-all duration-300 ease-out rounded-lg bg-lore-red-400 hover:bg-lore-red-500'
             onClick={() => router.push(`/world/${worldID}/page/generate`)}
@@ -48,7 +39,7 @@ const ClientEntriesNav = ({
             <span className='text-[20px] material-icons'>add</span>
             <div className='text-[16px] font-medium'>Create new page</div>
           </button>
-        </div>
+        </div>}
       </div>
     </div>
   );

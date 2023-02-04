@@ -12,11 +12,32 @@ const blankPage = {
   name: '',
   description: '',
   image: '',
+  category: '',
   public: false,
 };
 
 const GenerateFormPage = ({ worldID, permissions }: Props) => {
   const router = useRouter();
+
+  const onCreate = async () => {
+    try {
+      await fetch('/api/entry/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          entryData: blankPage,
+          worldID: worldID,
+          permissions,
+        }),
+      }).then((res) =>
+        res.json().then((entryID: string) => {
+          router.push(`/world/${worldID}/entry/${entryID}`);
+          router.refresh();
+        })
+      );
+    } catch (error) {
+      console.log('error submitting entry: ', error);
+    }
+  };
 
   return (
     <div className='flex flex-col items-center justify-center gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
@@ -43,21 +64,27 @@ const GenerateFormPage = ({ worldID, permissions }: Props) => {
                 PROMPT EXAMPLE
               </p>
             </div>
-            <button className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-red-400 disabled:opacity-50 disabled:hover:bg-lore-red-400 hover:bg-lore-red-500' disabled>
+            <button
+              className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-red-400 disabled:opacity-50 disabled:hover:bg-lore-red-400 hover:bg-lore-red-500'
+              disabled
+            >
               <span className='text-[20px] material-icons'>auto_fix_high</span>
               <p className='font-medium leading-5'>Generate</p>
             </button>
           </div>
         </div>
         <div className='flex self-stretch gap-6 px-10 text-lore-blue-400'>
-          <button className='z-10 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400' onClick={() => router.back()}>
+          <button
+            className='z-10 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'
+            onClick={() => router.back()}
+          >
             <p className='font-medium leading-5'>Cancel</p>
           </button>
           <button className='z-10 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'>
             <span className='text-[20px] material-icons'>add</span>
             <p
               className='font-medium leading-5'
-              onClick={() => router.push(`/world/${worldID}/page/blank`)}
+              onClick={() => onCreate()}
             >
               Create blank page
             </p>
