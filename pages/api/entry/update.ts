@@ -8,12 +8,10 @@ export default async function handler(
 ) {
   const {
     entryData,
-    entryID,
     worldID,
     permissions,
   }: {
     entryData: Entry;
-    entryID: string;
     worldID: string;
     permissions: string[];
   } = JSON.parse(request.body);
@@ -26,7 +24,7 @@ export default async function handler(
       .collection('worlds')
       .doc(worldID)
       .collection('entries')
-      .doc(entryID)
+      .doc(entryData.id)
       .withConverter(new Converter<Entry>())
       .set(entryData);
   } catch (error) {

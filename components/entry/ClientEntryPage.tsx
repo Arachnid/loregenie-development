@@ -6,7 +6,9 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import AlertDialog from '@/components/AlertDialog';
 import PageHeader from '@/components/PageHeader';
-import ParentDropDown from './ParentDropDown';
+import ParentDropDown from '@/components/entry/ParentDropDown';
+import CategoryDropDown from '@/components/entry/CategoryDropDown';
+import ImageSettings from '@/components/ImageSettings';
 
 interface Props {
   currentEntry: Entry;
@@ -23,9 +25,11 @@ const ClientEntryPage = ({
 }: Props) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [parentDropDownOpen, setParentDropDownOpen] = useState(false);
-  const [parentField, setParentField] = useState(
-    currentEntry.parent?.name ? currentEntry.parent.name : world.name
-  );
+  const [categoryDropDownOpen, setCategoryDropDownOpen] = useState(false);
+  const [entryData, setEntryData] = useState<Entry>(currentEntry);
+  const [editDescription, setEditDescription] = useState(false);
+  const [editImage, setEditImage] = useState(false);
+
   const router = useRouter();
 
   const onDelete = async () => {
@@ -47,18 +51,24 @@ const ClientEntryPage = ({
 
   return (
     <div className='flex flex-col w-full h-full mb-12'>
-      <PageHeader />
+      <PageHeader
+        entryData={entryData}
+        permissions={permissions}
+        worldID={world.id}
+      />
       <div className='flex flex-col items-start h-full gap-10 px-16 py-6 overflow-y-scroll bg-white isolate scrollbar-hide'>
         <div className='flex items-start self-stretch gap-6 h-[170px] min-w-max'>
           <div className='flex flex-col items-start gap-4 p-6 rounded-lg grow bg-lore-beige-400'>
             <div className='flex items-center self-stretch gap-4'>
-              <p className='font-medium w-[54px]'>Parent</p>
+              <p className='font-medium w-14'>Parent</p>
               <div className='relative flex flex-col items-center self-stretch w-full gap-4'>
                 <button
                   className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11'
                   onClick={() => setParentDropDownOpen(!parentDropDownOpen)}
                 >
-                  <p className='flex grow'>{parentField}</p>
+                  <p className='flex grow'>
+                    {entryData.parent ? entryData.parent.name : world.name}
+                  </p>
                   <span className='text-[20px] material-icons'>
                     expand_more
                   </span>
@@ -68,9 +78,9 @@ const ClientEntryPage = ({
                     {...{
                       world,
                       entries,
-                      currentEntry,
                       setParentDropDownOpen,
-                      setParentField,
+                      setEntryData,
+                      entryData,
                     }}
                   />
                 )}
@@ -78,38 +88,90 @@ const ClientEntryPage = ({
             </div>
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />
             <div className='flex items-center self-stretch gap-4'>
-              <p className='font-medium w-[54px]'>Type</p>
-              <div className='flex items-center justify-center gap-2 px-4 py-3 bg-white rounded-lg grow h-11'>
-                <p className='grow'>{currentEntry.category}</p>
-                <span className='text-[20px] material-icons'>expand_more</span>
+              <p className='font-medium w-14'>Type</p>
+              <div className='relative flex flex-col items-center self-stretch w-full gap-4'>
+                <button
+                  className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11'
+                  onClick={() => setCategoryDropDownOpen(!categoryDropDownOpen)}
+                >
+                  <p className='flex grow'>
+                    {entryData.category ? entryData.category : 'Select one'}
+                  </p>
+                  <span className='text-[20px] material-icons'>
+                    expand_more
+                  </span>
+                </button>
+                {categoryDropDownOpen && (
+                  <CategoryDropDown
+                    {...{ setCategoryDropDownOpen, setEntryData, entryData }}
+                  />
+                )}
               </div>
             </div>
           </div>
-          <div className='relative w-[170px] h-full rounded-lg'>
-            <button className='absolute flex items-center justify-center gap-2 p-3 transition-all duration-300 ease-out rounded-full w-11 h-11 right-2 bottom-2 bg-lore-red-400 hover:bg-lore-red-500'>
-              <span className='text-[20px] text-white material-icons'>
-                more_vert
-              </span>
-            </button>
-            <img className='w-full h-full' src='/drogon.svg' alt='' />
+          <div className='relative w-[170px] h-full rounded-lg bg-lore-beige-400'>
+            <div className='absolute flex bottom-2 right-2'>
+              {editImage && (
+                <ImageSettings
+                  showRemoveButton={Boolean(entryData.image)}
+                  data={entryData}
+                  setData={setEntryData}
+                  setOpen={setEditImage}
+                />
+              )}
+              <button
+                className='flex items-center justify-center gap-2 p-3 transition-all duration-300 ease-out rounded-full w-11 h-11 bg-lore-red-400 hover:bg-lore-red-500'
+                onClick={() => setEditImage(!editImage)}
+              >
+                <span className='text-[20px] text-white material-icons'>
+                  more_vert
+                </span>
+              </button>
+            </div>
+            {entryData.image && (
+              <img
+                className='object-cover w-full h-full rounded-lg'
+                src={entryData.image}
+                alt=''
+              />
+            )}
           </div>
         </div>
-        <h1 className='text-[40px] font-bold'>{currentEntry.name}</h1>
-        <ReactMarkdown className='markdown'>
-          {currentEntry.description}
-        </ReactMarkdown>
+        <input
+          className='flex text-[40px] font-bold w-full placeholder:text-black/50 focus-visible:outline-none'
+          value={entryData.name}
+          placeholder='Title'
+          onChange={(e) => setEntryData({ ...entryData, name: e.target.value })}
+        />
         {permissions.includes('writer') && (
           <button
-            onClick={() =>
-              router.push(`/world/${world.id}/entry/${currentEntry.id}/edit`)
-            }
+            className='p-2 text-white rounded bg-lore-red-400'
+            onClick={() => setEditDescription(!editDescription)}
           >
-            Edit {currentEntry.category}
+            {editDescription ? 'save description' : 'edit description'}
           </button>
         )}
+        {editDescription ? (
+          <textarea
+            className='w-full h-full'
+            value={entryData.description}
+            placeholder='Description'
+            onChange={(e) =>
+              setEntryData({ ...entryData, description: e.target.value })
+            }
+          />
+        ) : (
+          <ReactMarkdown
+            className='markdown'
+            children={entryData.description}
+          />
+        )}
         {permissions.includes('admin') && (
-          <button onClick={() => setAlertOpen(true)}>
-            Delete {currentEntry.category}
+          <button
+            className='p-2 text-white rounded bg-lore-red-400'
+            onClick={() => setAlertOpen(true)}
+          >
+            Delete Entry
           </button>
         )}
         {alertOpen && (

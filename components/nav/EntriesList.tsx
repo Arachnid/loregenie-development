@@ -3,6 +3,7 @@
 import { Campaign, Category, Entry, EntryHierarchy, World } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 import { getActiveID } from '@/utils/getActiveID';
+import { getIcon } from '@/utils/getIcon';
 import { Collapse } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -88,7 +89,9 @@ const RecursiveEntries = ({
             <li className='flex items-center justify-between w-full'>
               <Link
                 className={`flex items-center gap-2 ${
-                  selected === campaign.id ? 'text-lore-red-400' : 'text-lore-blue-400'
+                  selected === campaign.id
+                    ? 'text-lore-red-400'
+                    : 'text-lore-blue-400'
                 }`}
                 href={`/world/${world.id}/campaign/${campaign.id}`}
                 onClick={() => {
@@ -174,7 +177,9 @@ const RecursiveEntries = ({
                 <li className='flex items-center justify-between w-full gap-2 p-2 transition-all duration-300 ease-out rounded-lg h-9 hover:bg-lore-beige-300'>
                   <Link
                     className={`flex items-center gap-2 ${
-                      selected === entry.id ? 'text-lore-red-400' : 'text-lore-blue-400'
+                      selected === entry.id
+                        ? 'text-lore-red-400'
+                        : 'text-lore-blue-400'
                     }`}
                     href={
                       campaignID
@@ -186,47 +191,16 @@ const RecursiveEntries = ({
                       setOpen({ ...open, [entry.id]: true });
                     }}
                   >
-                    {entry.category === Category.NPC &&
-                      (selected === entry.id ? (
-                        <span className='flex justify-center items-center text-[20px] material-icons'>
-                          person
-                        </span>
-                      ) : (
-                        <span className='flex justify-center items-center text-[20px] material-icons-outlined'>
-                          person
-                        </span>
-                      ))}
-                    {entry.category === Category.Location &&
-                      (selected === entry.id ? (
-                        <span className='flex justify-center items-center text-[20px] material-icons'>
-                          location_on
-                        </span>
-                      ) : (
-                        <span className='flex justify-center items-center text-[20px] material-icons-outlined'>
-                          location_on
-                        </span>
-                      ))}
-                    {entry.category === Category.Lore &&
-                      (selected === entry.id ? (
-                        <span className='flex justify-center items-center text-[20px] material-icons'>
-                          history_edu
-                        </span>
-                      ) : (
-                        <span className='flex justify-center items-center text-[20px] material-icons-outlined'>
-                          history_edu
-                        </span>
-                      ))}
-                    {entry.category === Category.Journal &&
-                      (selected === entry.id ? (
-                        <span className='flex justify-center items-center text-[20px] material-icons'>
-                          class
-                        </span>
-                      ) : (
-                        <span className='flex justify-center items-center text-[20px] material-icons-outlined'>
-                          class
-                        </span>
-                      ))}
-                    <p className='w-max'>{entry.name}</p>
+                    {selected === entry.id
+                      ? getIcon(
+                          entry.category,
+                          'flex justify-center items-center text-[20px] material-icons'
+                        )
+                      : getIcon(
+                          entry.category,
+                          'flex justify-center items-center text-[20px] material-icons-outlined'
+                        )}
+                    <p className='w-max'>{entry.name ? entry.name : 'Untitled'}</p>
                   </Link>
                   {entry.children && entry.children.length > 0 && (
                     <div
@@ -287,7 +261,9 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
             <li className='flex items-center justify-between w-full'>
               <Link
                 className={`flex items-center gap-2 ${
-                  selected === world.id ? 'text-lore-red-400' : 'text-lore-blue-400'
+                  selected === world.id
+                    ? 'text-lore-red-400'
+                    : 'text-lore-blue-400'
                 }`}
                 href={`/world/${world.id}`}
                 onClick={() => {
