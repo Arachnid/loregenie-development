@@ -8,11 +8,8 @@ export default async function handler(
 ) {
   const {
     worldData,
-    worldID,
     permissions,
-  }: { worldData: World; worldID: string; permissions: string[] } = JSON.parse(
-    request.body
-  );
+  }: { worldData: World; permissions: string[] } = JSON.parse(request.body);
   try {
     if (!permissions.includes('writer')) {
       console.log('user does not have permission for that action.');
@@ -20,7 +17,7 @@ export default async function handler(
     }
     await db
       .collection('worlds')
-      .doc(worldID)
+      .doc(worldData.id)
       .withConverter(new Converter<World>())
       .update(worldData);
   } catch (error) {

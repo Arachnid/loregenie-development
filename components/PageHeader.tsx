@@ -1,39 +1,27 @@
 'use client';
 
 import { useOutsideClick } from '@/hooks/useOutsideClick';
-import { Entry } from '@/types';
-import { useRouter } from 'next/navigation';
-import { RefObject, useState } from 'react';
+import { isEntry, LoreSchemas } from '@/types';
+import { Dispatch, RefObject, SetStateAction, useState } from 'react';
 import SharingModal from './SharingModal';
 
-type Props = {
-  entryData: Entry;
+type Props<T extends LoreSchemas> = {
+  data: T;
+  setData: Dispatch<SetStateAction<T>>;
+  onSave: () => Promise<void>;
   permissions: string[];
-  worldID: string;
 };
 
-const PageHeader = ({ entryData, permissions, worldID }: Props) => {
+const PageHeader = <T extends LoreSchemas>({
+  data,
+  setData,
+  onSave,
+  permissions,
+}: Props<T>) => {
   const [showModal, setShowModal] = useState(false);
   const modalRef: RefObject<HTMLDivElement> = useOutsideClick<HTMLDivElement>(
     () => setShowModal(false)
   );
-  const router = useRouter();
-
-  const onSave = async () => {
-    try {
-      await fetch('/api/entry/update', {
-        method: 'POST',
-        body: JSON.stringify({
-          entryData,
-          worldID,
-          permissions,
-        }),
-      });
-      router.refresh();
-    } catch (error) {
-      console.log('error updating entry: ', error);
-    }
-  };
 
   return (
     <>
@@ -44,19 +32,31 @@ const PageHeader = ({ entryData, permissions, worldID }: Props) => {
             <img className='w-8 h-8 rounded-full' src='/favicon.ico' alt='' />
             <img className='w-8 h-8 rounded-full' src='/favicon.ico' alt='' />
           </div>
-          {permissions.includes('writer') && <button
-            className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium bg-white border-lore-beige-500 text-lore-blue-400 transition-all duration-300 ease-out hover:bg-lore-beige-400'
-            onClick={() => setShowModal(!showModal)}
-          >
-            Sharing
-          </button>}
-          {permissions.includes('writer') && <button className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-red-400 bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500 hover:border-lore-red-500' onClick={() => onSave()}>
-            Save
-          </button>}
+          {permissions.includes('admin') && (
+            <button
+              className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium bg-white border-lore-beige-500 text-lore-blue-400 transition-all duration-300 ease-out hover:bg-lore-beige-400'
+              onClick={() => setShowModal(!showModal)}
+            >
+              {isEntry(data) ? 'Visibility' : 'Sharing'}
+            </button>
+          )}
+          {permissions.includes('writer') && (
+            <button
+              className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium border-lore-red-400 bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500 hover:border-lore-red-500'
+              onClick={() => onSave()}
+            >
+              Save
+            </button>
+          )}
         </div>
       </div>
       {showModal && (
-        <SharingModal modalRef={modalRef} setShowModal={setShowModal} />
+        <SharingModal
+          modalRef={modalRef}
+          setShowModal={setShowModal}
+          data={data}
+          setData={setData}
+        />
       )}
     </>
   );

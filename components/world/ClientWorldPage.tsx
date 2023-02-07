@@ -13,7 +13,11 @@ type Props = {
 };
 
 const WorldPage = ({ world, permissions }: Props) => {
+  const [worldData, setWorldData] = useState<World>(world);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [editDescription, setEditDescription] = useState(false);
+  const [editImage, setEditImage] = useState(false);
+
   const router = useRouter();
 
   const onDelete = async () => {
@@ -28,9 +32,30 @@ const WorldPage = ({ world, permissions }: Props) => {
       console.log('error deleting world: ', error);
     }
   };
+
+  const onSave = async () => {
+    try {
+      await fetch('/api/world/update', {
+        method: 'POST',
+        body: JSON.stringify({
+          worldData,
+          permissions,
+        }),
+      });
+      router.refresh();
+    } catch (error) {
+      console.log('error updating world: ', error);
+    }
+  };
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
-      <PageHeader />
+      <PageHeader<World>
+        data={worldData}
+        setData={setWorldData}
+        onSave={onSave}
+        permissions={permissions}
+      />
       <div className='flex flex-col items-start gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
         <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl'>
           <img
