@@ -1,23 +1,38 @@
 'use client';
 
-import { Dispatch, SetStateAction, useRef } from 'react';
+import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { LoreSchemas } from '@/types';
+import { Dispatch, RefObject, SetStateAction, useRef } from 'react';
 
-type Props = {
+type Props<T extends LoreSchemas> = {
   showRemoveButton: boolean;
-  data;
-  setData;
+  data: T;
+  setData: Dispatch<SetStateAction<T>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-const ImageSettings = ({ showRemoveButton, data, setData, setOpen }: Props) => {
-  const uploadImageRef = useRef(null);
+const ImageSettings = <T extends LoreSchemas>({
+  showRemoveButton,
+  data,
+  setData,
+  setOpen,
+}: Props<T>) => {
+  const uploadImageRef = useRef<HTMLInputElement>(null);
+  const modalRef: RefObject<HTMLDivElement> = useOutsideClick<HTMLDivElement>(
+    () => setOpen(false)
+  );
 
-  const handleUpload = (event: MouseEvent) => {
-    uploadImageRef.current.click();
+  const handleUpload = () => {
+    if (uploadImageRef.current) {
+      uploadImageRef.current.click();
+    }
   };
 
   return (
-    <div className='absolute -translate-x-[200px] flex flex-col gap-2 p-2 bg-white rounded-lg border-lore-beige-500 border-2 w-[200px]'>
+    <div
+      className='absolute -translate-x-[200px] flex flex-col gap-2 p-2 bg-white rounded-lg border-lore-beige-500 border-2 w-[200px]'
+      ref={modalRef}
+    >
       <button
         className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-blue-400 hover:bg-lore-blue-500 disabled:hover:bg-lore-blue-400 disabled:opacity-50'
         disabled
@@ -30,14 +45,16 @@ const ImageSettings = ({ showRemoveButton, data, setData, setOpen }: Props) => {
         ref={uploadImageRef}
         accept='image/*'
         onChange={(e) => {
-          setData({ ...data, image: URL.createObjectURL(e.target.files[0]) });
+          if (e.target.files) {
+            setData({ ...data, image: URL.createObjectURL(e.target.files[0]) });
+          }
           setOpen(false);
         }}
         hidden
       />
       <button
         className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-blue-400 hover:bg-lore-blue-500'
-        onClick={(event) => handleUpload(event)}
+        onClick={() => handleUpload()}
       >
         <span className='text-[20px] material-icons'>add</span>
         <p className='font-medium leading-5'>Upload new</p>

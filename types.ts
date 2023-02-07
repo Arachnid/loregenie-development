@@ -10,10 +10,8 @@ export interface World {
   entries: Entry[];
   campaigns: Campaign[];
 }
-export type WorldForm = Omit<World, 'id'>;
 
 export type Campaign = Omit<World, 'campaigns'>;
-export type CampaignForm = Omit<Campaign, 'id'>;
 
 export interface Entry {
   readonly id: string;
@@ -27,7 +25,9 @@ export interface Entry {
   };
   category: Category;
 }
-export type EntryForm = Omit<Entry, 'id'>;
+export const isEntry = (obj: any): obj is Entry => {
+  return obj.category !== undefined;
+};
 
 export enum Category {
   NPC = 'NPC',
@@ -42,3 +42,5 @@ export const isCategory = (value: string): value is Category => {
 export interface EntryHierarchy extends Entry {
   children?: EntryHierarchy[];
 }
+
+export type LoreSchemas = World | Campaign | Entry;

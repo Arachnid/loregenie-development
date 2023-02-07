@@ -3,12 +3,11 @@
 import { Entry, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import AlertDialog from '@/components/AlertDialog';
 import PageHeader from '@/components/PageHeader';
 import ParentDropDown from '@/components/entry/ParentDropDown';
 import CategoryDropDown from '@/components/entry/CategoryDropDown';
 import ImageSettings from '@/components/ImageSettings';
+import PageBody from '@/components/PageBody';
 
 interface Props {
   currentEntry: Entry;
@@ -23,11 +22,9 @@ const ClientEntryPage = ({
   entries,
   permissions,
 }: Props) => {
-  const [alertOpen, setAlertOpen] = useState(false);
   const [parentDropDownOpen, setParentDropDownOpen] = useState(false);
   const [categoryDropDownOpen, setCategoryDropDownOpen] = useState(false);
   const [entryData, setEntryData] = useState<Entry>(currentEntry);
-  const [editDescription, setEditDescription] = useState(false);
   const [editImage, setEditImage] = useState(false);
 
   const router = useRouter();
@@ -49,12 +46,29 @@ const ClientEntryPage = ({
     }
   };
 
+  const onSave = async () => {
+    try {
+      await fetch('/api/entry/update', {
+        method: 'POST',
+        body: JSON.stringify({
+          entryData,
+          worldID: world.id,
+          permissions,
+        }),
+      });
+      router.refresh();
+    } catch (error) {
+      console.log('error updating entry: ', error);
+    }
+  };
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
-      <PageHeader
-        entryData={entryData}
+      <PageHeader<Entry>
+        data={entryData}
+        setData={setEntryData}
+        onSave={onSave}
         permissions={permissions}
-        worldID={world.id}
       />
       <div className='flex flex-col items-start h-full gap-10 px-16 py-6 overflow-y-scroll bg-white isolate scrollbar-hide'>
         <div className='flex items-start self-stretch gap-6 h-[170px] min-w-max'>
@@ -128,7 +142,7 @@ const ClientEntryPage = ({
           <div className='relative w-[170px] h-full rounded-lg bg-lore-beige-400'>
             <div className='absolute flex bottom-2 right-2'>
               {editImage && (
-                <ImageSettings
+                <ImageSettings<Entry>
                   showRemoveButton={Boolean(entryData.image)}
                   data={entryData}
                   setData={setEntryData}
@@ -155,52 +169,12 @@ const ClientEntryPage = ({
             )}
           </div>
         </div>
-        <input
-          className='flex text-[40px] font-bold w-full placeholder:text-black/50 focus-visible:outline-none disabled:bg-white disabled:cursor-text'
-          value={entryData.name}
-          placeholder='Title'
-          onChange={(e) => setEntryData({ ...entryData, name: e.target.value })}
-          disabled={!permissions.includes('writer')}
+        <PageBody<Entry>
+          data={entryData}
+          setData={setEntryData}
+          permissions={permissions}
+          onDelete={onDelete}
         />
-        {permissions.includes('writer') && (
-          <button
-            className='p-2 text-white rounded bg-lore-red-400'
-            onClick={() => setEditDescription(!editDescription)}
-          >
-            {editDescription ? 'save description' : 'edit description'}
-          </button>
-        )}
-        {editDescription ? (
-          <textarea
-            className='w-full h-full'
-            value={entryData.description}
-            placeholder='Description'
-            onChange={(e) =>
-              setEntryData({ ...entryData, description: e.target.value })
-            }
-          />
-        ) : (
-          <ReactMarkdown
-            className='markdown'
-            children={entryData.description}
-          />
-        )}
-        {permissions.includes('admin') && (
-          <button
-            className='p-2 text-white rounded bg-lore-red-400'
-            onClick={() => setAlertOpen(true)}
-          >
-            Delete Entry
-          </button>
-        )}
-        {alertOpen && (
-          <AlertDialog
-            title={`Delete ${currentEntry.name}?`}
-            alertOpen={alertOpen}
-            setAlertOpen={setAlertOpen}
-            action={onDelete}
-          />
-        )}
       </div>
     </div>
   );
