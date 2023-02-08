@@ -3,20 +3,19 @@
 import { World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import AlertDialog from '@/components/AlertDialog';
 import PageHeader from '@/components/PageHeader';
-import ReactMarkdown from 'react-markdown';
+import ImageSettings from '@/components/ImageSettings';
+import PageBody from '@/components/PageBody';
+import { Session } from 'next-auth';
 
 type Props = {
   world: World;
   permissions: string[];
+  session: Session;
 };
 
-const WorldPage = ({ world, permissions }: Props) => {
+const WorldPage = ({ world, permissions, session }: Props) => {
   const [worldData, setWorldData] = useState<World>(world);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [editDescription, setEditDescription] = useState(false);
-  const [editImage, setEditImage] = useState(false);
 
   const router = useRouter();
 
@@ -52,46 +51,35 @@ const WorldPage = ({ world, permissions }: Props) => {
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<World>
         data={worldData}
+        currentData={world}
         setData={setWorldData}
         onSave={onSave}
         permissions={permissions}
+        session={session}
       />
       <div className='flex flex-col items-start gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
-        <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl'>
-          <img
-            className='object-cover w-full h-full rounded-lg'
-            src='/eryndor.svg'
-            alt=''
-          />
-          <button className='absolute flex items-center justify-center gap-2 p-3 transition-all duration-300 ease-out rounded-full w-11 h-11 right-4 bottom-4 bg-lore-red-400 hover:bg-lore-red-500'>
-            <span className='text-[20px] text-white material-icons'>
-              more_vert
-            </span>
-          </button>
+        <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
+          <div className='absolute flex bottom-4 right-4'>
+            <ImageSettings<World>
+              data={worldData}
+              setData={setWorldData}
+              permissions={permissions}
+            />
+          </div>
+          {worldData.image && (
+            <img
+              className='object-cover w-full h-full rounded-lg'
+              src={worldData.image}
+              alt=''
+            />
+          )}
         </div>
-        <h1 className='text-[40px] font-bold'>{world.name}</h1>
-        <ReactMarkdown>{world.description}</ReactMarkdown>
-        {permissions.includes('writer') && (
-          <button onClick={() => router.push(`/world/${world.id}/edit`)}>
-            Edit World
-          </button>
-        )}
-        {permissions.includes('admin') && (
-          <button onClick={() => setAlertOpen(true)}>Delete World</button>
-        )}
-        {alertOpen && (
-          <AlertDialog
-            title={'Delete this World?'}
-            description={
-              'Doing so will permanently delete the data in this world, including all nested entries.'
-            }
-            confirmText={`Confirm that you want to delete this world by typing in its name:`}
-            confirmValue={world.name}
-            alertOpen={alertOpen}
-            setAlertOpen={setAlertOpen}
-            action={onDelete}
-          />
-        )}
+        <PageBody<World>
+          data={worldData}
+          setData={setWorldData}
+          permissions={permissions}
+          onDelete={onDelete}
+        />
       </div>
     </div>
   );

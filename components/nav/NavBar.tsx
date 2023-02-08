@@ -12,29 +12,35 @@ type Props = {
 
 const NavBar = ({ session, worldName }: Props) => {
   return (
-      <div className='flex justify-between items-center min-w-max p-4 gap-4 h-16'>
-        <div className='flex gap-6 h-6 items-center'>
-          <Link className='h-5' href='/'>
-            <img src={'/lore-genie-logo.svg'} alt='Lore Genie' />
-          </Link>
-          {worldName && (
-            <h2 className='self-center font-medium text-[20px] leading-6 text-lore-blue-400'>
-              {worldName}
-            </h2>
-          )}
-        </div>
-        <div className='flex items-center text-lore-blue-400 gap-4 h-8'>
-          {session ? (
-            <button onClick={() => signOut()}>Sign Out</button>
-          ) : (
-            <button onClick={() => signIn()}>Sign In</button>
-          )}
-          <span className='material-icons-outlined'>notifications</span>
-          <span className='material-icons-outlined'>settings</span>
-          <div className='relative border border-black rounded-full h-8 w-8'>
-            <Image src={'/favicon.ico'} alt='' fill />
-          </div>
-        </div>
+    <div className='flex items-center justify-between h-16 gap-4 p-4 min-w-max'>
+      <div className='flex items-center h-6 gap-6'>
+        <Link className='h-5' href='/'>
+          <img src={'/lore-genie-logo.svg'} alt='Lore Genie' />
+        </Link>
+        {worldName && (
+          <h2 className='self-center font-medium text-[20px] leading-6 text-lore-blue-400'>
+            {worldName}
+          </h2>
+        )}
+      </div>
+      <div className='flex items-center h-8 gap-4 text-lore-blue-400'>
+        {session ? (
+          <button onClick={() => signOut()}>Sign Out</button>
+        ) : (
+          <button onClick={() => signIn()}>Sign In</button>
+        )}
+        <span className='material-icons-outlined'>notifications</span>
+        <span className='material-icons-outlined'>settings</span>
+        <img
+          className='w-8 h-8 rounded-full'
+          src={
+            session?.user?.image
+              ? session.user.image
+              : '/no-profile-picture.svg'
+          }
+          alt=''
+        />
+      </div>
     </div>
   );
 };

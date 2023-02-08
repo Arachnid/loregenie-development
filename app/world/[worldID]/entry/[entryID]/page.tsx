@@ -31,6 +31,7 @@ export default async function EntryPage({ params }: Props) {
       world={world}
       entries={entries}
       permissions={permissions}
+      session={session}
     />
   );
 }

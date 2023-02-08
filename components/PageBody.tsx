@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import AlertDialog from '@/components/AlertDialog';
-import { LoreSchemas } from '@/types';
+import { isEntry, LoreSchemas } from '@/types';
 
 type Props<T extends LoreSchemas> = {
   data: T;
@@ -56,14 +56,27 @@ const PageBody = <T extends LoreSchemas>({
           Delete Entry
         </button>
       )}
-      {alertOpen && (
-        <AlertDialog
-          title={`Delete ${data.name}?`}
-          alertOpen={alertOpen}
-          setAlertOpen={setAlertOpen}
-          action={onDelete}
-        />
-      )}
+      {alertOpen &&
+        (isEntry(data) ? (
+          <AlertDialog
+            title={`Delete ${data.name}?`}
+            alertOpen={alertOpen}
+            setAlertOpen={setAlertOpen}
+            action={onDelete}
+          />
+        ) : (
+          <AlertDialog
+            title={'Delete this World?'}
+            description={
+              'Doing so will permanently delete the data in this world, including all nested entries.'
+            }
+            confirmText={`Confirm that you want to delete this world by typing in its name:`}
+            confirmValue={data.name}
+            alertOpen={alertOpen}
+            setAlertOpen={setAlertOpen}
+            action={onDelete}
+          />
+        ))}
     </>
   );
 };

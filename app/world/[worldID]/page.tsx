@@ -26,7 +26,7 @@ export default async function WorldPage({ params }: Props) {
 
   return (
     <>
-      <ClientWorldPage world={world} permissions={permissions} />
+      <ClientWorldPage world={world} permissions={permissions} session={session} />
     </>
   );
 }
