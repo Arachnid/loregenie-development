@@ -27,9 +27,6 @@ const PageHeader = <T extends LoreSchemas>({
   return (
     <>
       <div className='flex justify-end items-center w-full py-2 px-4 bg-white mb-[2px]'>
-        {JSON.stringify(currentData) !== JSON.stringify(data) && (
-          <p>unsaved changes</p>
-        )}
         <div className='flex items-center gap-4 h-11'>
           <div className='flex items-center h-8 gap-2 overflow-x-clip'>
             {!isEntry(data) &&

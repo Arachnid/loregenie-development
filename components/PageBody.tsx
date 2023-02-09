@@ -53,7 +53,7 @@ const PageBody = <T extends LoreSchemas>({
           className='p-2 text-white rounded bg-lore-red-400'
           onClick={() => setAlertOpen(true)}
         >
-          Delete Entry
+          Delete
         </button>
       )}
       {alertOpen &&
