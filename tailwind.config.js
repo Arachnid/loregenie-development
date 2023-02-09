@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       colors: {
         'lore-beige': {
+          100: '#FAF9F7',
           300: '#FBFAF9',
           400: '#F3F1EC',
           500: '#E7E3DA',

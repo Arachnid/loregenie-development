@@ -200,7 +200,9 @@ const RecursiveEntries = ({
                           entry.category,
                           'flex justify-center items-center text-[20px] material-icons-outlined'
                         )}
-                    <p className='w-max'>{entry.name ? entry.name : 'Untitled'}</p>
+                    <p className='w-max'>
+                      {entry.name ? entry.name : 'Untitled'}
+                    </p>
                   </Link>
                   {entry.children && entry.children.length > 0 && (
                     <div
@@ -279,7 +281,7 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
                     home
                   </span>
                 )}
-                <p>{world.name}</p>
+                <p>{world.name ? world.name : 'Untitled'}</p>
               </Link>
             </li>
           </div>
