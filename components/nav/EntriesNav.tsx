@@ -23,7 +23,12 @@ export default async function EntriesNav({ worldID, email }: Props) {
   const permissions = await getPermissions(worldID, email);
 
   return (
-    <ClientEntriesNav worldID={worldID} permissions={permissions} entries={entries} campaigns={campaigns}>
+    <ClientEntriesNav
+      worldID={worldID}
+      permissions={permissions}
+      entries={entries}
+      campaigns={campaigns}
+    >
       <EntriesList entries={entries} campaigns={campaigns} world={world} />
     </ClientEntriesNav>
   );

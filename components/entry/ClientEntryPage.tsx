@@ -26,6 +26,7 @@ const ClientEntryPage = ({
   session,
 }: Props) => {
   const [entryData, setEntryData] = useState<Entry>(currentEntry);
+  const [editMode, setEditMode] = useState(false);
 
   const router = useRouter();
   
@@ -70,6 +71,9 @@ const ClientEntryPage = ({
         currentData={currentEntry}
         setData={setEntryData}
         onSave={onSave}
+        onDelete={onDelete}
+        editMode={editMode}
+        setEditMode={setEditMode}
         permissions={permissions}
       />
       <div className='flex flex-col items-start h-full gap-10 px-16 py-6 overflow-y-scroll bg-white isolate scrollbar-hide'>
@@ -83,6 +87,7 @@ const ClientEntryPage = ({
                 setEntryData={setEntryData}
                 entryData={entryData}
                 permissions={permissions}
+                editMode={editMode}
               />
             </div>
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />
@@ -92,6 +97,7 @@ const ClientEntryPage = ({
                 setEntryData={setEntryData}
                 entryData={entryData}
                 permissions={permissions}
+                editMode={editMode}
               />
             </div>
           </div>
@@ -101,6 +107,7 @@ const ClientEntryPage = ({
                 data={entryData}
                 setData={setEntryData}
                 permissions={permissions}
+                editMode={editMode}
               />
             </div>
             {entryData.image && (
@@ -116,7 +123,7 @@ const ClientEntryPage = ({
           data={entryData}
           setData={setEntryData}
           permissions={permissions}
-          onDelete={onDelete}
+          editMode={editMode}
         />
       </div>
     </div>

@@ -61,23 +61,24 @@ const HomePage = ({ worlds, session }: Props) => {
               onClick={() => router.push(`/world/${world.id}`)}
               key={index}
             >
-              <div className='flex items-end self-stretch gap-20'>
-                <div className='flex flex-col gap-2 text-white grow'>
+              <div className='flex items-end justify-between gap-20'>
+                <div className='flex flex-col w-full gap-2 text-white'>
                   <p className='flex font-cinzel font-medium text-[40px] leading-[54px] text-center'>
                     {world.name ? world.name.toUpperCase() : 'UNTITLED'}
                   </p>
-                  <p className='self-stretch text-lg font-light leading-5'>
+                  <p className='text-lg font-light leading-5'>
                     {world.description}
                   </p>
                 </div>
-                <div className='flex flex-col gap-2 min-w-max'>
+                <div className='grid grid-flow-col grid-rows-2 gap-2'>
                   {world.readers.map((reader, index) => (
-                    <img
-                      className='rounded-full w-11 h-11 min-w-max'
-                      src='/no-profile-picture.svg'
-                      alt=''
-                      key={index}
-                    />
+                    <div className='w-12 h-12' key={index}>
+                      <img
+                        className='w-full h-full rounded-full'
+                        src='/no-profile-picture.svg'
+                        alt=''
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -99,7 +100,9 @@ const HomePage = ({ worlds, session }: Props) => {
                 </p>
               </div>
               <div className='flex items-center justify-center gap-2 px-8 py-6 font-medium transition-all duration-300 ease-out rounded-full bg-lore-red-400 hover:bg-lore-red-500'>
-                <p className='text-xl leading-6 text-center min-w-max'>Get Started</p>
+                <p className='text-xl leading-6 text-center min-w-max'>
+                  Get Started
+                </p>
                 <span className='material-icons'>east</span>
               </div>
             </div>

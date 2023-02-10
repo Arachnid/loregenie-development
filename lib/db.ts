@@ -91,6 +91,7 @@ export async function getCampaigns(
     .collection('worlds')
     .doc(worldID)
     .collection('campaigns')
+    .where('readers', 'array-contains', email)
     .withConverter(new Converter<Campaign>())
     .get();
 

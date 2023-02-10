@@ -8,12 +8,14 @@ type Props<T extends LoreSchemas> = {
   data: T;
   setData: Dispatch<SetStateAction<T>>;
   permissions: string[];
+  editMode: boolean;
 };
 
 const ImageSettings = <T extends LoreSchemas>({
   data,
   setData,
   permissions,
+  editMode
 }: Props<T>) => {
   const [editImage, setEditImage] = useState(false);
 
@@ -75,7 +77,7 @@ const ImageSettings = <T extends LoreSchemas>({
           )}
         </div>
       )}
-      {permissions.includes('writer') && (
+      {editMode && permissions.includes('writer') && (
         <button
           className='flex items-center justify-center gap-2 p-3 transition-all duration-300 ease-out rounded-full w-11 h-11 bg-lore-red-400 hover:bg-lore-red-500'
           onClick={() => setEditImage(!editImage)}

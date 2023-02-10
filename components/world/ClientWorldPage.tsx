@@ -1,6 +1,6 @@
 'use client';
 
-import { World } from '@/types';
+import { Campaign, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
@@ -10,14 +10,27 @@ import { Session } from 'next-auth';
 
 type Props = {
   world: World;
+  campaigns: Campaign[];
   permissions: string[];
   session: Session;
 };
 
-const WorldPage = ({ world, permissions, session }: Props) => {
+const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
   const [worldData, setWorldData] = useState<World>(world);
+  const [editMode, setEditMode] = useState(false);
 
   const router = useRouter();
+
+  const blankCampaign = {
+    name: '',
+    description: '',
+    image: '',
+    readers: [session.user?.email],
+    writers: [session.user?.email],
+    admins: [session.user?.email],
+    public: false,
+    entries: [],
+  };
 
   const onDelete = async () => {
     try {
@@ -47,6 +60,26 @@ const WorldPage = ({ world, permissions, session }: Props) => {
     }
   };
 
+  const onCreateCampaign = async () => {
+    try {
+      await fetch('/api/campaign/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          campaignData: blankCampaign,
+          worldID: world.id,
+          permissions,
+        }),
+      }).then((res) =>
+        res.json().then((campaignID: string) => {
+          router.push(`/world/${world.id}/campaign/${campaignID}`);
+          router.refresh();
+        })
+      );
+    } catch (error) {
+      console.log('error submitting campaign: ', error);
+    }
+  };
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<World>
@@ -54,6 +87,9 @@ const WorldPage = ({ world, permissions, session }: Props) => {
         currentData={world}
         setData={setWorldData}
         onSave={onSave}
+        onDelete={onDelete}
+        editMode={editMode}
+        setEditMode={setEditMode}
         permissions={permissions}
         session={session}
       />
@@ -64,6 +100,7 @@ const WorldPage = ({ world, permissions, session }: Props) => {
               data={worldData}
               setData={setWorldData}
               permissions={permissions}
+              editMode={editMode}
             />
           </div>
           {worldData.image && (
@@ -78,8 +115,49 @@ const WorldPage = ({ world, permissions, session }: Props) => {
           data={worldData}
           setData={setWorldData}
           permissions={permissions}
-          onDelete={onDelete}
+          editMode={editMode}
         />
+        <div className='flex self-stretch p-[1px] bg-lore-beige-500' />
+        <div className='flex flex-col w-full gap-4'>
+          <div className='flex items-center self-stretch justify-between gap-4'>
+            <p className='font-bold text-[40px]'>Campaigns</p>
+            {permissions.includes('writer') && (
+              <button
+                className='flex items-center justify-center gap-2 px-4 py-3 text-white rounded-lg bg-lore-red-400 w-[100px] transition-all duration-300 ease-out hover:bg-lore-red-500'
+                onClick={() => onCreateCampaign()}
+              >
+                <span className='text-[20px] material-icons'>add</span>
+                <p className='font-medium leading-5'>New</p>
+              </button>
+            )}
+          </div>
+          <div className='flex flex-col gap-5'>
+            {campaigns.map((campaign, index) => (
+              <div
+                className='flex items-end justify-between p-4 gap-4 h-40 rounded-2xl self-stretch bg-cover cursor-pointer
+              bg-[linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url("/eryndor.svg")]'
+                onClick={() =>
+                  router.push(`/world/${world.id}/campaign/${campaign.id}`)
+                }
+                key={index}
+              >
+                <p className='flex items-end font-cinzel font-medium text-[40px] leading-[54px] self-stretch text-white'>
+                  {campaign.name ? campaign.name.toUpperCase() : 'UNTITLED'}
+                </p>
+                <div className='flex flex-col-reverse flex-wrap-reverse items-end gap-2 max-h-28 min-w-max'>
+                  {campaign.readers.map((reader, index) => (
+                    <img
+                      className='w-12 h-12 rounded-full min-w-max'
+                      src='/no-profile-picture.svg'
+                      alt=''
+                      key={index}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

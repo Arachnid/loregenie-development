@@ -1,13 +1,14 @@
 'use client';
 
-import { Campaign, Category, Entry, EntryHierarchy, World } from '@/types';
+import { Campaign, Entry, EntryHierarchy, World } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 import { getActiveID } from '@/utils/getActiveID';
 import { getIcon } from '@/utils/getIcon';
 import { Collapse } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useClientContext } from '@/hooks/useClientContext';
 
 type Props = {
   entries: Entry[];
@@ -33,7 +34,6 @@ const RecursiveEntries = ({
   world,
   entries,
   selected,
-  setSelected,
   campaign,
   campaignID,
   iteration,
@@ -42,7 +42,6 @@ const RecursiveEntries = ({
   world: World;
   entries: Entry[];
   selected: string | undefined;
-  setSelected: Dispatch<SetStateAction<string | undefined>>;
   campaign?: Campaign;
   campaignID?: string;
   iteration: number;
@@ -95,7 +94,6 @@ const RecursiveEntries = ({
                 }`}
                 href={`/world/${world.id}/campaign/${campaign.id}`}
                 onClick={() => {
-                  setSelected(campaign.id);
                   setOpen({ ...open, [campaign.id]: true });
                 }}
               >
@@ -108,7 +106,7 @@ const RecursiveEntries = ({
                     folder
                   </span>
                 )}
-                <p>{campaign.name}</p>
+                <p>{campaign.name ? campaign.name : 'Untitled Campaign'}</p>
               </Link>
               {campaign.entries && campaign.entries.length > 0 && (
                 <div
@@ -139,7 +137,6 @@ const RecursiveEntries = ({
                 world={world}
                 entries={entries}
                 selected={selected}
-                setSelected={setSelected}
                 campaignID={campaign.id}
                 iteration={2}
               />
@@ -187,7 +184,6 @@ const RecursiveEntries = ({
                         : `/world/${world.id}/entry/${entry.id}`
                     }
                     onClick={() => {
-                      setSelected(entry.id);
                       setOpen({ ...open, [entry.id]: true });
                     }}
                   >
@@ -233,7 +229,6 @@ const RecursiveEntries = ({
                     world={world}
                     entries={entries}
                     selected={selected}
-                    setSelected={setSelected}
                     campaignID={campaignID}
                     iteration={iteration + 1}
                   />
@@ -254,6 +249,13 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
   const [selected, setSelected] = useState<string | undefined>(
     getActiveID(pathname)
   );
+  const {client, setClient} = useClientContext();
+
+  useEffect(() => {
+    const activeID = getActiveID(pathname);
+    setSelected(activeID);
+    setClient({id: activeID as string});
+  }, [pathname]);
 
   return (
     <div className='font-medium text-[16px]'>
@@ -268,9 +270,6 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
                     : 'text-lore-blue-400'
                 }`}
                 href={`/world/${world.id}`}
-                onClick={() => {
-                  setSelected(world.id);
-                }}
               >
                 {selected === world.id ? (
                   <span className='flex items-center justify-center w-5 h-5 material-icons'>
@@ -295,7 +294,6 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
               entryHierarchy={createEntryHierarchy(campaign.entries)}
               world={world}
               selected={selected}
-              setSelected={setSelected}
               campaign={campaign}
               campaignID={campaign.id}
               iteration={2}
@@ -309,7 +307,6 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
           entryHierarchy={createEntryHierarchy(entries)}
           world={world}
           selected={selected}
-          setSelected={setSelected}
           iteration={1}
         />
       </div>
