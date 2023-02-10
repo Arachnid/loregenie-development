@@ -110,9 +110,7 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
               onClick={() => router.push(element.url)}
             >
               {getIcon(element.category, 'material-icons-outlined text-[20px]')}
-              <p className='flex font-medium leading-5 grow'>
-                {element.name}
-              </p>
+              <p className='flex font-medium leading-5 grow'>{element.name}</p>
             </button>
           ))}
         </div>

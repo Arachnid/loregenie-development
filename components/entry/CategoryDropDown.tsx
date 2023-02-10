@@ -9,9 +9,15 @@ type Props = {
   setEntryData: Dispatch<SetStateAction<Entry>>;
   entryData: Entry;
   permissions: string[];
+  editMode: boolean;
 };
 
-const CategoryDropDown = ({ setEntryData, entryData, permissions }: Props) => {
+const CategoryDropDown = ({
+  setEntryData,
+  entryData,
+  permissions,
+  editMode,
+}: Props) => {
   const [dropDownOpen, setDropDownOpen] = useState(false);
 
   return (
@@ -23,12 +29,13 @@ const CategoryDropDown = ({ setEntryData, entryData, permissions }: Props) => {
         <button
           className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11 disabled:cursor-default'
           onClick={() => setDropDownOpen(!dropDownOpen)}
-          disabled={!permissions.includes('writer')}
+          disabled={!permissions.includes('writer') || !editMode}
         >
           <p className='flex grow'>
             {entryData.category ? entryData.category : 'Select one'}
           </p>
-          {permissions.includes('writer') &&
+          {editMode &&
+            permissions.includes('writer') &&
             (dropDownOpen ? (
               <span className='text-[20px] material-icons'>expand_less</span>
             ) : (

@@ -1,8 +1,9 @@
 'use client';
 
+import { ClientContext } from '@/context/ClientContext';
 import { World } from '@/types';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useContext } from 'react';
 
 type Props = {
   onCreate: () => Promise<void>;
@@ -12,6 +13,8 @@ type Props = {
 
 const GenieForm = ({ onCreate, world, setOpen }: Props) => {
   const router = useRouter();
+
+  const { client, setClient } = useContext(ClientContext);
 
   return (
     <div className='flex flex-col pt-20 gap-10 w-[640px]'>
@@ -25,7 +28,9 @@ const GenieForm = ({ onCreate, world, setOpen }: Props) => {
           {world && (
             <div className='flex self-stretch gap-4'>
               <div className='flex items-center justify-center gap-2 px-4 py-3 bg-white rounded-lg grow'>
-                <p className='leading-5 grow'>{world.id}</p>
+                <p className='leading-5 grow'>
+                  {world.name ? world.name : 'Untitled'}
+                </p>
                 <span className='text-[20px] material-icons'>expand_more</span>
               </div>
               <div className='flex items-center justify-center gap-2 px-4 py-3 bg-white rounded-lg grow'>
@@ -55,11 +60,12 @@ const GenieForm = ({ onCreate, world, setOpen }: Props) => {
         >
           <p className='font-medium leading-5'>Cancel</p>
         </button>
-        <button className='z-10 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'>
+        <button
+          className='z-10 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'
+          onClick={() => onCreate()}
+        >
           <span className='text-[20px] material-icons'>add</span>
-          <p className='font-medium leading-5' onClick={() => onCreate()}>
-            Create blank
-          </p>
+          <p className='font-medium leading-5'>Create blank</p>
         </button>
       </div>
     </div>

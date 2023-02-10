@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import NavBar from '@/components/nav/NavBar';
 import { Session } from 'next-auth';
+import { ClientProvider } from '@/context/ClientContext';
 
 interface Props {
   nav: JSX.Element;
@@ -18,14 +19,16 @@ export default function BaseLayout({
   children,
 }: Props) {
   return (
-    <div className='flex flex-col h-screen overflow-x-hidden'>
-      <NavBar session={session} worldName={worldName} />
-      <div className='flex h-full overflow-y-hidden'>
-        <div className='flex max-w-fit w-full min-w-[320px]'>
-          <nav className='flex w-full'>{nav}</nav>
+    <ClientProvider>
+      <div className='flex flex-col h-screen overflow-x-hidden'>
+        <NavBar session={session} worldName={worldName} />
+        <div className='flex h-full overflow-y-hidden'>
+          <div className='flex max-w-fit w-full min-w-[320px]'>
+            <nav className='flex w-full'>{nav}</nav>
+          </div>
+          <div className='flex w-full ml-[2px]'>{children}</div>
         </div>
-        <div className='flex w-full ml-[2px]'>{children}</div>
       </div>
-    </div>
+    </ClientProvider>
   );
 }

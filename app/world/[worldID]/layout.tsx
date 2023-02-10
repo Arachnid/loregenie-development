@@ -33,7 +33,7 @@ export default async function Layout({ children, params }: Props) {
           />
         }
         session={session}
-        worldName={world?.name}
+        worldName={world?.name as string}
       >
         {children}
       </BaseLayout>

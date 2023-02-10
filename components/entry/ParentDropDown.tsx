@@ -13,6 +13,7 @@ type Props = {
   setEntryData: Dispatch<SetStateAction<Entry>>;
   entryData: Entry;
   permissions: string[];
+  editMode: boolean;
 };
 
 const ParentDropDown = ({
@@ -21,6 +22,7 @@ const ParentDropDown = ({
   setEntryData,
   entryData,
   permissions,
+  editMode,
 }: Props) => {
   const [searchValue, setSearchValue] = useState('');
   const [filteredSearch, setFilteredSearch] = useState<EntryHierarchy[]>([]);
@@ -66,12 +68,12 @@ const ParentDropDown = ({
         <button
           className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11 disabled:cursor-default'
           onClick={() => setDropDownOpen(!dropDownOpen)}
-          disabled={!permissions.includes('writer')}
+          disabled={!permissions.includes('writer') || !editMode}
         >
           <p className='flex grow'>
             {entryData.parent ? entryData.parent.name : world.name}
           </p>
-          {permissions.includes('writer') &&
+          {editMode && permissions.includes('writer') &&
             (dropDownOpen ? (
               <span className='text-[20px] material-icons'>expand_less</span>
             ) : (
@@ -116,7 +118,7 @@ const ParentDropDown = ({
                   </p>
                 </button>
                 {/* <EntriesList entries={getParents(entries)} campaigns={[]} world={world} /> */}
-                {filteredSearch.map((parentEntry) => (
+                {filteredSearch.map((parentEntry, index) => (
                   <button
                     className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                     onClick={() => {
@@ -126,6 +128,7 @@ const ParentDropDown = ({
                       });
                       setDropDownOpen(false);
                     }}
+                    key={index}
                   >
                     {getIcon(
                       parentEntry.category,
