@@ -12,8 +12,6 @@ type Props<T extends LoreSchemas> = {
   setData: Dispatch<SetStateAction<T>>;
   onSave: () => Promise<void>;
   onDelete: () => Promise<void>;
-  editMode: boolean;
-  setEditMode: Dispatch<SetStateAction<boolean>>
   permissions: string[];
   session: Session;
 };
@@ -24,8 +22,6 @@ const PageHeader = <T extends LoreSchemas>({
   setData,
   onSave,
   onDelete,
-  editMode,
-  setEditMode,
   permissions,
   session,
 }: Props<T>) => {
@@ -48,7 +44,7 @@ const PageHeader = <T extends LoreSchemas>({
               ))}
           </div>
           <div className='flex gap-4 min-w-max'>
-            {permissions.includes('admin') && editMode && (
+            {permissions.includes('admin') && (
               <button
                 className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium bg-white border-lore-beige-500 text-lore-blue-400 transition-all duration-300 ease-out hover:bg-lore-beige-400'
                 onClick={() => setShowModal(!showModal)}
@@ -56,37 +52,19 @@ const PageHeader = <T extends LoreSchemas>({
                 {isEntry(data) ? 'Visibility' : 'Sharing'}
               </button>
             )}
-            {permissions.includes('writer') && editMode && (
-              <>
-                <button
-                  className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500'
-                  onClick={() => {
-                    onSave();
-                    setEditMode(false);
-                  }}
-                >
-                  Save
-                </button>
-                <button
-                  className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500'
-                  onClick={() => {
-                    setEditMode(false);
-                    setData(currentData);
-                  }}
-                >
-                  Cancel
-                </button>
-              </>
-            )}
-            {permissions.includes('writer') && !editMode && (
+            {permissions.includes('writer') && (
               <button
-                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500'
-                onClick={() => setEditMode(true)}
+                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500 disabled:opacity-50 disabled:hover:bg-lore-red-400'
+                onClick={() => {
+                  onSave();
+                  window.location.reload();
+                }}
+                disabled={JSON.stringify(currentData) === JSON.stringify(data)}
               >
-                Edit
+                Save
               </button>
             )}
-            {permissions.includes('admin') && editMode && (
+            {permissions.includes('admin') && (
               <button
                 className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500'
                 onClick={() => setAlertOpen(true)}

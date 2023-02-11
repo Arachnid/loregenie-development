@@ -1,50 +1,51 @@
 'use client';
 
-import { Category, Entry, EntryHierarchy, World } from '@/types';
+import { useClientContext } from '@/hooks/useClientContext';
+import { Category, Entry, EntryHierarchy, isEntry, World } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 import EntriesList from '../nav/EntriesList';
 
-type Props = {
+type Props<T> = {
   world: World;
   entries: Entry[];
-  setEntryData: Dispatch<SetStateAction<Entry>>;
-  entryData: Entry;
+  setData: Dispatch<SetStateAction<T>>;
+  data: T;
   permissions: string[];
-  editMode: boolean;
+  generate?: boolean;
 };
 
-const ParentDropDown = ({
+const ParentDropDown = <T extends {}>({
   world,
   entries,
-  setEntryData,
-  entryData,
+  setData,
+  data,
   permissions,
-  editMode,
-}: Props) => {
+  generate,
+}: Props<T>) => {
   const [searchValue, setSearchValue] = useState('');
   const [filteredSearch, setFilteredSearch] = useState<EntryHierarchy[]>([]);
   const [dropDownOpen, setDropDownOpen] = useState(false);
+  const { client } = useClientContext();
 
   const getParents = (entries: Entry[]): EntryHierarchy[] => {
     const result: EntryHierarchy[] = [];
     const parentHierarchy: EntryHierarchy[] = createEntryHierarchy(entries);
 
     const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
-      entriesHierarchy.map((entry: EntryHierarchy) => {
-        if (
-          entry.id !== entryData?.id &&
-          entry.category === Category.Location
-        ) {
-          if (entry.children) {
+      if (isEntry(data)) {
+        entriesHierarchy.map((entry: EntryHierarchy) => {
+          if (entry.id !== data.id && entry.category === Category.Location) {
+            if (entry.children) {
+              result.push(entry);
+              return recursiveEntryHierarchy(entry.children);
+            }
             result.push(entry);
-            return recursiveEntryHierarchy(entry.children);
           }
-          result.push(entry);
-        }
-      });
+        });
+      }
     };
     recursiveEntryHierarchy(parentHierarchy);
     return result;
@@ -68,12 +69,17 @@ const ParentDropDown = ({
         <button
           className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11 disabled:cursor-default'
           onClick={() => setDropDownOpen(!dropDownOpen)}
-          disabled={!permissions.includes('writer') || !editMode}
+          disabled={!permissions.includes('writer')}
         >
           <p className='flex grow'>
-            {entryData.parent ? entryData.parent.name : world.name}
+            {isEntry(data) &&
+              (generate
+                ? client.entry.name
+                : data.parent
+                ? data.parent.name
+                : world.name)}
           </p>
-          {editMode && permissions.includes('writer') &&
+          {permissions.includes('writer') &&
             (dropDownOpen ? (
               <span className='text-[20px] material-icons'>expand_less</span>
             ) : (
@@ -107,9 +113,11 @@ const ParentDropDown = ({
                 <button
                   className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                   onClick={() => {
-                    const { parent, ...state } = entryData;
-                    setEntryData(state);
-                    setDropDownOpen(false);
+                    if (isEntry(data)) {
+                      const { parent, ...state } = data;
+                      setData(state as T);
+                      setDropDownOpen(false);
+                    }
                   }}
                 >
                   {getIcon('Home', 'material-icons-outlined text-[20px]')}
@@ -122,11 +130,16 @@ const ParentDropDown = ({
                   <button
                     className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                     onClick={() => {
-                      setEntryData({
-                        ...entryData,
-                        parent: { name: parentEntry.name, id: parentEntry.id },
-                      });
-                      setDropDownOpen(false);
+                      if (isEntry(data)) {
+                        setData({
+                          ...data,
+                          parent: {
+                            name: parentEntry.name,
+                            id: parentEntry.id,
+                          },
+                        });
+                        setDropDownOpen(false);
+                      }
                     }}
                     key={index}
                   >

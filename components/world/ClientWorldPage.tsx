@@ -2,11 +2,12 @@
 
 import { Campaign, World } from '@/types';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import ImageSettings from '@/components/ImageSettings';
 import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
+import { useClientContext } from '@/hooks/useClientContext';
 
 type Props = {
   world: World;
@@ -17,9 +18,12 @@ type Props = {
 
 const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
   const [worldData, setWorldData] = useState<World>(world);
-  const [editMode, setEditMode] = useState(false);
-
+  const { setClient } = useClientContext();
   const router = useRouter();
+
+  useEffect(() => {
+    setClient({ world });
+  }, [world]);
 
   const blankCampaign = {
     name: '',
@@ -88,8 +92,6 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
         setData={setWorldData}
         onSave={onSave}
         onDelete={onDelete}
-        editMode={editMode}
-        setEditMode={setEditMode}
         permissions={permissions}
         session={session}
       />
@@ -100,7 +102,6 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
               data={worldData}
               setData={setWorldData}
               permissions={permissions}
-              editMode={editMode}
             />
           </div>
           {worldData.image && (
@@ -115,7 +116,6 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
           data={worldData}
           setData={setWorldData}
           permissions={permissions}
-          editMode={editMode}
         />
         <div className='flex self-stretch p-[1px] bg-lore-beige-500' />
         <div className='flex flex-col w-full gap-4'>

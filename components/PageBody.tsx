@@ -1,22 +1,24 @@
 'use client';
 
-import { Dispatch, SetStateAction, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import AlertDialog from '@/components/AlertDialog';
-import { isEntry, LoreSchemas } from '@/types';
+import { Dispatch, SetStateAction } from 'react';
+import { LoreSchemas } from '@/types';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
+import dynamic from 'next/dynamic';
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
 type Props<T extends LoreSchemas> = {
   data: T;
   setData: Dispatch<SetStateAction<T>>;
   permissions: string[];
-  editMode: boolean;
 };
+
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
 const PageBody = <T extends LoreSchemas>({
   data,
   setData,
   permissions,
-  editMode,
 }: Props<T>) => {
   return (
     <>
@@ -25,16 +27,15 @@ const PageBody = <T extends LoreSchemas>({
         value={data.name}
         placeholder='Title'
         onChange={(e) => setData({ ...data, name: e.target.value })}
-        disabled={!permissions.includes('writer') || !editMode}
+        disabled={!permissions.includes('writer')}
       />
-      {editMode ? (
-        <div className='w-full'>
-          <textarea
-            className='w-full p-2'
+      {permissions.includes('writer') ? (
+        <div className='w-full h-full'>
+          <MDEditor
+            data-color-mode='light'
+            className='w-full'
             value={data.description}
-            placeholder='Description'
-            onChange={(e) => setData({ ...data, description: e.target.value })}
-            rows={10}
+            onChange={(desc) => setData({ ...data, description: desc })}
           />
         </div>
       ) : (

@@ -1,20 +1,27 @@
 'use client';
 
-import { ClientContext } from '@/context/ClientContext';
-import { World } from '@/types';
+import { Campaign, Category, Entry, LoreSchemas, World } from '@/types';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { Dispatch, SetStateAction } from 'react';
+import CategoryDropDown from '@/components/entry/CategoryDropDown';
+import ParentDropDown from '@/components/entry/ParentDropDown';
+import { getIcon } from '@/utils/getIcon';
+import { useClientContext } from '@/hooks/useClientContext';
 
 type Props = {
   onCreate: () => Promise<void>;
   world?: World;
+  campaigns?: Campaign[];
+  entries: Entry[];
   setOpen?: Dispatch<SetStateAction<boolean>>;
+  form: LoreSchemas | undefined;
+  setForm: Dispatch<SetStateAction<LoreSchemas | undefined>>;
 };
 
-const GenieForm = ({ onCreate, world, setOpen }: Props) => {
+const GenieForm = ({ onCreate, world, entries, campaigns, setOpen, form, setForm }: Props) => {
   const router = useRouter();
-
-  const { client, setClient } = useContext(ClientContext);
+  const {client} = useClientContext();
+  console.log(world)
 
   return (
     <div className='flex flex-col pt-20 gap-10 w-[640px]'>
@@ -27,16 +34,29 @@ const GenieForm = ({ onCreate, world, setOpen }: Props) => {
         <div className='flex flex-col self-stretch gap-4'>
           {world && (
             <div className='flex self-stretch gap-4'>
-              <div className='flex items-center justify-center gap-2 px-4 py-3 bg-white rounded-lg grow'>
-                <p className='leading-5 grow'>
-                  {world.name ? world.name : 'Untitled'}
-                </p>
-                <span className='text-[20px] material-icons'>expand_more</span>
-              </div>
-              <div className='flex items-center justify-center gap-2 px-4 py-3 bg-white rounded-lg grow'>
-                <p className='leading-5 grow'>Select a type</p>
-                <span className='text-[20px] material-icons'>expand_more</span>
-              </div>
+              <ParentDropDown
+                world={world}
+                entries={entries}
+                setData={() => {}}
+                data={client.entry}
+                permissions={['admin', 'writer', 'reader']}
+                generate={true}
+              />
+              <CategoryDropDown
+                setData={() => {}}
+                data={client.entry}
+                permissions={['admin', 'writer', 'reader']}
+              >
+                {client.campaign && <button className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'>
+                  {getIcon(
+                    Category.Journal,
+                    'material-icons-outlined text-[20px]'
+                  )}
+                  <p className='flex font-medium leading-5 grow'>
+                    {Category.Journal}
+                  </p>
+                </button>}
+              </CategoryDropDown>
             </div>
           )}
           <div className='flex justify-center items-center py-3 px-5 gap-4 bg-white rounded-[10px] self-stretch'>
