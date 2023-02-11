@@ -8,7 +8,6 @@ import { Collapse } from '@mui/material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useClientContext } from '@/hooks/useClientContext';
 
 type Props = {
   entries: Entry[];
@@ -249,12 +248,10 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
   const [selected, setSelected] = useState<string | undefined>(
     getActiveID(pathname)
   );
-  const {client, setClient} = useClientContext();
 
   useEffect(() => {
     const activeID = getActiveID(pathname);
     setSelected(activeID);
-    setClient({id: activeID as string});
   }, [pathname]);
 
   return (

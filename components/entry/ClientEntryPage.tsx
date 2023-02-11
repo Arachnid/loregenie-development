@@ -2,13 +2,14 @@
 
 import { Entry, World } from '@/types';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import ParentDropDown from '@/components/entry/ParentDropDown';
 import CategoryDropDown from '@/components/entry/CategoryDropDown';
 import ImageSettings from '@/components/ImageSettings';
 import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
+import { useClientContext } from '@/hooks/useClientContext';
 
 interface Props {
   currentEntry: Entry;
@@ -26,10 +27,13 @@ const ClientEntryPage = ({
   session,
 }: Props) => {
   const [entryData, setEntryData] = useState<Entry>(currentEntry);
-  const [editMode, setEditMode] = useState(false);
-
+  const { setClient } = useClientContext();
   const router = useRouter();
-  
+
+  useEffect(() => {
+    setClient({ world, entry: currentEntry });
+  }, [currentEntry]);
+
   const onDelete = async () => {
     try {
       await fetch('/api/entry/delete', {
@@ -72,8 +76,6 @@ const ClientEntryPage = ({
         setData={setEntryData}
         onSave={onSave}
         onDelete={onDelete}
-        editMode={editMode}
-        setEditMode={setEditMode}
         permissions={permissions}
       />
       <div className='flex flex-col items-start h-full gap-10 px-16 py-6 overflow-y-scroll bg-white isolate scrollbar-hide'>
@@ -81,23 +83,21 @@ const ClientEntryPage = ({
           <div className='flex flex-col items-start gap-4 p-6 rounded-lg grow bg-lore-beige-400'>
             <div className='flex items-center self-stretch gap-4'>
               <p className='font-medium w-14'>Parent</p>
-              <ParentDropDown
+              <ParentDropDown<Entry>
                 world={world}
                 entries={entries}
-                setEntryData={setEntryData}
-                entryData={entryData}
+                setData={setEntryData}
+                data={entryData}
                 permissions={permissions}
-                editMode={editMode}
               />
             </div>
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />
             <div className='flex items-center self-stretch gap-4'>
               <p className='font-medium w-14'>Type</p>
-              <CategoryDropDown
-                setEntryData={setEntryData}
-                entryData={entryData}
+              <CategoryDropDown<Entry>
+                setData={setEntryData}
+                data={entryData}
                 permissions={permissions}
-                editMode={editMode}
               />
             </div>
           </div>
@@ -107,7 +107,6 @@ const ClientEntryPage = ({
                 data={entryData}
                 setData={setEntryData}
                 permissions={permissions}
-                editMode={editMode}
               />
             </div>
             {entryData.image && (
@@ -123,7 +122,6 @@ const ClientEntryPage = ({
           data={entryData}
           setData={setEntryData}
           permissions={permissions}
-          editMode={editMode}
         />
       </div>
     </div>

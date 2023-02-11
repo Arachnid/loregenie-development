@@ -1,32 +1,48 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import GenieForm from '@/components/GenieForm';
-import { World } from '@/types';
+import { Campaign, Entry, LoreSchemas, World } from '@/types';
+import { ClientContext } from '@/context/ClientContext';
 
 type Props = {
   world: World;
+  campaigns: Campaign[];
+  entries: Entry[];
   permissions: string[];
 };
 
-const blankPage = {
-  name: '',
-  description: '',
-  image: '',
-  category: '',
-  public: false,
+const apiRoutes = {
+  world: '/api/world/create',
+  campaign: '/api/campaign/create',
+  entry: '/api/entry/create',
+  campaignEntry: '/api/campaign/entry/create',
 };
 
-const GenerateFormPage = ({ world, permissions }: Props) => {
+const GenerateFormPage = ({
+  world,
+  campaigns,
+  entries,
+  permissions,
+}: Props) => {
   const router = useRouter();
+  const { client, setClient } = useContext(ClientContext);
+  const [form, setForm] = useState<LoreSchemas>();
+  console.log(client);
 
   const onCreate = async () => {
     try {
       await fetch('/api/entry/create', {
         method: 'POST',
         body: JSON.stringify({
-          entryData: blankPage,
+          entryData: {
+            name: '',
+            description: '',
+            image: '',
+            category: '',
+            public: false,
+          },
           worldID: world.id,
           permissions,
         }),
@@ -43,7 +59,14 @@ const GenerateFormPage = ({ world, permissions }: Props) => {
 
   return (
     <div className='flex flex-col items-center justify-center gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
-      <GenieForm onCreate={onCreate} world={world} />
+      <GenieForm
+        onCreate={onCreate}
+        world={world}
+        form={form}
+        setForm={setForm}
+        entries={entries}
+        campaigns={campaigns}
+      />
     </div>
   );
 };

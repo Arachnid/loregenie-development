@@ -44,3 +44,9 @@ export interface EntryHierarchy extends Entry {
 }
 
 export type LoreSchemas = World | Campaign | Entry;
+
+export interface ClientContextI {
+  world: World;
+  campaign?: Campaign;
+  entry?: Entry;
+}
