@@ -33,12 +33,11 @@ export default async function CampaignPage({ params }: Props) {
   );
 
   return (
-    <>
-      <ClientCampaignPage
-        campaign={campaign}
-        world={world}
-        permissions={permissions}
-      />
-    </>
+    <ClientCampaignPage
+      campaign={campaign}
+      world={world}
+      permissions={permissions}
+      session={session}
+    />
   );
 }
