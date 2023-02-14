@@ -74,7 +74,11 @@ const ClientEntryPage = ({
 
     const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
       entriesHierarchy.map((entry: EntryHierarchy) => {
-        if (entry.id !== currentEntry.id && entry.category === Category.Location) {
+        if (
+          entry.id !== currentEntry.id &&
+          (entry.category === Category.Location ||
+            entry.category === Category.Journal)
+        ) {
           if (entry.children) {
             result.push(entry);
             return recursiveEntryHierarchy(entry.children);
@@ -87,11 +91,15 @@ const ClientEntryPage = ({
     return result;
   };
 
-  // const filterSearch = getParents(entries).filter((parentEntry) => {
-  //   if (parentEntry.name.toLowerCase().includes(searchValue.toLowerCase())) {
-  //     return parentEntry;
-  //   }
-  // });
+  const defaultParent = () => {
+    if (currentEntry.parent) {
+      return currentEntry.parent.name;
+    }
+    if (currentEntry.campaign) {
+      return currentEntry.campaign.name;
+    }
+    return world.name;
+  };
 
   return (
     <div className='flex flex-col w-full h-full mb-12'>
@@ -114,7 +122,8 @@ const ClientEntryPage = ({
                 setData={setEntryData}
                 data={entryData}
                 permissions={permissions}
-                arr={[...getParents(entries), world]}
+                arr={[...getParents(entries)]}
+                defaultParent={defaultParent()}
               />
             </div>
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />

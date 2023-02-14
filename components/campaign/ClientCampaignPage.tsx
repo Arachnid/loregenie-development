@@ -1,29 +1,39 @@
 'use client';
 
-import { Campaign } from '@/types';
+import { useClientContext } from '@/hooks/useClientContext';
+import { Campaign, World } from '@/types';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AlertDialog from '../AlertDialog';
 
 interface Props {
   campaign: Campaign;
-  worldID: string;
+  world: World;
   permissions: string[];
 }
 
-const ClientCampaignPage = ({ campaign, worldID, permissions }: Props) => {
+const ClientCampaignPage = ({ campaign, world, permissions }: Props) => {
   const [alertOpen, setAlertOpen] = useState(false);
+  const { client, setClient } = useClientContext();
   const router = useRouter();
+
+  useEffect(() => {
+    setClient({ world, campaign });
+  }, [campaign]);
 
   const onDelete = async () => {
     try {
       await fetch('/api/campaign/delete', {
         method: 'POST',
-        body: JSON.stringify({ campaignID: campaign.id, worldID, permissions }),
+        body: JSON.stringify({
+          campaignID: campaign.id,
+          worldID: world.id,
+          permissions,
+        }),
       });
-      router.push(`/world/${worldID}`);
+      router.push(`/world/${world.id}`);
       router.refresh();
     } catch (error) {
       console.log('error deleting campaign: ', error);
@@ -39,7 +49,7 @@ const ClientCampaignPage = ({ campaign, worldID, permissions }: Props) => {
       <div>admins: {campaign.admins.join(', ')}</div>
       <div>visibility: {campaign.public ? 'public' : 'private'}</div>
       {permissions.includes('writer') && (
-        <Link href={`/world/${worldID}/campaign/${campaign.id}/entry/new`}>
+        <Link href={`/world/${world.id}/campaign/${campaign.id}/entry/new`}>
           New Campaign Entry
         </Link>
       )}
@@ -48,7 +58,7 @@ const ClientCampaignPage = ({ campaign, worldID, permissions }: Props) => {
           variant='contained'
           sx={{ margin: 1 }}
           onClick={() =>
-            router.push(`/world/${worldID}/campaign/${campaign.id}/edit`)
+            router.push(`/world/${world.id}/campaign/${campaign.id}/edit`)
           }
         >
           Edit Campaign

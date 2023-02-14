@@ -1,11 +1,10 @@
 'use client';
 
-import { Campaign, Category, Entry, LoreSchemas, World } from '@/types';
+import { Campaign, Entry, World } from '@/types';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import CategoryDropDown from '@/components/CategoryDropDown';
 import ParentDropDown from '@/components/ParentDropDown';
-import { getIcon } from '@/utils/getIcon';
 import { useClientContext } from '@/hooks/useClientContext';
 
 type Props = {
@@ -29,8 +28,27 @@ const GenieForm = ({
 }: Props) => {
   const router = useRouter();
   const { client } = useClientContext();
+  const [defaultParent, setDefaultParent] = useState('');
 
-  const everything = [...entries, ...campaigns as Campaign[]];
+  const everything = [
+    ...entries,
+    ...(campaigns as Campaign[]),
+    ...(campaigns?.map((campaign) => campaign.entries).flat() as Entry[]),
+  ];
+
+  useEffect(() => {
+    if (client.entry?.id) {
+      return setDefaultParent(client.entry.name);
+    }
+    if (client.campaign?.id) {
+      return setDefaultParent(client.campaign.name);
+    }
+    return setDefaultParent(client.world.name);
+  }, [client]);
+
+  if (!defaultParent) {
+    return <></>;
+  }
 
   return (
     <div className='flex flex-col pt-20 gap-10 w-[640px]'>
@@ -50,6 +68,7 @@ const GenieForm = ({
                 permissions={['admin', 'writer', 'reader']}
                 generate={true}
                 arr={everything}
+                defaultParent={defaultParent}
               />
               <CategoryDropDown
                 setData={setForm}

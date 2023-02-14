@@ -1,10 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import GenieForm from '@/components/GenieForm';
-import { Campaign, Entry, LoreSchemas, World } from '@/types';
-import { ClientContext } from '@/context/ClientContext';
+import { Campaign, Entry, World } from '@/types';
+import { useClientContext } from '@/hooks/useClientContext';
 
 type Props = {
   world: World;
@@ -20,7 +20,26 @@ const GenerateFormPage = ({
   permissions,
 }: Props) => {
   const router = useRouter();
-  const [form, setForm] = useState<Entry>({} as Entry);
+  const { client } = useClientContext();
+
+  const [form, setForm] = useState<Entry>({
+    name: 'Untitled',
+    description: '',
+    image: '',
+    public: false,
+  } as Entry);
+
+  useEffect(() => {
+    if (client.entry?.parent) {
+      setForm({ ...form, parent: client.entry.parent });
+    }
+    if (client.campaign?.id) {
+      setForm({
+        ...form,
+        campaign: { id: client.campaign.id, name: client.campaign.name },
+      });
+    }
+  }, [client]);
 
   const onCreate = async () => {
     try {
@@ -29,13 +48,7 @@ const GenerateFormPage = ({
         {
           method: 'POST',
           body: JSON.stringify({
-            entryData: {
-              ...form,
-              name: '',
-              description: '',
-              image: '',
-              public: false,
-            },
+            entryData: form,
             worldID: world.id,
             permissions,
           }),

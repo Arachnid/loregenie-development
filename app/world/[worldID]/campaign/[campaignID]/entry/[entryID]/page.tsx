@@ -1,6 +1,13 @@
 import ClientCampaignEntryPage from '@/components/campaign/entry/ClientCampaignEntryPage';
-import { getCampaignEntry, getCampaignPermissions } from '@/lib/db';
+import ClientEntryPage from '@/components/entry/ClientEntryPage';
+import {
+  getCampaignEntries,
+  getCampaignEntry,
+  getCampaignPermissions,
+  getWorld,
+} from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { Campaign, Entry, World } from '@/types';
 import { Session, unstable_getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
@@ -19,8 +26,16 @@ const CampaignEntryPage = async ({ params }: Props) => {
     params.entryID
   );
   const session: Session | null = await unstable_getServerSession(authOptions);
+  const { world }: { world: World | undefined } = await getWorld(
+    params.worldID,
+    session?.user?.email as string
+  );
+  const entries: Entry[] = await getCampaignEntries(
+    params.worldID,
+    params.campaignID
+  );
 
-  if (!campaignEntry || !session?.user?.email) {
+  if (!campaignEntry || !session?.user?.email || !world) {
     notFound();
   }
   const permissions = await getCampaignPermissions(
@@ -30,11 +45,12 @@ const CampaignEntryPage = async ({ params }: Props) => {
   );
 
   return (
-    <ClientCampaignEntryPage
-      campaignEntry={campaignEntry}
-      worldID={params.worldID}
-      campaignID={params.campaignID}
+    <ClientEntryPage
+      currentEntry={campaignEntry}
+      world={world}
+      entries={entries}
       permissions={permissions}
+      session={session}
     />
   );
 };
