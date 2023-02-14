@@ -1,62 +1,52 @@
 'use client';
 
 import { useClientContext } from '@/hooks/useClientContext';
-import { Category, Entry, EntryHierarchy, isEntry, World } from '@/types';
+import {
+  Category,
+  Entry,
+  EntryHierarchy,
+  isCampaign,
+  isEntry,
+  LoreSchemas,
+  World,
+} from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
-import EntriesList from '../nav/EntriesList';
+import EntriesList from './nav/EntriesList';
 
-type Props<T> = {
+type Props<T extends LoreSchemas> = {
   world: World;
-  entries: Entry[];
-  setData: Dispatch<SetStateAction<T>>;
-  data: T;
+  setData: Dispatch<SetStateAction<Entry>>;
+  data: Entry;
   permissions: string[];
   generate?: boolean;
+  arr: T[];
 };
 
-const ParentDropDown = <T extends {}>({
+const ParentDropDown = <T extends LoreSchemas>({
   world,
-  entries,
   setData,
   data,
   permissions,
   generate,
+  arr,
 }: Props<T>) => {
   const [searchValue, setSearchValue] = useState('');
-  const [filteredSearch, setFilteredSearch] = useState<EntryHierarchy[]>([]);
+  const [filteredSearch, setFilteredSearch] = useState<T[]>([]);
   const [dropDownOpen, setDropDownOpen] = useState(false);
   const { client } = useClientContext();
 
-  const getParents = (entries: Entry[]): EntryHierarchy[] => {
-    const result: EntryHierarchy[] = [];
-    const parentHierarchy: EntryHierarchy[] = createEntryHierarchy(entries);
-
-    const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
-      if (isEntry(data)) {
-        entriesHierarchy.map((entry: EntryHierarchy) => {
-          if (entry.id !== data.id && entry.category === Category.Location) {
-            if (entry.children) {
-              result.push(entry);
-              return recursiveEntryHierarchy(entry.children);
-            }
-            result.push(entry);
-          }
-        });
+  const filterSearch = () => {
+    return arr.filter((el) => {
+      if (el.name.toLowerCase().includes(searchValue.toLowerCase())) {
+        return el;
       }
-    };
-    recursiveEntryHierarchy(parentHierarchy);
-    return result;
+    });
   };
 
   useEffect(() => {
-    const filterSearch = getParents(entries).filter((parentEntry) => {
-      if (parentEntry.name.toLowerCase().includes(searchValue.toLowerCase())) {
-        return parentEntry;
-      }
-    });
     setFilteredSearch(filterSearch);
   }, [searchValue]);
 
@@ -65,19 +55,20 @@ const ParentDropDown = <T extends {}>({
       onOutsideClick={() => setDropDownOpen(false)}
       display='contents'
     >
-      <div className='relative flex flex-col items-center self-stretch w-full gap-4'>
+      <div className='relative z-10 flex flex-col items-center self-stretch w-full gap-4'>
         <button
           className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11 disabled:cursor-default'
           onClick={() => setDropDownOpen(!dropDownOpen)}
           disabled={!permissions.includes('writer')}
         >
           <p className='flex grow'>
-            {isEntry(data) &&
-              (generate
-                ? client.entry.name
+            {generate
+              ? data.campaign
+                ? data.campaign.name
                 : data.parent
                 ? data.parent.name
-                : world.name)}
+                : world.name
+              : world.name}
           </p>
           {permissions.includes('writer') &&
             (dropDownOpen ? (
@@ -87,7 +78,7 @@ const ParentDropDown = <T extends {}>({
             ))}
         </button>
         {dropDownOpen && (
-          <div className='z-20 absolute flex flex-col w-full bg-white border-2 border-lore-beige-500 rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'>
+          <div className='absolute flex flex-col w-full bg-white border-2 border-lore-beige-500 rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)] max-h-80'>
             <div className='flex items-center self-stretch justify-center px-4 py-3 border-b-2 border-lore-beige-500'>
               <input
                 className='leading-5 grow placeholder:text-black focus-visible:outline-none'
@@ -113,11 +104,9 @@ const ParentDropDown = <T extends {}>({
                 <button
                   className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                   onClick={() => {
-                    if (isEntry(data)) {
-                      const { parent, ...state } = data;
-                      setData(state as T);
-                      setDropDownOpen(false);
-                    }
+                    const { parent, campaign, category, ...state } = data;
+                    setData(state);
+                    setDropDownOpen(false);
                   }}
                 >
                   {getIcon('Home', 'material-icons-outlined text-[20px]')}
@@ -126,30 +115,42 @@ const ParentDropDown = <T extends {}>({
                   </p>
                 </button>
                 {/* <EntriesList entries={getParents(entries)} campaigns={[]} world={world} /> */}
-                {filteredSearch.map((parentEntry, index) => (
+                {filteredSearch.map((el, index) => (
                   <button
                     className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                     onClick={() => {
-                      if (isEntry(data)) {
+                      if (isEntry(el)) {
+                        const { campaign, category, ...state } = data;
                         setData({
-                          ...data,
+                          ...state,
                           parent: {
-                            name: parentEntry.name,
-                            id: parentEntry.id,
+                            name: el.name,
+                            id: el.id,
                           },
                         });
-                        setDropDownOpen(false);
+                      } else if (isCampaign(el)) {
+                        const { parent, category, ...state } = data;
+                        setData({
+                          ...state,
+                          campaign: { id: el.id, name: el.name },
+                        });
+                      } else {
+                        const { parent, category, ...state } = data;
+                        setData(state);
                       }
+                      setDropDownOpen(false);
                     }}
                     key={index}
                   >
                     {getIcon(
-                      parentEntry.category,
+                      isEntry(el)
+                        ? el.category
+                          ? el.category
+                          : ''
+                        : 'Campaign',
                       'material-icons-outlined text-[20px]'
                     )}
-                    <p className='flex font-medium leading-5 grow'>
-                      {parentEntry.name}
-                    </p>
+                    <p className='flex font-medium leading-5 grow'>{el.name}</p>
                   </button>
                 ))}
               </div>

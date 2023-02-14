@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GenieForm from '@/components/GenieForm';
 import { Campaign, Entry, LoreSchemas, World } from '@/types';
 import { ClientContext } from '@/context/ClientContext';
@@ -13,13 +13,6 @@ type Props = {
   permissions: string[];
 };
 
-const apiRoutes = {
-  world: '/api/world/create',
-  campaign: '/api/campaign/create',
-  entry: '/api/entry/create',
-  campaignEntry: '/api/campaign/entry/create',
-};
-
 const GenerateFormPage = ({
   world,
   campaigns,
@@ -27,28 +20,33 @@ const GenerateFormPage = ({
   permissions,
 }: Props) => {
   const router = useRouter();
-  const { client, setClient } = useContext(ClientContext);
-  const [form, setForm] = useState<LoreSchemas>();
-  console.log(client);
+  const [form, setForm] = useState<Entry>({} as Entry);
 
   const onCreate = async () => {
     try {
-      await fetch('/api/entry/create', {
-        method: 'POST',
-        body: JSON.stringify({
-          entryData: {
-            name: '',
-            description: '',
-            image: '',
-            category: '',
-            public: false,
-          },
-          worldID: world.id,
-          permissions,
-        }),
-      }).then((res) =>
-        res.json().then((entryID: string) => {
-          router.push(`/world/${world.id}/entry/${entryID}`);
+      await fetch(
+        form.campaign ? '/api/campaign/entry/create' : '/api/entry/create',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            entryData: {
+              ...form,
+              name: '',
+              description: '',
+              image: '',
+              public: false,
+            },
+            worldID: world.id,
+            permissions,
+          }),
+        }
+      ).then((res) =>
+        res.json().then((entry: Entry) => {
+          router.push(
+            form.campaign
+              ? `/world/${world.id}/campaign/${entry.campaign?.id}/entry/${entry.id}`
+              : `/world/${world.id}/entry/${entry.id}`
+          );
           router.refresh();
         })
       );

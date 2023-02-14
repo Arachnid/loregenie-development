@@ -3,8 +3,8 @@
 import { Campaign, Category, Entry, LoreSchemas, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
-import CategoryDropDown from '@/components/entry/CategoryDropDown';
-import ParentDropDown from '@/components/entry/ParentDropDown';
+import CategoryDropDown from '@/components/CategoryDropDown';
+import ParentDropDown from '@/components/ParentDropDown';
 import { getIcon } from '@/utils/getIcon';
 import { useClientContext } from '@/hooks/useClientContext';
 
@@ -14,14 +14,23 @@ type Props = {
   campaigns?: Campaign[];
   entries: Entry[];
   setOpen?: Dispatch<SetStateAction<boolean>>;
-  form: LoreSchemas | undefined;
-  setForm: Dispatch<SetStateAction<LoreSchemas | undefined>>;
+  form: Entry;
+  setForm: Dispatch<SetStateAction<Entry>>;
 };
 
-const GenieForm = ({ onCreate, world, entries, campaigns, setOpen, form, setForm }: Props) => {
+const GenieForm = ({
+  onCreate,
+  world,
+  entries,
+  campaigns,
+  setOpen,
+  form,
+  setForm,
+}: Props) => {
   const router = useRouter();
-  const {client} = useClientContext();
-  console.log(world)
+  const { client } = useClientContext();
+
+  const everything = [...entries, ...campaigns as Campaign[]];
 
   return (
     <div className='flex flex-col pt-20 gap-10 w-[640px]'>
@@ -33,30 +42,21 @@ const GenieForm = ({ onCreate, world, entries, campaigns, setOpen, form, setForm
         />
         <div className='flex flex-col self-stretch gap-4'>
           {world && (
-            <div className='flex self-stretch gap-4'>
+            <div className='relative z-20 flex self-stretch gap-4'>
               <ParentDropDown
                 world={world}
-                entries={entries}
-                setData={() => {}}
-                data={client.entry}
+                setData={setForm}
+                data={form}
+                permissions={['admin', 'writer', 'reader']}
+                generate={true}
+                arr={everything}
+              />
+              <CategoryDropDown
+                setData={setForm}
+                data={form}
                 permissions={['admin', 'writer', 'reader']}
                 generate={true}
               />
-              <CategoryDropDown
-                setData={() => {}}
-                data={client.entry}
-                permissions={['admin', 'writer', 'reader']}
-              >
-                {client.campaign && <button className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'>
-                  {getIcon(
-                    Category.Journal,
-                    'material-icons-outlined text-[20px]'
-                  )}
-                  <p className='flex font-medium leading-5 grow'>
-                    {Category.Journal}
-                  </p>
-                </button>}
-              </CategoryDropDown>
             </div>
           )}
           <div className='flex justify-center items-center py-3 px-5 gap-4 bg-white rounded-[10px] self-stretch'>
@@ -75,14 +75,15 @@ const GenieForm = ({ onCreate, world, entries, campaigns, setOpen, form, setForm
       </div>
       <div className='flex self-stretch gap-6 px-10 text-lore-blue-400'>
         <button
-          className='z-10 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'
+          className='flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'
           onClick={setOpen ? () => setOpen(false) : () => router.back()}
         >
           <p className='font-medium leading-5'>Cancel</p>
         </button>
         <button
-          className='z-10 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'
+          className='relative z-0 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400 disabled:bg-white/50'
           onClick={() => onCreate()}
+          disabled={!form.category}
         >
           <span className='text-[20px] material-icons'>add</span>
           <p className='font-medium leading-5'>Create blank</p>

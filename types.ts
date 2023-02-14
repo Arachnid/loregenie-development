@@ -12,6 +12,9 @@ export interface World {
 }
 
 export type Campaign = Omit<World, 'campaigns'>;
+export const isCampaign = (obj: any): obj is Campaign => {
+  return obj.campaigns === undefined && obj.category === undefined;
+};
 
 export interface Entry {
   readonly id: string;
@@ -19,11 +22,15 @@ export interface Entry {
   description: string;
   image: string;
   public: boolean;
+  category?: Category;
   parent?: {
     id: string;
     name: string;
   };
-  category: Category;
+  campaign?: {
+    id: string;
+    name: string;
+  };
 }
 export const isEntry = (obj: any): obj is Entry => {
   return obj.category !== undefined;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useLocalStorageState } from '@/hooks/useLocalStorageState';
 import { Campaign, ClientContextI, Entry, World } from '@/types';
 import { createContext, useMemo, useState } from 'react';
 
@@ -9,10 +10,15 @@ export const ClientContext = createContext({
 });
 
 export const ClientProvider = (props: any) => {
-  const [client, setClient] = useState({
-    world: {},
-    campaign: {},
-    entry: {},
+  // const [client, setClient] = useState({
+  //   world: {},
+  //   campaign: {},
+  //   entry: {},
+  // });
+  const [client, setClient] = useLocalStorageState('client-context', {
+    world: {} as World,
+    campaign: {} as Campaign,
+    entry: {} as Entry,
   });
   const value = useMemo(() => ({ client, setClient }), [client]);
 

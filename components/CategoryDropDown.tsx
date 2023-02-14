@@ -1,23 +1,25 @@
 'use client';
 
-import { Category, isEntry } from '@/types';
+import { Category, Entry, isEntry } from '@/types';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 
-type Props<T> = {
-  setData: Dispatch<SetStateAction<T>>;
-  data: T;
+type Props = {
+  setData: Dispatch<SetStateAction<Entry>>;
+  data: Entry;
   permissions: string[];
   children?: JSX.Element;
+  generate?: boolean;
 };
 
-const CategoryDropDown = <T extends {}>({
+const CategoryDropDown = ({
   setData,
   data,
   permissions,
   children,
-}: Props<T>) => {
+  generate,
+}: Props) => {
   const [dropDownOpen, setDropDownOpen] = useState(false);
 
   return (
@@ -32,7 +34,7 @@ const CategoryDropDown = <T extends {}>({
           disabled={!permissions.includes('writer')}
         >
           <p className='flex grow'>
-            {isEntry(data) && (data.category ? data.category : 'Select one')}
+            {data.category ? data.category : 'Select one'}
           </p>
           {permissions.includes('writer') &&
             (dropDownOpen ? (
@@ -45,11 +47,25 @@ const CategoryDropDown = <T extends {}>({
           <div className='z-10 absolute flex flex-col w-full bg-white border-2 border-lore-beige-500 rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'>
             <div className='flex flex-col self-stretch p-2 overflow-y-scroll grow scrollbar-hide'>
               <div className='flex flex-col self-stretch grow text-lore-blue-400'>
-                {children ? (
-                  children
+                {data.campaign ? (
+                  <button
+                    className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
+                    onClick={() => {
+                      setData({ ...data, category: Category.Journal });
+                      setDropDownOpen(false);
+                    }}
+                  >
+                    {getIcon(
+                      Category.Journal,
+                      'material-icons-outlined text-[20px]'
+                    )}
+                    <p className='flex font-medium leading-5 grow'>
+                      {Category.Journal}
+                    </p>
+                  </button>
                 ) : (
                   <>
-                  <button
+                    <button
                       className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                       onClick={() => {
                         setData({ ...data, category: Category.Location });
