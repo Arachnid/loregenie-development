@@ -1,16 +1,6 @@
 'use client';
 
-import { useClientContext } from '@/hooks/useClientContext';
-import {
-  Category,
-  Entry,
-  EntryHierarchy,
-  isCampaign,
-  isEntry,
-  LoreSchemas,
-  World,
-} from '@/types';
-import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
+import { Entry, isEntry, LoreSchemas, World } from '@/types';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
@@ -23,6 +13,7 @@ type Props<T extends LoreSchemas> = {
   permissions: string[];
   generate?: boolean;
   arr: T[];
+  defaultParent: string;
 };
 
 const ParentDropDown = <T extends LoreSchemas>({
@@ -32,11 +23,12 @@ const ParentDropDown = <T extends LoreSchemas>({
   permissions,
   generate,
   arr,
+  defaultParent,
 }: Props<T>) => {
   const [searchValue, setSearchValue] = useState('');
   const [filteredSearch, setFilteredSearch] = useState<T[]>([]);
   const [dropDownOpen, setDropDownOpen] = useState(false);
-  const { client } = useClientContext();
+  const [parentDisplay, setParentDisplay] = useState(defaultParent);
 
   const filterSearch = () => {
     return arr.filter((el) => {
@@ -61,15 +53,7 @@ const ParentDropDown = <T extends LoreSchemas>({
           onClick={() => setDropDownOpen(!dropDownOpen)}
           disabled={!permissions.includes('writer')}
         >
-          <p className='flex grow'>
-            {generate
-              ? data.campaign
-                ? data.campaign.name
-                : data.parent
-                ? data.parent.name
-                : world.name
-              : world.name}
-          </p>
+          <p className='flex grow'>{parentDisplay}</p>
           {permissions.includes('writer') &&
             (dropDownOpen ? (
               <span className='text-[20px] material-icons'>expand_less</span>
@@ -104,8 +88,13 @@ const ParentDropDown = <T extends LoreSchemas>({
                 <button
                   className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                   onClick={() => {
-                    const { parent, campaign, category, ...state } = data;
-                    setData(state);
+                    if (!generate) {
+                      setData({ ...data });
+                    } else {
+                      const { parent, campaign, category, ...state } = data;
+                      setData({ ...state });
+                    }
+                    setParentDisplay(() => world.name);
                     setDropDownOpen(false);
                   }}
                 >
@@ -120,24 +109,66 @@ const ParentDropDown = <T extends LoreSchemas>({
                     className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                     onClick={() => {
                       if (isEntry(el)) {
-                        const { campaign, category, ...state } = data;
-                        setData({
-                          ...state,
-                          parent: {
-                            name: el.name,
-                            id: el.id,
-                          },
-                        });
-                      } else if (isCampaign(el)) {
+                        if (el.campaign) {
+                          if (!generate) {
+                            setData({
+                              ...data,
+                              parent: {
+                                name: el.name,
+                                id: el.id,
+                              },
+                              campaign: {
+                                id: el.campaign.id,
+                                name: el.campaign.name,
+                              },
+                            });
+                          } else {
+                            const { category, ...state } = data;
+                            setData({
+                              ...state,
+                              parent: {
+                                name: el.name,
+                                id: el.id,
+                              },
+                              campaign: {
+                                id: el.campaign.id,
+                                name: el.campaign.name,
+                              },
+                            });
+                          }
+                        }
+                        if (!generate) {
+                          setData({
+                            ...data,
+                            parent: {
+                              name: el.name,
+                              id: el.id,
+                            },
+                          });
+                        } else {
+                          const { campaign, category, ...state } = data;
+                          setData({
+                            ...state,
+                            parent: {
+                              name: el.name,
+                              id: el.id,
+                            },
+                          });
+                        }
+                      } else {
+                        if (!generate) {
+                          setData({
+                            ...data,
+                            campaign: { id: el.id, name: el.name },
+                          });
+                        }
                         const { parent, category, ...state } = data;
                         setData({
                           ...state,
                           campaign: { id: el.id, name: el.name },
                         });
-                      } else {
-                        const { parent, category, ...state } = data;
-                        setData(state);
                       }
+                      setParentDisplay(() => el.name);
                       setDropDownOpen(false);
                     }}
                     key={index}

@@ -1,8 +1,8 @@
-import { getCampaign, getCampaignPermissions } from '@/lib/db';
+import { getCampaign, getCampaignPermissions, getWorld } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Session, unstable_getServerSession } from 'next-auth';
-import { Campaign } from '@/types';
+import { Campaign, World } from '@/types';
 import ClientCampaignPage from '@/components/campaign/ClientCampaignPage';
 
 interface Props {
@@ -19,16 +19,24 @@ export default async function CampaignPage({ params }: Props) {
   );
   const session: Session | null = await unstable_getServerSession(authOptions);
 
-  if (!campaign || !session?.user?.email) {
+  const { world }: { world: World | undefined } = await getWorld(
+    params.worldID,
+    session?.user?.email as string
+  );
+  if (!campaign || !session?.user?.email || !world) {
     notFound();
   }
-  const permissions = await getCampaignPermissions(params.worldID, params.campaignID, session.user.email);
+  const permissions = await getCampaignPermissions(
+    params.worldID,
+    params.campaignID,
+    session.user.email
+  );
 
   return (
     <>
       <ClientCampaignPage
         campaign={campaign}
-        worldID={params.worldID}
+        world={world}
         permissions={permissions}
       />
     </>
