@@ -24,7 +24,7 @@ export default async function handler(
       .collection('entries')
       .withConverter(new Converter<Entry>())
       .add(entryData);
-    response.json(entry.id);
+    response.json(entry);
   } catch (error) {
     console.log('error writing entry to database: ', error);
     response.statusCode = 500;

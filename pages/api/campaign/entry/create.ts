@@ -9,12 +9,10 @@ export default async function handler(
   const {
     entryData,
     worldID,
-    campaignID,
     permissions,
   }: {
     entryData: Entry;
     worldID: string;
-    campaignID: string;
     permissions: string[];
   } = JSON.parse(request.body);
   try {
@@ -26,11 +24,11 @@ export default async function handler(
       .collection('worlds')
       .doc(worldID)
       .collection('campaigns')
-      .doc(campaignID)
+      .doc(entryData.campaign?.id as string)
       .collection('entries')
       .withConverter(new Converter<Entry>())
       .add(entryData);
-    response.json(entry.id);
+    response.json((await entry.get()).data());
   } catch (error) {
     console.log('error writing campaign entry to database: ', error);
     response.statusCode = 500;

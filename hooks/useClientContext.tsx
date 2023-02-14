@@ -9,5 +9,6 @@ export const useClientContext = () => {
   if (!context) {
     throw new Error('useClient must be used within ClientProvider.');
   }
+  
   return context;
 };

@@ -1,15 +1,16 @@
 'use client';
 
-import { Entry, World } from '@/types';
+import { Category, Entry, EntryHierarchy, LoreSchemas, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
-import ParentDropDown from '@/components/entry/ParentDropDown';
-import CategoryDropDown from '@/components/entry/CategoryDropDown';
+import ParentDropDown from '@/components/ParentDropDown';
+import CategoryDropDown from '@/components/CategoryDropDown';
 import ImageSettings from '@/components/ImageSettings';
 import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
 import { useClientContext } from '@/hooks/useClientContext';
+import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
 interface Props {
   currentEntry: Entry;
@@ -67,6 +68,31 @@ const ClientEntryPage = ({
     }
   };
 
+  const getParents = (entries: Entry[]): EntryHierarchy[] => {
+    const result: EntryHierarchy[] = [];
+    const parentHierarchy: EntryHierarchy[] = createEntryHierarchy(entries);
+
+    const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
+      entriesHierarchy.map((entry: EntryHierarchy) => {
+        if (entry.id !== currentEntry.id && entry.category === Category.Location) {
+          if (entry.children) {
+            result.push(entry);
+            return recursiveEntryHierarchy(entry.children);
+          }
+          result.push(entry);
+        }
+      });
+    };
+    recursiveEntryHierarchy(parentHierarchy);
+    return result;
+  };
+
+  // const filterSearch = getParents(entries).filter((parentEntry) => {
+  //   if (parentEntry.name.toLowerCase().includes(searchValue.toLowerCase())) {
+  //     return parentEntry;
+  //   }
+  // });
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<Entry>
@@ -83,18 +109,18 @@ const ClientEntryPage = ({
           <div className='flex flex-col items-start gap-4 p-6 rounded-lg grow bg-lore-beige-400'>
             <div className='flex items-center self-stretch gap-4'>
               <p className='font-medium w-14'>Parent</p>
-              <ParentDropDown<Entry>
+              <ParentDropDown<LoreSchemas>
                 world={world}
-                entries={entries}
                 setData={setEntryData}
                 data={entryData}
                 permissions={permissions}
+                arr={[...getParents(entries), world]}
               />
             </div>
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />
             <div className='flex items-center self-stretch gap-4'>
               <p className='font-medium w-14'>Type</p>
-              <CategoryDropDown<Entry>
+              <CategoryDropDown
                 setData={setEntryData}
                 data={entryData}
                 permissions={permissions}
