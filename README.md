@@ -13,10 +13,10 @@
 - run: ```npm install -g firebase-tools```
 - run: ```firebase init```
 - select Emulators
-- select Authentication Emulator and Firestore Emulator
-- copy auth and firestore ports into the env. By default, the values are:
+- select Storage Emulator and Firestore Emulator
+- add storage and firestore ports into the env. By default, the values are:
   - ```FIRESTORE_EMULATOR_HOST='localhost:8080'```
-  - ```FIREBASE_AUTH_EMULATOR_HOST='localhost:9099'```
+  - ```FIREBASE_STORAGE_EMULATOR_HOST='localhost:9199'```
 - run: ```firebase emulators:start``` OR run firebase emulator with persistent data:
   - create ```exported-firebase-data``` folder in root directory
   - run: ```npm run emulator```
@@ -39,7 +39,7 @@ DISCORD_CLIENT_SECRET='dicord-client-secret'
 TWITCH_CLIENT_ID='twitch-client-id'
 TWITCH_CLIENT_SECRET='twitch-client-secret'
 FIRESTORE_EMULATOR_HOST='localhost:8080'
-FIREBASE_AUTH_EMULATOR_HOST='localhost:9099'
+FIREBASE_STORAGE_EMULATOR_HOST='localhost:9199'
 ```
 
 ## Run Development Server

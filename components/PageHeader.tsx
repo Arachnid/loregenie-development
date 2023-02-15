@@ -3,8 +3,8 @@
 import { isEntry, LoreSchemas } from '@/types';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction, useState } from 'react';
-import AlertDialog from './AlertDialog';
-import SharingModal from './SharingModal';
+import AlertDialog from '@/components/AlertDialog';
+import SharingModal from '@/components/SharingModal';
 
 type Props<T extends LoreSchemas> = {
   data: T;

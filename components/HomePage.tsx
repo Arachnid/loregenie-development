@@ -116,7 +116,11 @@ const HomePage = ({ worlds, session }: Props) => {
             display='contents'
           >
             <div className='absolute z-20 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'>
-              <GenieForm onCreate={onCreate} setOpen={setGenieFormOpen} />
+              <GenieForm
+                onCreate={onCreate}
+                setOpen={setGenieFormOpen}
+                disabled={false}
+              />
             </div>
           </OutsideClickHandler>
           <div className='fixed inset-0 z-10 w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50' />

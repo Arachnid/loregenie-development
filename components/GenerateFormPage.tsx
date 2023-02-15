@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import GenieForm from '@/components/GenieForm';
 import { Campaign, Entry, World } from '@/types';
 import { useClientContext } from '@/hooks/useClientContext';
+import ParentDropDown from '@/components/dropdown/ParentDropDown';
+import CategoryDropDown from '@/components/dropdown/CategoryDropDown';
 
 type Props = {
   world: World;
@@ -22,12 +24,23 @@ const GenerateFormPage = ({
   const router = useRouter();
   const { client } = useClientContext();
 
+  const [defaultParent, setDefaultParent] = useState('');
   const [form, setForm] = useState<Entry>({
     name: 'Untitled',
     description: '',
     image: '',
     public: false,
   } as Entry);
+
+  useEffect(() => {
+    if (client.entry?.id) {
+      return setDefaultParent(client.entry.name);
+    }
+    if (client.campaign?.id) {
+      return setDefaultParent(client.campaign.name);
+    }
+    return setDefaultParent(client.world.name);
+  }, [client]);
 
   useEffect(() => {
     if (client.entry?.parent) {
@@ -68,16 +81,37 @@ const GenerateFormPage = ({
     }
   };
 
+  const dropDownList = [
+    ...entries,
+    ...campaigns,
+    ...campaigns?.map((campaign) => campaign.entries).flat(),
+  ];
+
+  if (!defaultParent) {
+    return <></>;
+  }
+
   return (
     <div className='flex flex-col items-center justify-center gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
-      <GenieForm
-        onCreate={onCreate}
-        world={world}
-        form={form}
-        setForm={setForm}
-        entries={entries}
-        campaigns={campaigns}
-      />
+      <GenieForm onCreate={onCreate} disabled={!Boolean(form.category)}>
+        <div className='relative z-20 flex self-stretch gap-4'>
+          <ParentDropDown
+            world={world}
+            setData={setForm}
+            data={form}
+            permissions={permissions}
+            generate={true}
+            dropDownList={dropDownList}
+            defaultParent={defaultParent}
+          />
+          <CategoryDropDown
+            setData={setForm}
+            data={form}
+            permissions={permissions}
+            generate={true}
+          />
+        </div>
+      </GenieForm>
     </div>
   );
 };

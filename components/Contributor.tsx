@@ -2,7 +2,7 @@
 
 import { Campaign, World } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
-import PermissionDropDown from '@/components/PermissionDropDown';
+import PermissionDropDown from '@/components/dropdown/PermissionDropDown';
 import { Session } from 'next-auth';
 
 type Props<T extends World | Campaign> = {

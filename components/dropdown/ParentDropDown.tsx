@@ -4,7 +4,7 @@ import { Entry, isEntry, LoreSchemas, World } from '@/types';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
-import EntriesList from './nav/EntriesList';
+import EntriesList from '../nav/EntriesList';
 
 type Props<T extends LoreSchemas> = {
   world: World;
@@ -12,7 +12,7 @@ type Props<T extends LoreSchemas> = {
   data: Entry;
   permissions: string[];
   generate?: boolean;
-  arr: T[];
+  dropDownList: T[];
   defaultParent: string;
 };
 
@@ -22,7 +22,7 @@ const ParentDropDown = <T extends LoreSchemas>({
   data,
   permissions,
   generate,
-  arr,
+  dropDownList,
   defaultParent,
 }: Props<T>) => {
   const [searchValue, setSearchValue] = useState('');
@@ -31,9 +31,9 @@ const ParentDropDown = <T extends LoreSchemas>({
   const [parentDisplay, setParentDisplay] = useState(defaultParent);
 
   const filterSearch = () => {
-    return arr.filter((el) => {
-      if (el.name.toLowerCase().includes(searchValue.toLowerCase())) {
-        return el;
+    return dropDownList.filter((listIem) => {
+      if (listIem.name.toLowerCase().includes(searchValue.toLowerCase())) {
+        return listIem;
       }
     });
   };
