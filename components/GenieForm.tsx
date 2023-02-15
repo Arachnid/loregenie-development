@@ -1,54 +1,22 @@
 'use client';
 
-import { Campaign, Entry, World } from '@/types';
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import CategoryDropDown from '@/components/CategoryDropDown';
-import ParentDropDown from '@/components/ParentDropDown';
-import { useClientContext } from '@/hooks/useClientContext';
+import { Dispatch, SetStateAction } from 'react';
 
 type Props = {
   onCreate: () => Promise<void>;
-  world?: World;
-  campaigns?: Campaign[];
-  entries: Entry[];
   setOpen?: Dispatch<SetStateAction<boolean>>;
-  form: Entry;
-  setForm: Dispatch<SetStateAction<Entry>>;
+  children?: JSX.Element;
+  disabled: boolean;
 };
 
 const GenieForm = ({
   onCreate,
-  world,
-  entries,
-  campaigns,
   setOpen,
-  form,
-  setForm,
+  children,
+  disabled
 }: Props) => {
   const router = useRouter();
-  const { client } = useClientContext();
-  const [defaultParent, setDefaultParent] = useState('');
-
-  const everything = [
-    ...entries,
-    ...(campaigns as Campaign[]),
-    ...(campaigns?.map((campaign) => campaign.entries).flat() as Entry[]),
-  ];
-
-  useEffect(() => {
-    if (client.entry?.id) {
-      return setDefaultParent(client.entry.name);
-    }
-    if (client.campaign?.id) {
-      return setDefaultParent(client.campaign.name);
-    }
-    return setDefaultParent(client.world.name);
-  }, [client]);
-
-  if (!defaultParent) {
-    return <></>;
-  }
 
   return (
     <div className='flex flex-col pt-20 gap-10 w-[640px]'>
@@ -59,25 +27,7 @@ const GenieForm = ({
           alt=''
         />
         <div className='flex flex-col self-stretch gap-4'>
-          {world && (
-            <div className='relative z-20 flex self-stretch gap-4'>
-              <ParentDropDown
-                world={world}
-                setData={setForm}
-                data={form}
-                permissions={['admin', 'writer', 'reader']}
-                generate={true}
-                arr={everything}
-                defaultParent={defaultParent}
-              />
-              <CategoryDropDown
-                setData={setForm}
-                data={form}
-                permissions={['admin', 'writer', 'reader']}
-                generate={true}
-              />
-            </div>
-          )}
+          {children}
           <div className='flex justify-center items-center py-3 px-5 gap-4 bg-white rounded-[10px] self-stretch'>
             <p className='font-cinzel font-bold text-[27px] leading-9 text-center opacity-50'>
               PROMPT EXAMPLE
@@ -102,7 +52,7 @@ const GenieForm = ({
         <button
           className='relative z-0 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400 disabled:bg-white/50'
           onClick={() => onCreate()}
-          disabled={!form.category}
+          disabled={disabled}
         >
           <span className='text-[20px] material-icons'>add</span>
           <p className='font-medium leading-5'>Create blank</p>

@@ -3,7 +3,7 @@
 import { Campaign, isEntry, LoreSchemas, World } from '@/types';
 import { Dispatch, SetStateAction, useState } from 'react';
 import Contributor from '@/components/Contributor';
-import PermissionDropDown from './PermissionDropDown';
+import PermissionDropDown from '@/components/dropdown/PermissionDropDown';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { Session } from 'next-auth';
 

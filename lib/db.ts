@@ -5,6 +5,7 @@ import {
   QueryDocumentSnapshot,
   Firestore,
 } from 'firebase-admin/firestore';
+import { Storage } from 'firebase-admin/storage';
 import { World, Entry, EntryHierarchy, Campaign } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
@@ -15,6 +16,7 @@ if (!admin.apps.length) {
         credential: admin.credential.cert(
           process.env.GOOGLE_SERVICE_ACCOUNT as admin.ServiceAccount
         ),
+        storageBucket: process.env.GOOGLE_STORAGE_BUCKET,
       });
     } else {
       admin.initializeApp();
@@ -24,6 +26,7 @@ if (!admin.apps.length) {
   }
 }
 
+export const storage: Storage = admin.storage();
 export const db: Firestore = admin.firestore();
 
 export class Converter<U> implements FirestoreDataConverter<U> {
@@ -35,6 +38,10 @@ export class Converter<U> implements FirestoreDataConverter<U> {
     return Object.assign({ id: snapshot.id }, snapshot.data()) as U;
   }
 }
+
+export const uploadImage = async (file: string) => {
+  await storage.bucket().upload(file);
+};
 
 export async function getWorlds(email: string): Promise<World[]> {
   const worlds = await db
