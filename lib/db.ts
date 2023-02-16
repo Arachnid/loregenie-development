@@ -39,10 +39,6 @@ export class Converter<U> implements FirestoreDataConverter<U> {
   }
 }
 
-export const uploadImage = async (file: string) => {
-  await storage.bucket().upload(file);
-};
-
 export async function getWorlds(email: string): Promise<World[]> {
   const worlds = await db
     .collection('worlds')

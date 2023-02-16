@@ -11,6 +11,7 @@ import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
 import { useClientContext } from '@/hooks/useClientContext';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
+import { base64Converter } from '@/utils/base64Converter';
 
 interface Props {
   currentEntry: Entry;
@@ -68,6 +69,24 @@ const ClientEntryPage = ({
     }
   };
 
+  const onImageUpload = async (uploadedFile: File) => {
+    try {
+      const base64: string = (await base64Converter(uploadedFile)) as string;
+      const filePath = `worlds/${world.id}/entries/${currentEntry.id}/image`;
+      await fetch('/api/image/create', {
+        method: 'POST',
+        body: JSON.stringify({ base64, filePath, permissions }),
+      }).then((res) =>
+        res
+          .json()
+          .then((url: string) => setEntryData({ ...entryData, image: url }))
+      );
+      router.refresh();
+    } catch (error) {
+      console.log('error submitting image: ', error);
+    }
+  };
+
   const getParents = (entries: Entry[]): EntryHierarchy[] => {
     const result: EntryHierarchy[] = [];
     const parentHierarchy: EntryHierarchy[] = createEntryHierarchy(entries);
@@ -122,7 +141,7 @@ const ClientEntryPage = ({
                 setData={setEntryData}
                 data={entryData}
                 permissions={permissions}
-                arr={[...getParents(entries)]}
+                dropDownList={[...getParents(entries)]}
                 defaultParent={defaultParent()}
               />
             </div>
@@ -142,6 +161,7 @@ const ClientEntryPage = ({
                 data={entryData}
                 setData={setEntryData}
                 permissions={permissions}
+                onUpload={onImageUpload}
               />
             </div>
             {entryData.image && (

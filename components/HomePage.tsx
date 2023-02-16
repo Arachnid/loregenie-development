@@ -6,6 +6,7 @@ import { Session } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
+import { signIn } from 'next-auth/react';
 
 type Props = {
   worlds: World[];
@@ -87,7 +88,7 @@ const HomePage = ({ worlds, session }: Props) => {
           <div
             className='flex flex-col justify-end gap-4 p-10 cursor-pointer rounded-2xl w-[860px] h-[400px] bg-lore-beige-500 bg-cover bg-top 
               bg-[linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url("/create-world-background.png")]'
-            onClick={() => setGenieFormOpen(true)}
+            onClick={() => session?.user?.email ? setGenieFormOpen(true) : signIn()}
           >
             <div className='flex items-end self-stretch gap-20 text-white'>
               <div className='flex flex-col gap-2 grow'>

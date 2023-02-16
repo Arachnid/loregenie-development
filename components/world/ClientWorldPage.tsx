@@ -8,6 +8,7 @@ import ImageSettings from '@/components/ImageSettings';
 import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
 import { useClientContext } from '@/hooks/useClientContext';
+import { base64Converter } from '@/utils/base64Converter';
 
 type Props = {
   world: World;
@@ -84,6 +85,24 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
     }
   };
 
+  const onImageUpload = async (uploadedFile: File) => {
+    try {
+      const base64: string = (await base64Converter(uploadedFile)) as string;
+      const filePath = `worlds/${world.id}/image`;
+      await fetch('/api/image/create', {
+        method: 'POST',
+        body: JSON.stringify({ base64, filePath, permissions }),
+      }).then((res) =>
+        res.json().then((url: string) => {
+          setWorldData({ ...worldData, image: url });
+          router.refresh();
+        })
+      );
+    } catch (error) {
+      console.log('error submitting image: ', error);
+    }
+  };
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<World>
@@ -102,12 +121,13 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
               data={worldData}
               setData={setWorldData}
               permissions={permissions}
+              onUpload={onImageUpload}
             />
           </div>
           {worldData.image && (
             <img
               className='object-cover w-full h-full rounded-lg'
-              src={worldData.image}
+              src={`${worldData.image}?${Date.now()}`}
               alt=''
             />
           )}

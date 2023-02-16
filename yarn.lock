@@ -3715,10 +3715,10 @@
   "resolved" "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
   "version" "1.4.0"
 
-"next-auth@^4.18.6":
-  "integrity" "sha512-0TQwbq5X9Jyd1wUVYUoyvHJh4JWXeW9UOcMEl245Er/Y5vsSbyGJHt8M7xjRMzk9mORVMYehoMdERgyiq/jCgA=="
-  "resolved" "https://registry.npmjs.org/next-auth/-/next-auth-4.18.6.tgz"
-  "version" "4.18.6"
+"next-auth@^4.19.2":
+  "integrity" "sha512-6V2YG3IJQVhgCAH7mvT3yopTW92gMdUrcwGX7NQ0dCreT/+axGua/JmVdarjec0C/oJukKpIYRgjMlV+L5ZQOQ=="
+  "resolved" "https://registry.npmjs.org/next-auth/-/next-auth-4.19.2.tgz"
+  "version" "4.19.2"
   dependencies:
     "@babel/runtime" "^7.16.3"
     "@panva/hkdf" "^1.0.1"
