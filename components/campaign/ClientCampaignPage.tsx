@@ -8,6 +8,7 @@ import ImageSettings from '@/components/ImageSettings';
 import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
 import { useClientContext } from '@/hooks/useClientContext';
+import { base64Converter } from '@/utils/base64Converter';
 
 type Props = {
   world: World;
@@ -16,7 +17,12 @@ type Props = {
   session: Session;
 };
 
-const ClientCampaignPage = ({ world, campaign, permissions, session }: Props) => {
+const ClientCampaignPage = ({
+  world,
+  campaign,
+  permissions,
+  session,
+}: Props) => {
   const [campaignData, setCampaignData] = useState<Campaign>(campaign);
   const { setClient } = useClientContext();
   const router = useRouter();
@@ -59,6 +65,24 @@ const ClientCampaignPage = ({ world, campaign, permissions, session }: Props) =>
     }
   };
 
+  const onImageUpload = async (uploadedFile: File) => {
+    try {
+      const base64: string = (await base64Converter(uploadedFile)) as string;
+      const filePath = `worlds/${world.id}/campaigns/${campaign.id}/image`;
+      await fetch('/api/image/create', {
+        method: 'POST',
+        body: JSON.stringify({ base64, filePath, permissions }),
+      }).then((res) =>
+        res.json().then((url: string) => {
+          setCampaignData({ ...campaignData, image: url });
+          router.refresh();
+        })
+      );
+    } catch (error) {
+      console.log('error submitting image: ', error);
+    }
+  };
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<Campaign>
@@ -77,6 +101,7 @@ const ClientCampaignPage = ({ world, campaign, permissions, session }: Props) =>
               data={campaignData}
               setData={setCampaignData}
               permissions={permissions}
+              onUpload={onImageUpload}
             />
           </div>
           {campaignData.image && (

@@ -8,15 +8,16 @@ type Props<T extends LoreSchemas> = {
   data: T;
   setData: Dispatch<SetStateAction<T>>;
   permissions: string[];
+  onUpload: (uploadedFile: File) => Promise<void>;
 };
 
 const ImageSettings = <T extends LoreSchemas>({
   data,
   setData,
   permissions,
+  onUpload,
 }: Props<T>) => {
   const [editImage, setEditImage] = useState(false);
-
   const uploadImageRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = () => {
@@ -45,10 +46,7 @@ const ImageSettings = <T extends LoreSchemas>({
             accept='image/*'
             onChange={(e) => {
               if (e.target.files) {
-                setData({
-                  ...data,
-                  image: URL.createObjectURL(e.target.files[0]),
-                });
+                onUpload(e.target.files[0]);
               }
               setEditImage(false);
             }}
