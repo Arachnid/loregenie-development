@@ -1,4 +1,4 @@
-import { unstable_getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Inter } from '@next/font/google';
 import HomePage from '@/components/HomePage';
@@ -9,7 +9,7 @@ import { World } from '@/types';
 const inter = Inter({ subsets: ['latin'] });
 
 export default async function Home() {
-  const session = await unstable_getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
   let worlds: World[] = [];
 
   if (session?.user?.email) {

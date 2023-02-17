@@ -2,8 +2,8 @@
 
 import { Session } from 'next-auth';
 import { signIn, signOut } from 'next-auth/react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 type Props = {
   session: Session | null;
@@ -11,6 +11,29 @@ type Props = {
 };
 
 const NavBar = ({ session, worldName }: Props) => {
+  const userData = {
+    image: session?.user?.image as string,
+    email: session?.user?.email as string,
+    username: session?.user?.name as string,
+  };
+
+  const onSignIn = async () => {
+    try {
+      await fetch('/api/user/update', {
+        method: 'POST',
+        body: JSON.stringify({ userData }),
+      });
+    } catch (error) {
+      console.log('error updating user: ', error);
+    }
+  };
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      onSignIn();
+    }
+  }, [session]);
+
   return (
     <div className='flex items-center justify-between h-16 gap-4 p-4 min-w-max'>
       <div className='flex items-center h-6 gap-6'>

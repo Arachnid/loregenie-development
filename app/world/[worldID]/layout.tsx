@@ -1,5 +1,5 @@
 import BaseLayout from '@/components/BaseLayout';
-import { unstable_getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import EntriesNav from '@/components/nav/EntriesNav';
 import { notFound } from 'next/navigation';
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default async function Layout({ children, params }: Props) {
-  const session = await unstable_getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
   if (!session?.user?.email) {
     notFound();
   }

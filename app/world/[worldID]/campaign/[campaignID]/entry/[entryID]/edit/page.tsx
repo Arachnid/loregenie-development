@@ -5,7 +5,7 @@ import {
 } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { Entry } from '@/types';
-import { Session, unstable_getServerSession } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import CampaignEntryForm from '@/components/campaign/entry/CampaignEntryForm';
 
@@ -23,7 +23,7 @@ export default async function EditCampaignPage({ params }: Props) {
     params.campaignID,
     params.entryID
   );
-  const session: Session | null = await unstable_getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
   const campaignEntries: Entry[] = await getCampaignEntries(
     params.worldID,
     session?.user?.email as string

@@ -8,6 +8,7 @@ import { Session } from 'next-auth';
 type Props<T extends World | Campaign> = {
   email: string;
   title: string;
+  image: string;
   data: T;
   setData: Dispatch<SetStateAction<T>>;
   session: Session;
@@ -16,6 +17,7 @@ type Props<T extends World | Campaign> = {
 const Contributor = <T extends World | Campaign>({
   email,
   title,
+  image,
   data,
   setData,
   session,
@@ -23,7 +25,7 @@ const Contributor = <T extends World | Campaign>({
   return (
     <div className='flex items-center self-stretch gap-2'>
       <div className='flex items-center p-[10px] pr-4 gap-2 bg-white rounded-lg grow'>
-        <img className='w-6 h-6 rounded-full' src='/no-profile-picture.svg' alt='' />
+        <img className='w-6 h-6 rounded-full' src={image} alt='' />
         <p className='leading-5 grow'>{email}</p>
       </div>
       {email === session.user?.email ? (
@@ -64,19 +66,23 @@ const Contributor = <T extends World | Campaign>({
           }
         />
       )}
-      {email === session.user?.email ? <div className='w-5 h-5' /> : <span
-        className='text-[20px] material-icons text-lore-blue-400 cursor-pointer'
-        onClick={() => {
-          setData({
-            ...data,
-            admins: data.admins.filter((admin) => email !== admin),
-            writers: data.writers.filter((writer) => email !== writer),
-            readers: data.readers.filter((reader) => email !== reader),
-          });
-        }}
-      >
-        close
-      </span>}
+      {email === session.user?.email ? (
+        <div className='w-5 h-5' />
+      ) : (
+        <span
+          className='text-[20px] material-icons text-lore-blue-400 cursor-pointer'
+          onClick={() => {
+            setData({
+              ...data,
+              admins: data.admins.filter((admin) => email !== admin),
+              writers: data.writers.filter((writer) => email !== writer),
+              readers: data.readers.filter((reader) => email !== reader),
+            });
+          }}
+        >
+          close
+        </span>
+      )}
     </div>
   );
 };

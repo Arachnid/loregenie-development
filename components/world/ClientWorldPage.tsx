@@ -1,6 +1,6 @@
 'use client';
 
-import { Campaign, World } from '@/types';
+import { Campaign, User, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
@@ -15,9 +15,16 @@ type Props = {
   campaigns: Campaign[];
   permissions: string[];
   session: Session;
+  contributors: User[];
 };
 
-const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
+const WorldPage = ({
+  world,
+  campaigns,
+  permissions,
+  session,
+  contributors,
+}: Props) => {
   const [worldData, setWorldData] = useState<World>(world);
   const { setClient } = useClientContext();
   const router = useRouter();
@@ -87,7 +94,7 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
 
   const onImageUpload = async (uploadedFile: File) => {
     try {
-      const base64: string = (await base64Converter(uploadedFile)) as string;
+      const base64: string = await base64Converter(uploadedFile);
       const filePath = `worlds/${world.id}/image`;
       await fetch('/api/image/create', {
         method: 'POST',
@@ -113,6 +120,7 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
         onDelete={onDelete}
         permissions={permissions}
         session={session}
+        contributors={contributors}
       />
       <div className='flex flex-col items-start gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
         <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
@@ -165,10 +173,10 @@ const WorldPage = ({ world, campaigns, permissions, session }: Props) => {
                   {campaign.name ? campaign.name.toUpperCase() : 'UNTITLED'}
                 </p>
                 <div className='flex flex-col-reverse flex-wrap-reverse items-end gap-2 max-h-28 min-w-max'>
-                  {campaign.readers.map((reader, index) => (
+                  {campaign.contributors.map((contributor, index) => (
                     <img
                       className='w-12 h-12 rounded-full min-w-max'
-                      src='/no-profile-picture.svg'
+                      src={contributor.image}
                       alt=''
                       key={index}
                     />

@@ -1,7 +1,12 @@
-import { getCampaign, getCampaignPermissions, getWorld } from '@/lib/db';
+import {
+  getCampaign,
+  getCampaignPermissions,
+  getContributors,
+  getWorld,
+} from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Session, unstable_getServerSession } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { Campaign, World } from '@/types';
 import ClientCampaignPage from '@/components/campaign/ClientCampaignPage';
 
@@ -17,12 +22,15 @@ export default async function CampaignPage({ params }: Props) {
     params.worldID,
     params.campaignID
   );
-  const session: Session | null = await unstable_getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
 
   const { world }: { world: World | undefined } = await getWorld(
     params.worldID,
     session?.user?.email as string
   );
+
+  const contributors = await getContributors(params.worldID, params.campaignID);
+
   if (!campaign || !session?.user?.email || !world) {
     notFound();
   }
@@ -38,6 +46,7 @@ export default async function CampaignPage({ params }: Props) {
       world={world}
       permissions={permissions}
       session={session}
+      contributors={contributors}
     />
   );
 }

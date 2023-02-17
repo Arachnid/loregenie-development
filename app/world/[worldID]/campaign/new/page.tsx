@@ -1,7 +1,7 @@
 import CampaignForm from '@/components/campaign/CampaignForm';
 import { getPermissions } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { unstable_getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default async function NewCampaignPage({ params }: Props) {
-  const session = await unstable_getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
   
   if (!session?.user?.email) {
     notFound();

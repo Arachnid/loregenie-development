@@ -1,7 +1,7 @@
 'use client';
 
-import { Campaign, isEntry, LoreSchemas, World } from '@/types';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Campaign, isEntry, LoreSchemas, User, World } from '@/types';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Contributor from '@/components/Contributor';
 import PermissionDropDown from '@/components/dropdown/PermissionDropDown';
 import OutsideClickHandler from 'react-outside-click-handler';
@@ -23,8 +23,40 @@ const SharingModal = <T extends LoreSchemas>({
   const [publicSwitchOn, setPublicSwitchOn] = useState<boolean>(data.public);
   const [inputEmail, setInputEmail] = useState<string>('');
   const [inputPermission, setInputPermission] = useState<string>('Reader');
+  const [users, setUsers] = useState<User[]>([]);
 
-  const onAdd = () => {
+  const getUsers = async (emails: string[]) => {
+    try {
+      let result: User[] = [];
+      await fetch('/api/user/get', {
+        method: 'POST',
+        body: JSON.stringify({ emails }),
+      }).then((res) =>
+        res.json().then((users: User[]) => {
+          result = users;
+        })
+      );
+      return result;
+    } catch (error) {
+      console.log('error fetching users: ', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isEntry(data) && data.readers.length) {
+      const setUserData = async () => {
+        const users = await getUsers(data.readers) as User[];
+        setUsers(users);
+      }
+      setUserData();
+    }
+  }, [!isEntry(data) && data.readers]);
+
+  const onAdd = async () => {
+    const validUser = await getUsers([inputEmail]);
+    if (!validUser?.length) {
+      return alert('User with that email does not exist.');
+    }
     if (!isEntry(data)) {
       switch (inputPermission) {
         case 'Admin':
@@ -52,6 +84,7 @@ const SharingModal = <T extends LoreSchemas>({
           break;
       }
     }
+    setInputEmail('');
   };
 
   return (
@@ -109,12 +142,13 @@ const SharingModal = <T extends LoreSchemas>({
                 <p className='self-stretch text-2xl font-medium leading-7'>
                   Contributors
                 </p>
-                {data.readers.map((email, index) => {
-                  if (data.admins.includes(email)) {
+                {users.map((contributor, index) => {
+                  if (data.admins.includes(contributor.email)) {
                     return (
                       <Contributor<World | Campaign>
                         key={index}
-                        email={email}
+                        email={contributor.email}
+                        image={contributor.image}
                         title='Admin'
                         data={data}
                         setData={
@@ -123,11 +157,12 @@ const SharingModal = <T extends LoreSchemas>({
                         session={session}
                       />
                     );
-                  } else if (data.writers.includes(email)) {
+                  } else if (data.writers.includes(contributor.email)) {
                     return (
                       <Contributor<World | Campaign>
                         key={index}
-                        email={email}
+                        email={contributor.email}
+                        image={contributor.image}
                         title='Writer'
                         data={data}
                         setData={
@@ -140,7 +175,8 @@ const SharingModal = <T extends LoreSchemas>({
                     return (
                       <Contributor<World | Campaign>
                         key={index}
-                        email={email}
+                        email={contributor.email}
+                        image={contributor.image}
                         title='Reader'
                         data={data}
                         setData={

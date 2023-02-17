@@ -72,11 +72,11 @@ const HomePage = ({ worlds, session }: Props) => {
                   </p>
                 </div>
                 <div className='grid grid-flow-col grid-rows-2 gap-2'>
-                  {world.readers.map((reader, index) => (
+                  {world.contributors.map((contributor, index) => (
                     <div className='w-12 h-12' key={index}>
                       <img
                         className='w-full h-full rounded-full'
-                        src='/no-profile-picture.svg'
+                        src={contributor.image}
                         alt=''
                       />
                     </div>

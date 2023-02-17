@@ -1,8 +1,8 @@
-import { getPermissions, getWorld } from '@/lib/db';
+import { getContributors, getPermissions, getWorld } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Session, unstable_getServerSession } from 'next-auth';
-import { Campaign, World } from '@/types';
+import { Session, getServerSession } from 'next-auth';
+import { Campaign, User, World } from '@/types';
 import ClientWorldPage from '@/components/world/ClientWorldPage';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default async function WorldPage({ params }: Props) {
-  const session: Session | null = await unstable_getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
   const {
     world,
     campaigns,
@@ -20,6 +20,8 @@ export default async function WorldPage({ params }: Props) {
     world: World | undefined;
     campaigns: Campaign[];
   } = await getWorld(params.worldID, session?.user?.email as string);
+
+  const contributors: User[] = await getContributors(params.worldID);
 
   if (!world || !session?.user?.email) {
     notFound();
@@ -33,6 +35,7 @@ export default async function WorldPage({ params }: Props) {
         campaigns={campaigns}
         permissions={permissions}
         session={session}
+        contributors={contributors}
       />
     </>
   );

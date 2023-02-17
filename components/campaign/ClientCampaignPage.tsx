@@ -1,6 +1,6 @@
 'use client';
 
-import { Campaign, World } from '@/types';
+import { Campaign, User, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
@@ -15,6 +15,7 @@ type Props = {
   campaign: Campaign;
   permissions: string[];
   session: Session;
+  contributors: User[];
 };
 
 const ClientCampaignPage = ({
@@ -22,6 +23,7 @@ const ClientCampaignPage = ({
   campaign,
   permissions,
   session,
+  contributors,
 }: Props) => {
   const [campaignData, setCampaignData] = useState<Campaign>(campaign);
   const { setClient } = useClientContext();
@@ -93,6 +95,7 @@ const ClientCampaignPage = ({
         onDelete={onDelete}
         permissions={permissions}
         session={session}
+        contributors={contributors}
       />
       <div className='flex flex-col items-start gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
         <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
