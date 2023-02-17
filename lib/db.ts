@@ -6,7 +6,7 @@ import {
   Firestore,
 } from 'firebase-admin/firestore';
 import { Storage } from 'firebase-admin/storage';
-import { World, Entry, EntryHierarchy, Campaign } from '@/types';
+import { World, Entry, EntryHierarchy, Campaign, User } from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
 if (!admin.apps.length) {
@@ -46,7 +46,18 @@ export async function getWorlds(email: string): Promise<World[]> {
     .withConverter(new Converter<World>())
     .get();
 
-  return worlds.docs.map((world) => world.data());
+  const worldsWithContributors = await Promise.all(
+    worlds.docs.map(async (world): Promise<World | undefined> => {
+      const contributors = await getContributors(world.id);
+
+      return {
+        ...world.data(),
+        contributors,
+      };
+    })
+  );
+
+  return worldsWithContributors as World[];
 }
 
 export async function getWorld(
@@ -146,7 +157,15 @@ export async function getCampaigns(
     })
   );
 
-  return campaignsWithEntries as Campaign[];
+  const campaignsWithContributors = await Promise.all(
+    campaignsWithEntries.map(async (campaign) => {
+      const contributors = await getContributors(worldID, campaign?.id);
+
+      return { ...campaign, contributors };
+    })
+  );
+
+  return campaignsWithContributors as Campaign[];
 }
 
 export async function getCampaign(
@@ -294,4 +313,28 @@ export async function getCampaignPermissions(
   } else {
     return [];
   }
+}
+
+export async function getContributors(
+  worldID: string,
+  campaignID?: string
+): Promise<User[]> {
+  let docRef: admin.firestore.DocumentReference<World | Campaign> = db
+    .collection('worlds')
+    .doc(worldID)
+    .withConverter(new Converter<World>());
+
+  if (campaignID) {
+    docRef = docRef
+      .collection('campaigns')
+      .doc(campaignID)
+      .withConverter(new Converter<Campaign>());
+  }
+  const readerEmails = (await docRef.get()).data()?.readers;
+  const contributors = await db
+    .collection('users')
+    .where('email', 'in', readerEmails)
+    .withConverter(new Converter<User>())
+    .get();
+  return contributors.docs.map((contributor) => contributor.data());
 }

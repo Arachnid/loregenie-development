@@ -2,7 +2,7 @@ import EntryForm from '@/components/entry/EntryForm';
 import { getPermissions, getWorld } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Entry, World } from '@/types';
-import { unstable_getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default async function NewEntryPage({ params }: Props) {
-  const session = await unstable_getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
   const { world, entries }: { world: World | undefined; entries: Entry[] } =
     await getWorld(params.worldID, session?.user?.email as string);
   if (!session?.user?.email || !world) {

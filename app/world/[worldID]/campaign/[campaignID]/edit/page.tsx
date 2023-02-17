@@ -2,7 +2,7 @@ import CampaignForm from '@/components/campaign/CampaignForm';
 import { getCampaign, getCampaignPermissions } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Campaign } from '@/types';
-import { Session, unstable_getServerSession } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
@@ -18,7 +18,7 @@ const EditCampaignPage = async ({ params }: Props) => {
     params.worldID,
     params.campaignID
   );
-  const session: Session | null = await unstable_getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
 
   if (!campaign || !session?.user?.email) {
     notFound();

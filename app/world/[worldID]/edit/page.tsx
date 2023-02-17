@@ -2,7 +2,7 @@ import WorldForm from '@/components/world/WorldForm';
 import { getPermissions, getWorld } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { World } from '@/types';
-import { Session, unstable_getServerSession } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const EditWorldPage = async ({ params }: Props) => {
-  const session: Session | null = await unstable_getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
   const { world }: { world: World | undefined } = await getWorld(
     params.worldID,
     session?.user?.email as string

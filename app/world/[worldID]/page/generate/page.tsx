@@ -2,7 +2,7 @@ import GenerateFormPage from '@/components/GenerateFormPage';
 import { getPermissions, getWorld } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Campaign, Entry, World } from '@/types';
-import { Session, unstable_getServerSession } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const GenerateNewPage = async ({ params }: Props) => {
-  const session: Session | null = await unstable_getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
   const {
     world,
     entries,

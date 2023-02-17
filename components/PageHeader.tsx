@@ -1,6 +1,6 @@
 'use client';
 
-import { isEntry, LoreSchemas } from '@/types';
+import { isEntry, LoreSchemas, User } from '@/types';
 import { Session } from 'next-auth';
 import { Dispatch, SetStateAction, useState } from 'react';
 import AlertDialog from '@/components/AlertDialog';
@@ -14,6 +14,7 @@ type Props<T extends LoreSchemas> = {
   onDelete: () => Promise<void>;
   permissions: string[];
   session: Session;
+  contributors?: User[];
 };
 
 const PageHeader = <T extends LoreSchemas>({
@@ -24,6 +25,7 @@ const PageHeader = <T extends LoreSchemas>({
   onDelete,
   permissions,
   session,
+  contributors,
 }: Props<T>) => {
   const [showModal, setShowModal] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -33,15 +35,14 @@ const PageHeader = <T extends LoreSchemas>({
       <div className='flex justify-end items-center w-full py-2 px-4 bg-white mb-[2px]'>
         <div className='flex items-center gap-4 h-11'>
           <div className='flex items-center h-8 gap-2 overflow-x-clip'>
-            {!isEntry(data) &&
-              data.readers.map((reader, index) => (
-                <img
-                  className='w-8 h-8 rounded-full min-w-max'
-                  src='/no-profile-picture.svg'
-                  alt=''
-                  key={index}
-                />
-              ))}
+            {contributors?.map((contributor, index) => (
+              <img
+                className='w-8 h-8 rounded-full min-w-max'
+                src={contributor.image}
+                alt=''
+                key={index}
+              />
+            ))}
           </div>
           <div className='flex gap-4 min-w-max'>
             {permissions.includes('admin') && (

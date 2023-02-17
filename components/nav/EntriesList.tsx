@@ -186,15 +186,16 @@ const RecursiveEntries = ({
                       setOpen({ ...open, [entry.id]: true });
                     }}
                   >
-                    {selected === entry.id
-                      ? getIcon(
-                          entry.category,
-                          'flex justify-center items-center text-[20px] material-icons'
-                        )
-                      : getIcon(
-                          entry.category,
-                          'flex justify-center items-center text-[20px] material-icons-outlined'
-                        )}
+                    {entry.category &&
+                      (selected === entry.id
+                        ? getIcon(
+                            entry.category,
+                            'flex justify-center items-center text-[20px] material-icons'
+                          )
+                        : getIcon(
+                            entry.category,
+                            'flex justify-center items-center text-[20px] material-icons-outlined'
+                          ))}
                     <p className='w-max'>
                       {entry.name ? entry.name : 'Untitled'}
                     </p>

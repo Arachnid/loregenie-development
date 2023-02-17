@@ -71,7 +71,7 @@ const ClientEntryPage = ({
 
   const onImageUpload = async (uploadedFile: File) => {
     try {
-      const base64: string = (await base64Converter(uploadedFile)) as string;
+      const base64: string = await base64Converter(uploadedFile);
       const filePath = `worlds/${world.id}/entries/${currentEntry.id}/image`;
       await fetch('/api/image/create', {
         method: 'POST',

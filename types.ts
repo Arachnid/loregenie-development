@@ -9,6 +9,7 @@ export interface World {
   public: boolean;
   entries: Entry[];
   campaigns: Campaign[];
+  contributors: User[];
 }
 
 export type Campaign = Omit<World, 'campaigns'>;
@@ -56,4 +57,10 @@ export interface ClientContextI {
   world: World;
   campaign?: Campaign;
   entry?: Entry;
+}
+
+export interface User {
+  image: string;
+  email: string;
+  username: string;
 }

@@ -2,7 +2,7 @@ import { getEntry, getPermissions, getWorld } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { Entry, World } from '@/types';
 import EntryForm from '@/components/entry/EntryForm';
-import { Session, unstable_getServerSession } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 
 export default async function EditLocationPage({ params }: Props) {
   const currentEntry = await getEntry(params.worldID, params.entryID);
-  const session: Session | null = await unstable_getServerSession(authOptions);
+  const session: Session | null = await getServerSession(authOptions);
   const { world, entries }: { world: World | undefined; entries: Entry[] } =
     await getWorld(params.worldID, session?.user?.email as string);
   if (!currentEntry || !world || !session?.user?.email) {
