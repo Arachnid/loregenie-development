@@ -63,11 +63,11 @@ const GenerateFormPage = ({
           body: JSON.stringify({
             entryData: form,
             worldID: world.id,
-            permissions,
           }),
         }
       ).then((res) =>
         res.json().then((entry: Entry) => {
+          if (!entry.id) return;
           router.push(
             form.campaign
               ? `/world/${world.id}/campaign/${entry.campaign?.id}/entry/${entry.id}`

@@ -43,7 +43,6 @@ const ClientEntryPage = ({
         body: JSON.stringify({
           entryID: currentEntry.id,
           worldID: world.id,
-          permissions,
         }),
       });
       router.push(`/world/${world.id}`);
@@ -60,7 +59,6 @@ const ClientEntryPage = ({
         body: JSON.stringify({
           entryData,
           worldID: world.id,
-          permissions,
         }),
       });
       router.refresh();
@@ -75,7 +73,7 @@ const ClientEntryPage = ({
       const filePath = `worlds/${world.id}/entries/${currentEntry.id}/image`;
       await fetch('/api/image/create', {
         method: 'POST',
-        body: JSON.stringify({ base64, filePath, permissions }),
+        body: JSON.stringify({ base64, filePath, worldID: world.id }),
       }).then((res) =>
         res
           .json()

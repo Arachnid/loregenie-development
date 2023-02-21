@@ -98,7 +98,11 @@ const WorldPage = ({
       const filePath = `worlds/${world.id}/image`;
       await fetch('/api/image/create', {
         method: 'POST',
-        body: JSON.stringify({ base64, filePath, permissions }),
+        body: JSON.stringify({
+          base64,
+          filePath,
+          worldID: world.id,
+        }),
       }).then((res) =>
         res.json().then((url: string) => {
           setWorldData({ ...worldData, image: url });
