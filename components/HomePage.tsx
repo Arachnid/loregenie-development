@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { signIn } from 'next-auth/react';
+import removeMd from 'remove-markdown';
 
 type Props = {
   worlds: World[];
@@ -68,7 +69,7 @@ const HomePage = ({ worlds, session }: Props) => {
                     {world.name ? world.name.toUpperCase() : 'UNTITLED'}
                   </p>
                   <p className='text-lg font-light leading-5'>
-                    {world.description}
+                    {removeMd(world.description)}
                   </p>
                 </div>
                 <div className='grid grid-flow-col grid-rows-2 gap-2'>

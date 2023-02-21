@@ -1,6 +1,6 @@
 'use client';
 
-import { Category, Entry, isEntry } from '@/types';
+import { Category, Entry } from '@/types';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
@@ -17,8 +17,6 @@ const CategoryDropDown = ({
   setData,
   data,
   permissions,
-  children,
-  generate,
 }: Props) => {
   const [dropDownOpen, setDropDownOpen] = useState(false);
 

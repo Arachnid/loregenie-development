@@ -64,3 +64,9 @@ export interface User {
   email: string;
   username: string;
 }
+
+export enum PermissionLevel {
+  reader = 'reader',
+  writer = 'writer',
+  admin = 'admin',
+}
