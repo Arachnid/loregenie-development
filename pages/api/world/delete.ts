@@ -1,16 +1,20 @@
 import { db } from '@/lib/db';
+import { PermissionLevel } from '@/types';
+import { hasPermission } from '@/utils/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { worldID, permissions }: { worldID: string; permissions: string[] } =
-    JSON.parse(request.body);
+  const { worldID }: { worldID: string } = JSON.parse(request.body);
 
   try {
-    if (!permissions.includes('admin')) {
-      console.log('user does not have permission for that action.');
+    if (
+      !(await hasPermission(request, response, worldID, PermissionLevel.admin))
+    ) {
+      response.statusCode = 500;
+      response.send({});
       return;
     }
     await db.recursiveDelete(db.collection('worlds').doc(worldID));
