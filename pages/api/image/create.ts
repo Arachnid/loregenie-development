@@ -1,4 +1,6 @@
 import { storage } from '@/lib/db';
+import { PermissionLevel } from '@/types';
+import { hasPermission } from '@/utils/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export const config = {
@@ -16,13 +18,16 @@ export default async function handler(
   const {
     base64,
     filePath,
-    permissions,
-  }: { base64: string; filePath: string; permissions: string[] } = JSON.parse(
+    worldID,
+  }: { base64: string; filePath: string; worldID: string } = JSON.parse(
     request.body
   );
   try {
-    if (!permissions.includes('writer')) {
-      console.log('user does not have permission for that action.');
+    if (
+      !(await hasPermission(request, response, worldID, PermissionLevel.writer))
+    ) {
+      response.statusCode = 500;
+      response.send({});
       return;
     }
     const fileRef = storage.bucket().file(filePath);

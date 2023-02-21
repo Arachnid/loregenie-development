@@ -1,23 +1,24 @@
 import { Converter, db } from '@/lib/db';
-import { Entry } from '@/types';
+import { Entry, PermissionLevel } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { hasPermission } from '@/utils/hasPermission';
 
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const {
-    entryData,
-    worldID,
-    permissions,
-  }: { entryData: Entry; worldID: string; permissions: string[] } = JSON.parse(
-    request.body
-  );
+  const { entryData, worldID }: { entryData: Entry; worldID: string } =
+    JSON.parse(request.body);
+
   try {
-    if (!permissions.includes('writer')) {
-      console.log('user does not have permission for that action.');
+    if (
+      !(await hasPermission(request, response, worldID, PermissionLevel.writer))
+    ) {
+      response.statusCode = 500;
+      response.send({});
       return;
     }
+
     const entry = await db
       .collection('worlds')
       .doc(worldID)

@@ -1,5 +1,6 @@
 import { Converter, db } from '@/lib/db';
-import { Entry } from '@/types';
+import { Entry, PermissionLevel } from '@/types';
+import { hasPermission } from '@/utils/hasPermission';
 import { FieldValue } from 'firebase-admin/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -11,17 +12,24 @@ export default async function handler(
     entryID,
     worldID,
     campaignID,
-    permissions,
   }: {
     entryID: string;
     worldID: string;
     campaignID: string;
-    permissions: string[];
   } = JSON.parse(request.body);
 
   try {
-    if (!permissions.includes('admin')) {
-      console.log('user does not have permission for that action.');
+    if (
+      !(await hasPermission(
+        request,
+        response,
+        worldID,
+        PermissionLevel.admin,
+        campaignID
+      ))
+    ) {
+      response.statusCode = 500;
+      response.send({});
       return;
     }
     const entriesRef = db
