@@ -17,7 +17,7 @@ export default async function Home() {
   }
 
   return (
-    <div className='flex flex-col h-screen'>
+    <div className='flex flex-col h-screen min-w-fit'>
       <NavBar session={session} />
       <HomePage worlds={worlds} session={session} />
     </div>

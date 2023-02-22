@@ -47,7 +47,7 @@ const ParentDropDown = <T extends LoreSchemas>({
       onOutsideClick={() => setDropDownOpen(false)}
       display='contents'
     >
-      <div className='relative z-10 flex flex-col items-center self-stretch w-full gap-4'>
+      <div className='relative flex flex-col items-center self-stretch w-full gap-4 grow'>
         <button
           className='flex items-center justify-center w-full gap-2 px-4 py-3 bg-white rounded-lg cursor-pointer h-11 disabled:cursor-default'
           onClick={() => setDropDownOpen(!dropDownOpen)}
@@ -62,7 +62,7 @@ const ParentDropDown = <T extends LoreSchemas>({
             ))}
         </button>
         {dropDownOpen && (
-          <div className='absolute flex flex-col w-full bg-white border-2 border-lore-beige-500 rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)] max-h-80'>
+          <div className='z-10 absolute flex flex-col w-full bg-white border-2 border-lore-beige-500 rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)] max-h-80'>
             <div className='flex items-center self-stretch justify-center px-4 py-3 border-b-2 border-lore-beige-500'>
               <input
                 className='leading-5 grow placeholder:text-black focus-visible:outline-none'

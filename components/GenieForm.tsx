@@ -10,23 +10,18 @@ type Props = {
   disabled: boolean;
 };
 
-const GenieForm = ({
-  onCreate,
-  setOpen,
-  children,
-  disabled
-}: Props) => {
+const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
   const router = useRouter();
 
   return (
-    <div className='flex flex-col pt-20 gap-10 w-[640px]'>
-      <div className='relative flex flex-col self-stretch gap-8 p-10 isolate bg-lore-beige-400 rounded-2xl'>
+    <div className='relative flex flex-col w-full pt-20 gap-4 md:gap-10 md:w-[640px] min-w-max'>
+      <div className='relative flex flex-col self-stretch gap-6 p-6 md:gap-8 md:p-10 isolate bg-lore-beige-400 rounded-2xl'>
         <img
-          className='-z-10 absolute w-[389px] h-[524px] -right-8 top-[calc(50%-524px/2-56px)]'
+          className='absolute w-[320px] left-[calc(50%-320px/2)] top-[-166px] md:left-auto md:w-[389px] md:h-[524px] md:-right-8 md:top-[calc(50%-524px/2-56px)]'
           src='/genie.svg'
           alt=''
         />
-        <div className='flex flex-col self-stretch gap-4'>
+        <div className='z-20 flex flex-col self-stretch gap-4 rounded-2xl'>
           {children}
           <div className='flex justify-center items-center py-3 px-5 gap-4 bg-white rounded-[10px] self-stretch'>
             <p className='font-cinzel font-bold text-[27px] leading-9 text-center opacity-50'>
@@ -38,25 +33,27 @@ const GenieForm = ({
             disabled
           >
             <span className='text-[20px] material-icons'>auto_fix_high</span>
-            <p className='font-medium leading-5'>Generate</p>
+            <p className='font-medium leading-5'>
+              {children ? 'Generate' : 'Generate world'}
+            </p>
           </button>
         </div>
-      </div>
-      <div className='flex self-stretch gap-6 px-10 text-lore-blue-400'>
+      <div className='absolute bottom-[-80px] md:bottom-[-100px] p-4 left-0 flex w-full gap-2 md:px-10 md:gap-6 text-lore-blue-400'>
         <button
-          className='flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400'
+          className='flex items-center justify-center w-full gap-2 px-3 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg md:px-4 border-lore-beige-500 hover:bg-lore-beige-400'
           onClick={setOpen ? () => setOpen(false) : () => router.back()}
         >
           <p className='font-medium leading-5'>Cancel</p>
         </button>
         <button
-          className='relative z-0 flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400 disabled:bg-white/50'
+          className='flex items-center justify-center w-full gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg border-lore-beige-500 hover:bg-lore-beige-400 disabled:bg-white/50'
           onClick={() => onCreate()}
           disabled={disabled}
         >
           <span className='text-[20px] material-icons'>add</span>
           <p className='font-medium leading-5'>Create blank</p>
         </button>
+      </div>
       </div>
     </div>
   );

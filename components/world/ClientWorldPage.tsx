@@ -166,8 +166,10 @@ const WorldPage = ({
           <div className='flex flex-col gap-5'>
             {campaigns.map((campaign, index) => (
               <div
-                className='flex items-end justify-between p-4 gap-4 h-40 rounded-2xl self-stretch bg-cover cursor-pointer
-              bg-[linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url("/eryndor.svg")]'
+                className='flex items-end self-stretch justify-between h-40 gap-4 p-4 bg-cover cursor-pointer rounded-2xl'
+                style={{
+                  backgroundImage: `linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url(${campaign.image ? campaign.image : '/eryndor.svg'})`,
+                }}
                 onClick={() =>
                   router.push(`/world/${world.id}/campaign/${campaign.id}`)
                 }

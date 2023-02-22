@@ -133,7 +133,7 @@ const ClientEntryPage = ({
         <div className='flex items-start self-stretch gap-6 h-[170px] min-w-max'>
           <div className='flex flex-col items-start gap-4 p-6 rounded-lg grow bg-lore-beige-400'>
             <div className='flex items-center self-stretch gap-4'>
-              <p className='font-medium w-14'>Parent</p>
+              <p className='font-medium w-[54px]'>Parent</p>
               <ParentDropDown<LoreSchemas>
                 world={world}
                 setData={setEntryData}
@@ -145,12 +145,10 @@ const ClientEntryPage = ({
             </div>
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />
             <div className='flex items-center self-stretch gap-4'>
-              <p className='font-medium w-14'>Type</p>
-              <CategoryDropDown
-                setData={setEntryData}
-                data={entryData}
-                permissions={permissions}
-              />
+              <p className='w-[54px] font-medium'>Type</p>
+              <div className='flex items-center gap-2 px-4 py-3 bg-white rounded-lg grow'>
+                {entryData.category}
+              </div>
             </div>
           </div>
           <div className='relative w-[170px] h-full rounded-lg bg-lore-beige-400'>
