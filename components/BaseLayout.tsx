@@ -23,7 +23,7 @@ export default function BaseLayout({
       <div className='flex flex-col h-screen overflow-x-hidden'>
         <NavBar session={session} worldName={worldName} />
         <div className='flex h-full overflow-y-hidden'>
-          <div className='flex max-w-fit w-full min-w-[320px]'>
+          <div className='flex max-w-fit w-full lg:min-w-[320px]'>
             <nav className='flex w-full'>{nav}</nav>
           </div>
           <div className='flex w-full ml-[2px]'>{children}</div>

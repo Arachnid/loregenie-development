@@ -48,9 +48,9 @@ const NavBar = ({ session, worldName }: Props) => {
       </div>
       <div className='flex items-center h-8 gap-4 text-lore-blue-400'>
         {session ? (
-          <button onClick={() => signOut()}>Sign Out</button>
+          <button className='hidden md:block' onClick={() => signOut()}>Sign Out</button>
         ) : (
-          <button onClick={() => signIn()}>Sign In</button>
+          <button className='hidden md:block' onClick={() => signIn()}>Sign In</button>
         )}
         <span className='material-icons-outlined'>notifications</span>
         <span className='material-icons-outlined'>settings</span>
