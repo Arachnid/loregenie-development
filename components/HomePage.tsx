@@ -16,26 +16,27 @@ type Props = {
 
 const HomePage = ({ worlds, session }: Props) => {
   const [genieFormOpen, setGenieFormOpen] = useState(false);
-
+  const email = session?.user?.email as string;
   const router = useRouter();
 
-  const blankWorld = {
+  const world: Partial<World> = {
     name: '',
     description: '',
     image: '',
-    readers: [session?.user?.email],
-    writers: [session?.user?.email],
-    admins: [session?.user?.email],
+    readers: [email],
+    writers: [email],
+    admins: [email],
     public: false,
     entries: [],
     campaigns: [],
   };
 
-  const onCreate = async () => {
+  const onCreate = async (prompt?: string) => {
     try {
+      world.prompt = prompt;
       await fetch('/api/world/create', {
         method: 'POST',
-        body: JSON.stringify(blankWorld),
+        body: JSON.stringify(world),
       }).then((res) =>
         res.json().then((worldID: string) => {
           router.push(`/world/${worldID}`);
