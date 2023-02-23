@@ -13,11 +13,7 @@ type Props = {
   generate?: boolean;
 };
 
-const CategoryDropDown = ({
-  setData,
-  data,
-  permissions,
-}: Props) => {
+const CategoryDropDown = ({ setData, data, permissions }: Props) => {
   const [dropDownOpen, setDropDownOpen] = useState(false);
 
   return (
@@ -63,51 +59,26 @@ const CategoryDropDown = ({
                   </button>
                 ) : (
                   <>
-                    <button
-                      className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
-                      onClick={() => {
-                        setData({ ...data, category: Category.Location });
-                        setDropDownOpen(false);
-                      }}
-                    >
-                      {getIcon(
-                        Category.Location,
-                        'material-icons-outlined text-[20px]'
-                      )}
-                      <p className='flex font-medium leading-5 grow'>
-                        {Category.Location}
-                      </p>
-                    </button>
-                    <button
-                      className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
-                      onClick={() => {
-                        setData({ ...data, category: Category.NPC });
-                        setDropDownOpen(false);
-                      }}
-                    >
-                      {getIcon(
-                        Category.NPC,
-                        'material-icons-outlined text-[20px]'
-                      )}
-                      <p className='flex font-medium leading-5 grow'>
-                        {Category.NPC}
-                      </p>
-                    </button>
-                    <button
-                      className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
-                      onClick={() => {
-                        setData({ ...data, category: Category.Lore });
-                        setDropDownOpen(false);
-                      }}
-                    >
-                      {getIcon(
-                        Category.Lore,
-                        'material-icons-outlined text-[20px]'
-                      )}
-                      <p className='flex font-medium leading-5 grow'>
-                        {Category.Lore}
-                      </p>
-                    </button>
+                    {[Category.Location, Category.NPC, Category.Lore].map(
+                      (category, index) => (
+                        <button
+                          className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
+                          onClick={() => {
+                            setData({ ...data, category });
+                            setDropDownOpen(false);
+                          }}
+                          key={index}
+                        >
+                          {getIcon(
+                            category,
+                            'material-icons-outlined text-[20px]'
+                          )}
+                          <p className='flex font-medium leading-5 grow'>
+                            {category}
+                          </p>
+                        </button>
+                      )
+                    )}
                   </>
                 )}
               </div>

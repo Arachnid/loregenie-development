@@ -1,11 +1,17 @@
 'use client';
 
-import { Category, Entry, EntryHierarchy, LoreSchemas, World } from '@/types';
+import {
+  Campaign,
+  Category,
+  Entry,
+  EntryHierarchy,
+  LoreSchemas,
+  World,
+} from '@/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import ParentDropDown from '@/components/dropdown/ParentDropDown';
-import CategoryDropDown from '@/components/dropdown/CategoryDropDown';
 import ImageSettings from '@/components/ImageSettings';
 import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
@@ -43,6 +49,7 @@ const ClientEntryPage = ({
         body: JSON.stringify({
           entryID: currentEntry.id,
           worldID: world.id,
+          campaignID: currentEntry.campaign?.id,
         }),
       });
       router.push(`/world/${world.id}`);
@@ -118,6 +125,17 @@ const ClientEntryPage = ({
     return world.name;
   };
 
+  const generateDropDownList = () => {
+    const result: LoreSchemas[] = [];
+    if (currentEntry.campaign) {
+      result.push(currentEntry.campaign as Campaign);
+    } else {
+      result.push(world);
+    }
+    result.push(...getParents(entries));
+    return result;
+  };
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<Entry>
@@ -135,11 +153,10 @@ const ClientEntryPage = ({
             <div className='flex items-center self-stretch gap-4'>
               <p className='font-medium w-[54px]'>Parent</p>
               <ParentDropDown<LoreSchemas>
-                world={world}
                 setData={setEntryData}
                 data={entryData}
                 permissions={permissions}
-                dropDownList={[...getParents(entries)]}
+                dropDownList={generateDropDownList()}
                 defaultParent={defaultParent()}
               />
             </div>

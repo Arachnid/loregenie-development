@@ -1,5 +1,6 @@
+import admin from 'firebase-admin';
 import { Converter, db } from '@/lib/db';
-import { Entry, PermissionLevel } from '@/types';
+import { Entry, PermissionLevel, World } from '@/types';
 import { hasPermission } from '@/utils/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -14,7 +15,7 @@ export default async function handler(
     entryData: Entry;
     worldID: string;
   } = JSON.parse(request.body);
-  
+
   try {
     if (
       !(await hasPermission(request, response, worldID, PermissionLevel.writer))
@@ -23,13 +24,27 @@ export default async function handler(
       response.send({});
       return;
     }
-    await db
+
+    let docRef: admin.firestore.DocumentReference<World | Entry> = db
       .collection('worlds')
       .doc(worldID)
-      .collection('entries')
-      .doc(entryData.id)
-      .withConverter(new Converter<Entry>())
-      .set(entryData);
+      .withConverter(new Converter<World>());
+
+    if (entryData.campaign) {
+      docRef = docRef
+        .collection('campaigns')
+        .doc(entryData.campaign.id)
+        .collection('entries')
+        .doc(entryData.id)
+        .withConverter(new Converter<Entry>());
+    } else {
+      docRef = docRef
+        .collection('entries')
+        .doc(entryData.id)
+        .withConverter(new Converter<Entry>());
+    }
+
+    await docRef.set(entryData);
   } catch (error) {
     console.log('error updating entry to database: ', error);
     response.statusCode = 500;
