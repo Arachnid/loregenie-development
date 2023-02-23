@@ -19,6 +19,7 @@ module.exports = {
           500: '#C74225',
         },
         'lore-blue': {
+          200: '#4C7F8F',
           400: '#445761',
           500: '#303E45',
         },
@@ -33,5 +34,8 @@ module.exports = {
     },
   },
   darkMode: 'class',
-  plugins: [require('tailwind-scrollbar-hide')],
+  plugins: [
+    require('tailwind-scrollbar-hide'),
+    require('@tailwindcss/line-clamp'),
+  ],
 };
