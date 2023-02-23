@@ -69,7 +69,7 @@ const HomePage = ({ worlds, session }: Props) => {
                   <p className='flex font-cinzel font-medium text-[40px] leading-[54px] text-center justify-center md:justify-start'>
                     {world.name ? world.name.toUpperCase() : 'UNTITLED'}
                   </p>
-                  <p className='hidden text-lg font-light leading-5 md:block'>
+                  <p className='hidden text-lg font-light leading-5 md:line-clamp-6'>
                     {removeMd(world.description)}
                   </p>
                 </div>

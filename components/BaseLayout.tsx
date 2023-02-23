@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import NavBar from '@/components/nav/NavBar';
 import { Session } from 'next-auth';
 import { ClientProvider } from '@/context/ClientContext';
+import GenieWand from './GenieWand';
 
 interface Props {
   nav: JSX.Element;
@@ -27,6 +28,9 @@ export default function BaseLayout({
             <nav className='flex w-full'>{nav}</nav>
           </div>
           <div className='flex w-full ml-[2px]'>{children}</div>
+          <div className='absolute z-20 bottom-4 right-4'>
+            <GenieWand />
+          </div>
         </div>
       </div>
     </ClientProvider>

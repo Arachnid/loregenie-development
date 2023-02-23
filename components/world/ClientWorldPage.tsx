@@ -48,7 +48,7 @@ const WorldPage = ({
     try {
       await fetch('/api/world/delete', {
         method: 'POST',
-        body: JSON.stringify({ worldID: world.id, permissions }),
+        body: JSON.stringify({ worldID: world.id }),
       });
       router.push('/');
       router.refresh();
@@ -63,7 +63,6 @@ const WorldPage = ({
         method: 'POST',
         body: JSON.stringify({
           worldData,
-          permissions,
         }),
       });
       router.refresh();
@@ -168,7 +167,9 @@ const WorldPage = ({
               <div
                 className='flex items-end self-stretch justify-between h-40 gap-4 p-4 bg-cover cursor-pointer rounded-2xl'
                 style={{
-                  backgroundImage: `linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url(${campaign.image ? campaign.image : '/eryndor.svg'})`,
+                  backgroundImage: `linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url(${
+                    campaign.image ? campaign.image : '/eryndor.svg'
+                  })`,
                 }}
                 onClick={() =>
                   router.push(`/world/${world.id}/campaign/${campaign.id}`)
