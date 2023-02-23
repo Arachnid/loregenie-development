@@ -10,6 +10,7 @@ export interface World {
   entries: Entry[];
   campaigns: Campaign[];
   contributors: User[];
+  prompt?: string;
 }
 
 export type Campaign = Omit<World, 'campaigns'>;

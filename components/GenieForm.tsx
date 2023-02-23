@@ -1,10 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
 type Props = {
-  onCreate: () => Promise<void>;
+  onCreate: (prompt?: string) => Promise<void>;
   setOpen?: Dispatch<SetStateAction<boolean>>;
   children?: JSX.Element;
   disabled: boolean;
@@ -12,6 +12,7 @@ type Props = {
 
 const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
   const router = useRouter();
+  const [ prompt, setPrompt ] = useState('');
 
   return (
     <div className='relative flex flex-col w-full pt-20 gap-4 md:gap-10 md:w-[640px] min-w-max'>
@@ -24,13 +25,12 @@ const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
         <div className='z-20 flex flex-col self-stretch gap-4 rounded-2xl'>
           {children}
           <div className='flex justify-center items-center py-3 px-5 gap-4 bg-white rounded-[10px] self-stretch'>
-            <p className='font-cinzel font-bold text-[27px] leading-9 text-center opacity-50'>
-              PROMPT EXAMPLE
-            </p>
+            <input className='font-cinzel font-bold text-[27px] leading-9 text-center opacity-50' placeholder="PROMPT EXAMPLE" type="text" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
           </div>
           <button
             className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-red-400 disabled:opacity-50 disabled:hover:bg-lore-red-400 hover:bg-lore-red-500'
-            disabled
+            disabled={prompt.length === 0}
+            onClick={() => onCreate(prompt)}
           >
             <span className='text-[20px] material-icons'>auto_fix_high</span>
             <p className='font-medium leading-5'>
