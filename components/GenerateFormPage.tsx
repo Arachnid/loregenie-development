@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import GenieForm from '@/components/GenieForm';
-import { Campaign, Entry, World } from '@/types';
+import { Campaign, Category, Entry, LoreSchemas, World } from '@/types';
 import { useClientContext } from '@/hooks/useClientContext';
 import ParentDropDown from '@/components/dropdown/ParentDropDown';
 import CategoryDropDown from '@/components/dropdown/CategoryDropDown';
@@ -46,31 +46,31 @@ const GenerateFormPage = ({
     if (client.entry?.parent) {
       setForm({ ...form, parent: client.entry.parent });
     }
-    if (client.campaign?.id) {
+    if (client.entry?.campaign?.id) {
       setForm({
         ...form,
-        campaign: { id: client.campaign.id, name: client.campaign.name },
+        campaign: {
+          id: client.entry.campaign.id,
+          name: client.entry.campaign.name,
+        },
       });
     }
   }, [client]);
 
   const onCreate = async () => {
     try {
-      await fetch(
-        form.campaign ? '/api/campaign/entry/create' : '/api/entry/create',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            entryData: form,
-            worldID: world.id,
-          }),
-        }
-      ).then((res) =>
+      await fetch('/api/entry/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          entryData: form,
+          worldID: world.id,
+        }),
+      }).then((res) =>
         res.json().then((entry: Entry) => {
           if (!entry.id) return;
           router.push(
-            form.campaign
-              ? `/world/${world.id}/campaign/${entry.campaign?.id}/entry/${entry.id}`
+            entry.campaign
+              ? `/world/${world.id}/campaign/${entry.campaign.id}/entry/${entry.id}`
               : `/world/${world.id}/entry/${entry.id}`
           );
           router.refresh();
@@ -81,7 +81,8 @@ const GenerateFormPage = ({
     }
   };
 
-  const dropDownList = [
+  const parentDropDownList: LoreSchemas[] = [
+    world,
     ...entries,
     ...campaigns,
     ...campaigns?.map((campaign) => campaign.entries).flat(),
@@ -96,12 +97,11 @@ const GenerateFormPage = ({
       <GenieForm onCreate={onCreate} disabled={!Boolean(form.category)}>
         <div className='flex self-stretch gap-4'>
           <ParentDropDown
-            world={world}
             setData={setForm}
             data={form}
             permissions={permissions}
             generate={true}
-            dropDownList={dropDownList}
+            dropDownList={parentDropDownList}
             defaultParent={defaultParent}
           />
           <CategoryDropDown

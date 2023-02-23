@@ -1,13 +1,19 @@
 'use client';
 
-import { Entry, isEntry, LoreSchemas, World } from '@/types';
+import {
+  Category,
+  Entry,
+  isCampaign,
+  isEntry,
+  LoreSchemas,
+  World,
+} from '@/types';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
-import EntriesList from '../nav/EntriesList';
+import { filterLogic } from './filterLogic';
 
 type Props<T extends LoreSchemas> = {
-  world: World;
   setData: Dispatch<SetStateAction<Entry>>;
   data: Entry;
   permissions: string[];
@@ -17,7 +23,6 @@ type Props<T extends LoreSchemas> = {
 };
 
 const ParentDropDown = <T extends LoreSchemas>({
-  world,
   setData,
   data,
   permissions,
@@ -36,6 +41,17 @@ const ParentDropDown = <T extends LoreSchemas>({
         return listIem;
       }
     });
+  };
+
+  const handleIcon = (schema: LoreSchemas): JSX.Element => {
+    const classString = 'material-icons-outlined text-[20px]';
+    if (isEntry(schema)) {
+      return getIcon(schema.category as Category, classString);
+    }
+    if (isCampaign(schema)) {
+      return getIcon('Campaign', classString);
+    }
+    return getIcon('Home', classString);
   };
 
   useEffect(() => {
@@ -85,103 +101,20 @@ const ParentDropDown = <T extends LoreSchemas>({
             </div>
             <div className='flex flex-col self-stretch p-2 overflow-y-scroll grow scrollbar-hide'>
               <div className='flex flex-col self-stretch grow text-lore-blue-400'>
-                <button
-                  className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
-                  onClick={() => {
-                    if (!generate) {
-                      setData({ ...data });
-                    } else {
-                      const { parent, campaign, category, ...state } = data;
-                      setData({ ...state });
-                    }
-                    setParentDisplay(() => world.name);
-                    setDropDownOpen(false);
-                  }}
-                >
-                  {getIcon('Home', 'material-icons-outlined text-[20px]')}
-                  <p className='flex font-medium leading-5 grow'>
-                    {world.name}
-                  </p>
-                </button>
-                {/* <EntriesList entries={getParents(entries)} campaigns={[]} world={world} /> */}
-                {filteredSearch.map((el, index) => (
+                {filteredSearch.map((schema, index) => (
                   <button
                     className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                     onClick={() => {
-                      if (isEntry(el)) {
-                        if (el.campaign) {
-                          if (!generate) {
-                            setData({
-                              ...data,
-                              parent: {
-                                name: el.name,
-                                id: el.id,
-                              },
-                              campaign: {
-                                id: el.campaign.id,
-                                name: el.campaign.name,
-                              },
-                            });
-                          } else {
-                            const { category, ...state } = data;
-                            setData({
-                              ...state,
-                              parent: {
-                                name: el.name,
-                                id: el.id,
-                              },
-                              campaign: {
-                                id: el.campaign.id,
-                                name: el.campaign.name,
-                              },
-                            });
-                          }
-                        }
-                        if (!generate) {
-                          setData({
-                            ...data,
-                            parent: {
-                              name: el.name,
-                              id: el.id,
-                            },
-                          });
-                        } else {
-                          const { campaign, category, ...state } = data;
-                          setData({
-                            ...state,
-                            parent: {
-                              name: el.name,
-                              id: el.id,
-                            },
-                          });
-                        }
-                      } else {
-                        if (!generate) {
-                          setData({
-                            ...data,
-                            campaign: { id: el.id, name: el.name },
-                          });
-                        }
-                        const { parent, category, ...state } = data;
-                        setData({
-                          ...state,
-                          campaign: { id: el.id, name: el.name },
-                        });
-                      }
-                      setParentDisplay(() => el.name);
+                      filterLogic(generate, schema, data, setData);
+                      setParentDisplay(() => schema.name);
                       setDropDownOpen(false);
                     }}
                     key={index}
                   >
-                    {getIcon(
-                      isEntry(el)
-                        ? el.category
-                          ? el.category
-                          : ''
-                        : 'Campaign',
-                      'material-icons-outlined text-[20px]'
-                    )}
-                    <p className='flex font-medium leading-5 grow'>{el.name}</p>
+                    {handleIcon(schema)}
+                    <p className='flex font-medium leading-5 grow'>
+                      {schema.name}
+                    </p>
                   </button>
                 ))}
               </div>

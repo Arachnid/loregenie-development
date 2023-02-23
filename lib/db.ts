@@ -75,6 +75,10 @@ export async function getWorld(
     .get();
 
   const world = worldRef.data();
+  if (world) {
+    world.campaigns = [];
+    world.entries = [];
+  }
 
   if (!world?.readers.includes(email) && !world?.public) {
     return {
