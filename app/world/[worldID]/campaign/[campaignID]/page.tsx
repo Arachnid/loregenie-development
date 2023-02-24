@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Session, getServerSession } from 'next-auth';
 import { Campaign, World } from '@/types';
-import ClientCampaignPage from '@/components/campaign/ClientCampaignPage';
+import ClientCampaignPage from '@/components/pages/ClientCampaignPage';
 
 interface Props {
   params: {

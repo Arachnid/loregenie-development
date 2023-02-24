@@ -2,7 +2,7 @@ import { getEntry, getPermissions, getWorld } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Session, getServerSession } from 'next-auth';
-import ClientEntryPage from '@/components/entry/ClientEntryPage';
+import ClientEntryPage from '@/components/pages/ClientEntryPage';
 import { Entry, World } from '@/types';
 
 interface Props {

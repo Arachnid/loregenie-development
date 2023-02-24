@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Session, getServerSession } from 'next-auth';
 import { Campaign, User, World } from '@/types';
-import ClientWorldPage from '@/components/world/ClientWorldPage';
+import ClientWorldPage from '@/components/pages/ClientWorldPage';
 
 interface Props {
   params: {

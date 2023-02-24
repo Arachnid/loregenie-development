@@ -1,5 +1,5 @@
 import ClientCampaignEntryPage from '@/components/campaign/entry/ClientCampaignEntryPage';
-import ClientEntryPage from '@/components/entry/ClientEntryPage';
+import ClientEntryPage from '@/components/pages/ClientEntryPage';
 import {
   getCampaignEntries,
   getCampaignEntry,

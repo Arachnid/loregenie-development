@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Inter } from '@next/font/google';
-import HomePage from '@/components/HomePage';
+import HomePage from '@/components/pages/HomePage';
 import { getWorlds } from '@/lib/db';
 import NavBar from '@/components/nav/NavBar';
 import { World } from '@/types';
