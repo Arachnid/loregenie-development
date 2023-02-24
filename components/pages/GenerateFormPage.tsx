@@ -43,8 +43,11 @@ const GenerateFormPage = ({
   }, [client]);
 
   useEffect(() => {
-    if (client.entry?.parent) {
-      setForm({ ...form, parent: client.entry.parent });
+    if (client.entry?.id) {
+      setForm({
+        ...form,
+        parent: { id: client.entry.id, name: client.entry.name },
+      });
     }
     if (client.entry?.campaign?.id) {
       setForm({
