@@ -1,4 +1,4 @@
-import GenerateFormPage from '@/components/GenerateFormPage';
+import GenerateFormPage from '@/components/pages/GenerateFormPage';
 import { getPermissions, getWorld } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Campaign, Entry, World } from '@/types';
