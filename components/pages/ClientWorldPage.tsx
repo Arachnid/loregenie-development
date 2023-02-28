@@ -125,8 +125,8 @@ const WorldPage = ({
         session={session}
         contributors={contributors}
       />
-      <div className='flex flex-col items-start gap-10 px-16 py-6 overflow-y-scroll bg-white grow isolate scrollbar-hide'>
-        <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
+      <div className='flex flex-col items-start gap-6 p-4 overflow-y-scroll bg-white md:gap-10 md:px-16 md:py-6 grow isolate scrollbar-hide'>
+        <div className='relative min-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
           <div className='absolute flex bottom-4 right-4'>
             <ImageSettings<World>
               data={worldData}
@@ -192,6 +192,7 @@ const WorldPage = ({
               </div>
             ))}
           </div>
+          <div className='flex w-full h-[72px]' />
         </div>
       </div>
     </div>

@@ -147,9 +147,9 @@ const ClientEntryPage = ({
         onDelete={onDelete}
         permissions={permissions}
       />
-      <div className='flex flex-col items-start h-full gap-10 px-16 py-6 overflow-y-scroll bg-white isolate scrollbar-hide'>
-        <div className='flex items-start self-stretch gap-6 h-[170px] min-w-max'>
-          <div className='flex flex-col items-start gap-4 p-6 rounded-lg grow bg-lore-beige-400'>
+      <div className='flex flex-col items-start h-full gap-6 p-4 overflow-y-scroll bg-white md:gap-10 md:px-16 md:py-6 isolate scrollbar-hide'>
+        <div className='flex flex-col-reverse items-start self-stretch gap-6 md:flex-row'>
+          <div className='flex flex-col items-start w-full gap-4 p-6 rounded-lg md:w-auto md:grow bg-lore-beige-400'>
             <div className='flex items-center self-stretch gap-4'>
               <p className='font-medium w-[54px]'>Parent</p>
               <ParentDropDown<LoreSchemas>
@@ -163,12 +163,12 @@ const ClientEntryPage = ({
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />
             <div className='flex items-center self-stretch gap-4'>
               <p className='w-[54px] font-medium'>Type</p>
-              <div className='flex items-center gap-2 px-4 py-3 bg-white rounded-lg grow'>
+              <div className='flex items-center gap-2 px-4 py-3 bg-white rounded-lg grow h-11'>
                 {entryData.category}
               </div>
             </div>
           </div>
-          <div className='relative w-[170px] h-full rounded-lg bg-lore-beige-400'>
+          <div className={`relative flex w-full ${!entryData.image && 'pb-[100%] xs:pb-[440px]'} xs:w-[440px] xs:mx-auto md:min-h-0 md:pb-0 md:w-[170px] md:h-[170px] rounded-lg bg-lore-beige-400`}>
             <div className='absolute flex bottom-2 right-2'>
               <ImageSettings<Entry>
                 data={entryData}
@@ -179,7 +179,7 @@ const ClientEntryPage = ({
             </div>
             {entryData.image && (
               <img
-                className='object-cover w-full h-full rounded-lg'
+                className='object-cover w-full h-full rounded-lg aspect-square'
                 src={entryData.image}
                 alt=''
               />

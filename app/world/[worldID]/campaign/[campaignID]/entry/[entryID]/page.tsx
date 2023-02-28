@@ -1,4 +1,3 @@
-import ClientCampaignEntryPage from '@/components/campaign/entry/ClientCampaignEntryPage';
 import ClientEntryPage from '@/components/pages/ClientEntryPage';
 import {
   getCampaignEntries,
@@ -7,7 +6,7 @@ import {
   getWorld,
 } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Campaign, Entry, World } from '@/types';
+import { Entry, World } from '@/types';
 import { Session, getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 

@@ -17,7 +17,7 @@ const GenieWand = (props: Props) => {
         </button>
       )}
       {open && (
-        <div className='flex items-center justify-center gap-2 p-2 pr-4 rounded-full w-96 bg-lore-blue-200'>
+        <div className='flex items-center justify-center gap-2 p-2 pr-4 rounded-full bg-lore-blue-200'>
           <div className='flex items-center self-stretch gap-4 px-5 py-4 text-xl font-semibold leading-6 bg-white rounded-full font-cinzel grow'>
             <input
               className='focus-visible:outline-none grow'

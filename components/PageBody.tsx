@@ -36,6 +36,7 @@ const PageBody = <T extends LoreSchemas>({
       ) : (
         <ReactMarkdown className='markdown' children={data.description} />
       )}
+      <div className='flex w-full h-[72px]' />
     </div>
   );
 };
