@@ -32,9 +32,9 @@ const PageHeader = <T extends LoreSchemas>({
 
   return (
     <>
-      <div className='flex justify-end items-center w-full py-2 px-4 bg-white mb-[2px]'>
-        <div className='flex items-center gap-4 h-11'>
-          <div className='flex items-center h-8 gap-2 overflow-x-clip'>
+      <div className='flex md:justify-end items-center w-full py-2 px-4 bg-white mb-[2px]'>
+        <div className='flex items-center w-full gap-4 md:w-auto h-11'>
+          <div className='items-center hidden h-8 gap-2 md:flex overflow-x-clip'>
             {contributors?.map((contributor, index) => (
               <img
                 className='w-8 h-8 rounded-full min-w-max'
@@ -44,10 +44,10 @@ const PageHeader = <T extends LoreSchemas>({
               />
             ))}
           </div>
-          <div className='flex gap-4 min-w-max'>
+          <div className='flex w-full gap-4 md:w-auto min-w-max'>
             {permissions.includes('admin') && (
               <button
-                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg border-2 text-[16px] font-medium bg-white border-lore-beige-500 text-lore-blue-400 transition-all duration-300 ease-out hover:bg-lore-beige-400'
+                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-full md:w-[100px] rounded-lg border-2 text-[16px] font-medium bg-white border-lore-beige-500 text-lore-blue-400 transition-all duration-300 ease-out hover:bg-lore-beige-400'
                 onClick={() => setShowModal(!showModal)}
               >
                 {isEntry(data) ? 'Visibility' : 'Sharing'}
@@ -55,7 +55,7 @@ const PageHeader = <T extends LoreSchemas>({
             )}
             {permissions.includes('writer') && (
               <button
-                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500 disabled:opacity-50 disabled:hover:bg-lore-red-400'
+                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-full md:w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500 disabled:opacity-50 disabled:hover:bg-lore-red-400'
                 onClick={() => {
                   onSave();
                   window.location.reload();
@@ -67,7 +67,7 @@ const PageHeader = <T extends LoreSchemas>({
             )}
             {permissions.includes('admin') && (
               <button
-                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500'
+                className='flex justify-center items-center py-3 px-4 gap-2 h-11 w-full md:w-[100px] rounded-lg text-[16px] font-medium bg-lore-red-400 text-white transition-all duration-300 ease-out hover:bg-lore-red-500'
                 onClick={() => setAlertOpen(true)}
               >
                 Delete

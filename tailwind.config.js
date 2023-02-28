@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -31,6 +33,10 @@ module.exports = {
     fontFamily: {
       sans: ['"Helvetica Neue"'],
       cinzel: ['Cinzel'],
+    },
+    screens: {
+      xs: '475px',
+      ...defaultTheme.screens,
     },
   },
   darkMode: 'class',
