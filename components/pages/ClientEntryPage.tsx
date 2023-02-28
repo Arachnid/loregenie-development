@@ -150,7 +150,7 @@ const ClientEntryPage = ({
       <div className='flex flex-col items-start h-full gap-6 p-4 overflow-y-scroll bg-white md:gap-10 md:px-16 md:py-6 isolate scrollbar-hide'>
         <div className='flex flex-col-reverse items-start self-stretch gap-6 md:flex-row'>
           <div className='flex flex-col items-start w-full gap-4 p-6 rounded-lg md:w-auto md:grow bg-lore-beige-400'>
-            <div className='flex items-center self-stretch gap-4'>
+            <div className='flex flex-col self-stretch gap-2 md:gap-4 md:items-center md:flex-row'>
               <p className='font-medium w-[54px]'>Parent</p>
               <ParentDropDown<LoreSchemas>
                 setData={setEntryData}
@@ -161,7 +161,7 @@ const ClientEntryPage = ({
               />
             </div>
             <div className='bg-lore-beige-500 h-[2px] self-stretch' />
-            <div className='flex items-center self-stretch gap-4'>
+            <div className='flex flex-col self-stretch gap-2 md:flex-row md:items-center md:gap-4'>
               <p className='w-[54px] font-medium'>Type</p>
               <div className='flex items-center gap-2 px-4 py-3 bg-white rounded-lg grow h-11'>
                 {entryData.category}

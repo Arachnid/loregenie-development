@@ -93,7 +93,7 @@ const SharingModal = <T extends LoreSchemas>({
         onOutsideClick={() => setShowModal(false)}
         display='contents'
       >
-        <div className='absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg top-1/2 left-1/2 bg-lore-beige-400 w-[571px]'>
+        <div className='absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg top-1/2 left-1/2 bg-lore-beige-400 w-[97%] min-w-max md:w-[571px]'>
           <div className='flex items-center self-stretch justify-center gap-2 px-6 py-4 rounded-t-lg bg-lore-beige-500'>
             <p className='text-2xl font-medium leading-7 grow'>
               {isEntry(data) ? 'Visibility' : 'Sharing settings'}
@@ -106,7 +106,7 @@ const SharingModal = <T extends LoreSchemas>({
             </span>
           </div>
           <div className='flex flex-col self-stretch gap-6 p-6'>
-            <div className='flex self-stretch gap-2'>
+            <div className='flex flex-col self-stretch gap-2 md:flex-row'>
               <div className='flex items-center justify-center gap-2 py-2 pl-4 pr-2 bg-white rounded-lg grow'>
                 <p className='leading-5 grow'>Make public</p>
                 <button
@@ -187,14 +187,15 @@ const SharingModal = <T extends LoreSchemas>({
                     );
                   }
                 })}
-                <div className='flex self-stretch gap-2 h-11'>
+                <div className='flex flex-col self-stretch gap-2 md:flex-row'>
                   <input
-                    className='flex items-center justify-center gap-2 px-4 py-3 bg-white rounded-lg grow focus-visible:outline-none placeholder:text-black placeholder:text-opacity-50'
+                    className='flex items-center justify-center gap-2 px-4 py-3 bg-white rounded-lg h-11 grow focus-visible:outline-none placeholder:text-black placeholder:text-opacity-50'
                     type='email'
                     placeholder='Enter email'
                     value={inputEmail}
                     onChange={(e) => setInputEmail(e.target.value)}
                   />
+                  <div className='flex gap-2'>
                   <PermissionDropDown
                     title={inputPermission}
                     adminAction={() => setInputPermission('Admin')}
@@ -202,12 +203,13 @@ const SharingModal = <T extends LoreSchemas>({
                     readerAction={() => setInputPermission('Reader')}
                   />
                   <button
-                    className='flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 rounded-lg border-lore-beige-500 text-lore-blue-400'
+                    className='flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 rounded-lg h-11 border-lore-beige-500 text-lore-blue-400'
                     onClick={() => onAdd()}
                   >
                     <span className='text-[20px] material-icons'>add</span>
                     <p className='font-medium leading-5'>Add</p>
                   </button>
+                  </div>
                 </div>
               </div>
             )}

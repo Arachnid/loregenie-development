@@ -16,7 +16,7 @@ const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
 
   return (
     <div className='relative flex flex-col w-full pt-20 gap-4 md:gap-10 md:w-[640px] min-w-max'>
-      <div className='relative flex flex-col self-stretch gap-6 p-6 md:gap-8 md:p-10 isolate bg-lore-beige-400 rounded-2xl'>
+      <div className='relative flex flex-col self-stretch gap-4 p-4 md:gap-8 md:p-10 isolate bg-lore-beige-400 rounded-2xl'>
         <img
           className='absolute w-[320px] left-[calc(50%-320px/2)] top-[-166px] md:left-auto md:w-[389px] md:h-[524px] md:-right-8 md:top-[calc(50%-524px/2-56px)]'
           src='/genie.svg'

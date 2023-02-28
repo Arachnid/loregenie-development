@@ -23,7 +23,7 @@ const PermissionDropDown = ({
       onOutsideClick={() => setDropDownOpen(false)}
       display='contents'
     >
-      <div className='flex flex-col w-[140px] relative text-lore-blue-400'>
+      <div className='flex flex-col w-full md:w-[140px] relative text-lore-blue-400'>
         <button
           className='flex justify-center gap-2 px-4 py-3 bg-white rounded-lg'
           onClick={() => setDropDownOpen(!dropDownOpen)}

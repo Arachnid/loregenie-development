@@ -26,7 +26,7 @@ export default function BaseLayout({
   useEffect(() => {
     setShowMenu(false);
   }, [pathname]);
-  
+
   return (
     <ClientProvider>
       <div className='flex flex-col h-screen min-w-fit'>
@@ -43,10 +43,14 @@ export default function BaseLayout({
           >
             <nav className='flex w-full h-full'>{nav}</nav>
           </div>
-          <div className='md:flex w-full ml-[2px]' hidden={showMenu}>
+          <div className='md:flex w-full md:ml-[2px]' hidden={showMenu}>
             {children}
           </div>
-          <div className='absolute z-20 bottom-4 right-4' hidden={showMenu}>
+          <div
+            className={`absolute z-20 flex-row-reverse bottom-4 right-4 ${
+              showMenu ? 'hidden' : 'flex'
+            }`}
+          >
             <GenieWand />
           </div>
         </div>
