@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Session, getServerSession } from 'next-auth';
 import ClientEntryPage from '@/components/pages/ClientEntryPage';
-import { Entry, World } from '@/types';
+import { World } from '@/types';
 
 interface Props {
   params: {
@@ -15,7 +15,7 @@ interface Props {
 export default async function EntryPage({ params }: Props) {
   const entry = await getEntry(params.worldID, params.entryID);
   const session: Session | null = await getServerSession(authOptions);
-  const { world, entries }: { world: World | undefined, entries: Entry[] } = await getWorld(
+  const world: World | undefined = await getWorld(
     params.worldID,
     session?.user?.email as string
   );
@@ -29,7 +29,7 @@ export default async function EntryPage({ params }: Props) {
     <ClientEntryPage
       currentEntry={entry}
       world={world}
-      entries={entries}
+      entries={world.entries}
       permissions={permissions}
       session={session}
     />

@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import EntriesNav from '@/components/nav/EntriesNav';
 import { notFound } from 'next/navigation';
-import { getWorld } from '@/lib/db';
+import { getPermissions, getWorld } from '@/lib/db';
 import { World } from '@/types';
 
 interface Props {
@@ -15,13 +15,15 @@ interface Props {
 
 export default async function Layout({ children, params }: Props) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  const world: World | undefined = await getWorld(
+    params.worldID,
+    session?.user?.email as string
+  );
+  if (!session?.user?.email || !world) {
     notFound();
   }
-  const { world }: { world: World | undefined } = await getWorld(
-    params.worldID,
-    session?.user.email
-  );
+
+  const permissions = await getPermissions(world.id, session.user.email);
 
   return (
     <>
@@ -33,7 +35,8 @@ export default async function Layout({ children, params }: Props) {
           />
         }
         session={session}
-        worldName={world?.name as string}
+        worldName={world.name}
+        permissions={permissions}
       >
         {children}
       </BaseLayout>

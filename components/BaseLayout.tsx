@@ -11,6 +11,7 @@ interface Props {
   nav: JSX.Element;
   session: Session;
   worldName: string;
+  permissions: string[];
   children: ReactNode;
 }
 
@@ -18,6 +19,7 @@ export default function BaseLayout({
   nav,
   session,
   worldName,
+  permissions,
   children,
 }: Props) {
   const [showMenu, setShowMenu] = useState(false);
@@ -46,13 +48,15 @@ export default function BaseLayout({
           <div className='md:flex w-full md:ml-[2px]' hidden={showMenu}>
             {children}
           </div>
-          <div
-            className={`absolute z-20 flex-row-reverse bottom-4 right-4 ${
-              showMenu ? 'hidden' : 'flex'
-            }`}
-          >
-            <GenieWand />
-          </div>
+          {permissions.includes('writer') && (
+            <div
+              className={`absolute z-20 flex-row-reverse bottom-4 right-4 ${
+                showMenu ? 'hidden' : 'flex'
+              }`}
+            >
+              <GenieWand />
+            </div>
+          )}
         </div>
       </div>
     </ClientProvider>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Campaign, isEntry, LoreSchemas, User, World } from '@/types';
+import { CampaignDB, isEntry, LoreSchemas, User, WorldDB } from '@/types';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Contributor from '@/components/Contributor';
 import PermissionDropDown from '@/components/dropdown/PermissionDropDown';
@@ -45,9 +45,9 @@ const SharingModal = <T extends LoreSchemas>({
   useEffect(() => {
     if (!isEntry(data) && data.readers.length) {
       const setUserData = async () => {
-        const users = await getUsers(data.readers) as User[];
+        const users = (await getUsers(data.readers)) as User[];
         setUsers(users);
-      }
+      };
       setUserData();
     }
   }, [!isEntry(data) && data.readers]);
@@ -145,42 +145,48 @@ const SharingModal = <T extends LoreSchemas>({
                 {users.map((contributor, index) => {
                   if (data.admins.includes(contributor.email)) {
                     return (
-                      <Contributor<World | Campaign>
+                      <Contributor<WorldDB | CampaignDB>
                         key={index}
                         email={contributor.email}
                         image={contributor.image}
                         title='Admin'
                         data={data}
                         setData={
-                          setData as Dispatch<SetStateAction<World | Campaign>>
+                          setData as Dispatch<
+                            SetStateAction<WorldDB | CampaignDB>
+                          >
                         }
                         session={session}
                       />
                     );
                   } else if (data.writers.includes(contributor.email)) {
                     return (
-                      <Contributor<World | Campaign>
+                      <Contributor<WorldDB | CampaignDB>
                         key={index}
                         email={contributor.email}
                         image={contributor.image}
                         title='Writer'
                         data={data}
                         setData={
-                          setData as Dispatch<SetStateAction<World | Campaign>>
+                          setData as Dispatch<
+                            SetStateAction<WorldDB | CampaignDB>
+                          >
                         }
                         session={session}
                       />
                     );
                   } else {
                     return (
-                      <Contributor<World | Campaign>
+                      <Contributor<WorldDB | CampaignDB>
                         key={index}
                         email={contributor.email}
                         image={contributor.image}
                         title='Reader'
                         data={data}
                         setData={
-                          setData as Dispatch<SetStateAction<World | Campaign>>
+                          setData as Dispatch<
+                            SetStateAction<WorldDB | CampaignDB>
+                          >
                         }
                         session={session}
                       />
@@ -196,19 +202,19 @@ const SharingModal = <T extends LoreSchemas>({
                     onChange={(e) => setInputEmail(e.target.value)}
                   />
                   <div className='flex gap-2'>
-                  <PermissionDropDown
-                    title={inputPermission}
-                    adminAction={() => setInputPermission('Admin')}
-                    writerAction={() => setInputPermission('Writer')}
-                    readerAction={() => setInputPermission('Reader')}
-                  />
-                  <button
-                    className='flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 rounded-lg h-11 border-lore-beige-500 text-lore-blue-400'
-                    onClick={() => onAdd()}
-                  >
-                    <span className='text-[20px] material-icons'>add</span>
-                    <p className='font-medium leading-5'>Add</p>
-                  </button>
+                    <PermissionDropDown
+                      title={inputPermission}
+                      adminAction={() => setInputPermission('Admin')}
+                      writerAction={() => setInputPermission('Writer')}
+                      readerAction={() => setInputPermission('Reader')}
+                    />
+                    <button
+                      className='flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 rounded-lg h-11 border-lore-beige-500 text-lore-blue-400'
+                      onClick={() => onAdd()}
+                    >
+                      <span className='text-[20px] material-icons'>add</span>
+                      <p className='font-medium leading-5'>Add</p>
+                    </button>
                   </div>
                 </div>
               </div>

@@ -8,8 +8,8 @@ import { Dispatch, SetStateAction, useEffect } from 'react';
 type Props = {
   session: Session | null;
   worldName?: string;
-  showMenu: boolean;
-  setShowMenu: Dispatch<SetStateAction<boolean>>;
+  showMenu?: boolean;
+  setShowMenu?: Dispatch<SetStateAction<boolean>>;
 };
 
 const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
@@ -72,17 +72,19 @@ const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
           />
         </div>
       </div>
-      <button
-        className='flex items-center gap-2 text-lore-blue-400 md:hidden w-fit'
-        onClick={() => setShowMenu(!showMenu)}
-      >
-        {showMenu ? (
-          <span className='material-icons'>close</span>
-        ) : (
-          <span className='material-icons'>menu</span>
-        )}
-        <h2 className='text-xl font-medium leading-6'>{worldName}</h2>
-      </button>
+      {showMenu && setShowMenu && (
+        <button
+          className='flex items-center gap-2 text-lore-blue-400 md:hidden w-fit'
+          onClick={() => setShowMenu(!showMenu)}
+        >
+          {showMenu ? (
+            <span className='material-icons'>close</span>
+          ) : (
+            <span className='material-icons'>menu</span>
+          )}
+          <h2 className='text-xl font-medium leading-6'>{worldName}</h2>
+        </button>
+      )}
     </div>
   );
 };

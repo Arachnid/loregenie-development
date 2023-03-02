@@ -1,11 +1,11 @@
 'use client';
 
-import { Campaign, World } from '@/types';
+import { CampaignDB, WorldDB } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
 import PermissionDropDown from '@/components/dropdown/PermissionDropDown';
 import { Session } from 'next-auth';
 
-type Props<T extends World | Campaign> = {
+type Props<T extends WorldDB | CampaignDB> = {
   email: string;
   title: string;
   image: string;
@@ -14,7 +14,7 @@ type Props<T extends World | Campaign> = {
   session: Session;
 };
 
-const Contributor = <T extends World | Campaign>({
+const Contributor = <T extends WorldDB | CampaignDB>({
   email,
   title,
   image,
