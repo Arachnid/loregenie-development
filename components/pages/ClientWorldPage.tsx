@@ -1,6 +1,6 @@
 'use client';
 
-import { Campaign, User, World } from '@/types';
+import { Campaign, User, World, WorldDB } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
@@ -18,6 +18,11 @@ type Props = {
   contributors: User[];
 };
 
+const worldDBConverter = (world: World) => {
+  const { entries, campaigns, contributors, ...worldDB } = world;
+  return worldDB;
+};
+
 const WorldPage = ({
   world,
   campaigns,
@@ -25,7 +30,7 @@ const WorldPage = ({
   session,
   contributors,
 }: Props) => {
-  const [worldData, setWorldData] = useState<World>(world);
+  const [worldData, setWorldData] = useState<WorldDB>(worldDBConverter(world));
   const { setClient } = useClientContext();
   const router = useRouter();
 
@@ -115,7 +120,7 @@ const WorldPage = ({
 
   return (
     <div className='flex flex-col w-full h-full mb-12'>
-      <PageHeader<World>
+      <PageHeader<WorldDB>
         data={worldData}
         currentData={world}
         setData={setWorldData}
@@ -128,7 +133,7 @@ const WorldPage = ({
       <div className='flex flex-col items-start gap-6 p-4 overflow-y-scroll bg-white md:gap-10 md:px-16 md:py-6 grow isolate scrollbar-hide'>
         <div className='relative min-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
           <div className='absolute flex bottom-4 right-4'>
-            <ImageSettings<World>
+            <ImageSettings<WorldDB>
               data={worldData}
               setData={setWorldData}
               permissions={permissions}
@@ -143,7 +148,7 @@ const WorldPage = ({
             />
           )}
         </div>
-        <PageBody<World>
+        <PageBody<WorldDB>
           data={worldData}
           setData={setWorldData}
           permissions={permissions}

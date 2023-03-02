@@ -1,7 +1,7 @@
 import GenerateFormPage from '@/components/pages/GenerateFormPage';
 import { getPermissions, getWorld } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Campaign, Entry, World } from '@/types';
+import { World } from '@/types';
 import { Session, getServerSession } from 'next-auth';
 import { notFound } from 'next/navigation';
 
@@ -13,11 +13,7 @@ type Props = {
 
 const GenerateNewPage = async ({ params }: Props) => {
   const session: Session | null = await getServerSession(authOptions);
-  const {
-    world,
-    entries,
-    campaigns,
-  }: { world: World | undefined; entries: Entry[]; campaigns: Campaign[] } =
+  const world: World | undefined =
     await getWorld(params.worldID, session?.user?.email as string);
 
   if (!session?.user?.email || !world) {
@@ -29,8 +25,8 @@ const GenerateNewPage = async ({ params }: Props) => {
   return (
     <GenerateFormPage
       world={world}
-      entries={entries}
-      campaigns={campaigns}
+      entries={world.entries}
+      campaigns={world.campaigns}
       permissions={permissions}
     />
   );

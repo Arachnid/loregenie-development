@@ -1,4 +1,4 @@
-export interface World {
+export interface WorldDB {
   readonly id: string;
   name: string;
   description: string;
@@ -7,13 +7,22 @@ export interface World {
   writers: string[];
   admins: string[];
   public: boolean;
-  entries: Entry[];
-  campaigns: Campaign[];
-  contributors: User[];
   prompt?: string;
 }
 
-export type Campaign = Omit<World, 'campaigns'>;
+export interface World extends WorldDB {
+  entries: Entry[];
+  campaigns: Campaign[];
+  contributors: User[];
+}
+
+export type CampaignDB = Omit<WorldDB, 'prompt'>;
+
+export interface Campaign extends CampaignDB {
+  entries: Entry[];
+  contributors: User[];
+}
+
 export const isCampaign = (obj: any): obj is Campaign => {
   return obj.campaigns === undefined && obj.category === undefined;
 };
@@ -52,7 +61,7 @@ export interface EntryHierarchy extends Entry {
   children?: EntryHierarchy[];
 }
 
-export type LoreSchemas = World | Campaign | Entry;
+export type LoreSchemas = WorldDB | CampaignDB | Entry;
 
 export interface ClientContextI {
   world: World;

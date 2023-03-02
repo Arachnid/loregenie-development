@@ -1,6 +1,6 @@
 'use client';
 
-import { Campaign, User, World } from '@/types';
+import { Campaign, CampaignDB, User, World } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PageHeader from '@/components/PageHeader';
@@ -18,6 +18,11 @@ type Props = {
   contributors: User[];
 };
 
+const campaignDBConverter = (campaign: Campaign) => {
+  const { entries, contributors, ...campaignDB } = campaign;
+  return campaignDB;
+};
+
 const ClientCampaignPage = ({
   world,
   campaign,
@@ -25,7 +30,7 @@ const ClientCampaignPage = ({
   session,
   contributors,
 }: Props) => {
-  const [campaignData, setCampaignData] = useState<Campaign>(campaign);
+  const [campaignData, setCampaignData] = useState<CampaignDB>(campaignDBConverter(campaign));
   const { setClient } = useClientContext();
   const router = useRouter();
 
@@ -87,7 +92,7 @@ const ClientCampaignPage = ({
 
   return (
     <div className='flex flex-col w-full h-full mb-12'>
-      <PageHeader<Campaign>
+      <PageHeader<CampaignDB>
         data={campaignData}
         currentData={campaign}
         setData={setCampaignData}
@@ -100,7 +105,7 @@ const ClientCampaignPage = ({
       <div className='flex flex-col items-start gap-6 p-4 overflow-y-scroll bg-white md:gap-10 md:px-16 md:py-6 grow isolate scrollbar-hide'>
         <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
           <div className='absolute flex bottom-4 right-4'>
-            <ImageSettings<Campaign>
+            <ImageSettings<CampaignDB>
               data={campaignData}
               setData={setCampaignData}
               permissions={permissions}
@@ -115,7 +120,7 @@ const ClientCampaignPage = ({
             />
           )}
         </div>
-        <PageBody<Campaign>
+        <PageBody<CampaignDB>
           data={campaignData}
           setData={setCampaignData}
           permissions={permissions}

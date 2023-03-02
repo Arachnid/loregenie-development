@@ -25,7 +25,7 @@ const CampaignEntryPage = async ({ params }: Props) => {
     params.entryID
   );
   const session: Session | null = await getServerSession(authOptions);
-  const { world }: { world: World | undefined } = await getWorld(
+  const world: World | undefined = await getWorld(
     params.worldID,
     session?.user?.email as string
   );

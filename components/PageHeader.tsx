@@ -37,7 +37,7 @@ const PageHeader = <T extends LoreSchemas>({
           <div className='items-center hidden h-8 gap-2 md:flex overflow-x-clip'>
             {contributors?.map((contributor, index) => (
               <img
-                className='w-8 h-8 rounded-full min-w-max'
+                className='w-8 h-8 rounded-full'
                 src={contributor.image}
                 alt=''
                 key={index}

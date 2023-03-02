@@ -6,7 +6,15 @@ import {
   Firestore,
 } from 'firebase-admin/firestore';
 import { Storage } from 'firebase-admin/storage';
-import { World, Entry, EntryHierarchy, Campaign, User } from '@/types';
+import {
+  World,
+  Entry,
+  EntryHierarchy,
+  Campaign,
+  User,
+  WorldDB,
+  CampaignDB,
+} from '@/types';
 import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
 
 if (!admin.apps.length) {
@@ -40,91 +48,98 @@ export class Converter<U> implements FirestoreDataConverter<U> {
 }
 
 export async function getWorlds(email: string): Promise<World[]> {
-  const worlds = await db
+  const worldsDB = await db
     .collection('worlds')
     .where('readers', 'array-contains', email)
-    .withConverter(new Converter<World>())
+    .withConverter(new Converter<WorldDB>())
     .get();
 
-  const worldsWithContributors = await Promise.all(
-    worlds.docs.map(async (world): Promise<World | undefined> => {
+  const worlds = await Promise.all(
+    worldsDB.docs.map(async (world): Promise<World> => {
+      const worldData = world.data();
       const contributors = await getContributors(world.id);
+      const entries = await getEntries(
+        world.id,
+        worldData.public,
+        worldData.readers.includes(email)
+      );
+      const campaigns = await getCampaigns(world.id, email);
 
       return {
-        ...world.data(),
+        ...worldData,
         contributors,
+        entries,
+        campaigns,
       };
     })
   );
 
-  return worldsWithContributors as World[];
+  return worlds;
 }
 
 export async function getWorld(
   worldID: string,
   email: string
-): Promise<{
-  world: World | undefined;
-  entries: Entry[];
-  campaigns: Campaign[];
-}> {
-  const worldRef = await db
-    .collection('worlds')
-    .doc(worldID)
-    .withConverter(new Converter<World>())
-    .get();
+): Promise<World | undefined> {
+  const worldDB = (
+    await db
+      .collection('worlds')
+      .doc(worldID)
+      .withConverter(new Converter<WorldDB>())
+      .get()
+  ).data();
 
-  const world = worldRef.data();
-  if (world) {
-    world.campaigns = [];
-    world.entries = [];
-  }
+  const world = async (): Promise<World | undefined> => {
+    if (!worldDB) {
+      return undefined;
+    }
 
-  if (!world?.readers.includes(email) && !world?.public) {
-    return {
-      world: undefined,
-      entries: [],
-      campaigns: [],
-    };
-  }
-  if (!world.readers.includes(email) && world.public) {
-    return {
-      world,
-      entries: await getEntries(worldID, true),
-      campaigns: await getCampaigns(worldID, email),
-    };
-  }
-  return {
-    world,
-    entries: await getEntries(worldID, false),
-    campaigns: await getCampaigns(worldID, email),
+    if (worldDB.readers.includes(email) || worldDB.public) {
+      const entries = await getEntries(
+        worldDB.id,
+        worldDB.public,
+        worldDB.readers.includes(email)
+      );
+      const campaigns = await getCampaigns(worldDB.id, email);
+      const contributors = await getContributors(worldDB.id);
+      return {
+        ...worldDB,
+        entries,
+        campaigns,
+        contributors,
+      };
+    }
+    return undefined;
   };
+  return await world();
 }
 
 export async function getCampaigns(
   worldID: string,
   email: string
 ): Promise<Campaign[]> {
-  const campaigns = await db
+  const campaignsDB = await db
     .collection('worlds')
     .doc(worldID)
     .collection('campaigns')
     .where('readers', 'array-contains', email)
-    .withConverter(new Converter<Campaign>())
+    .withConverter(new Converter<CampaignDB>())
     .get();
 
   const campaignsWithEntries = await Promise.all(
-    campaigns.docs.map(async (campaign): Promise<Campaign | undefined> => {
+    campaignsDB.docs.map(async (campaign): Promise<Campaign | undefined> => {
       const campaignData = campaign.data();
 
+      const contributors = await getContributors(worldID, campaignData.id);
       const campaignEntries = await getCampaignEntries(
         worldID,
         campaignData.id
       );
 
       if (!campaignData.readers.includes(email) && !campaignData.public) {
-        return;
-      } else if (!campaignData.readers.includes(email) && campaignData.public) {
+        return undefined;
+      }
+      if (!campaignData.readers.includes(email) && campaignData.public) {
         const entryHierarchy: EntryHierarchy[] =
           createEntryHierarchy(campaignEntries);
 
@@ -151,39 +166,48 @@ export async function getCampaigns(
           entries: campaignEntries.filter((entry) =>
             publicEntryIDs.includes(entry.id)
           ),
+          contributors,
         };
       }
-
       return {
-        ...campaign.data(),
+        ...campaignData,
         entries: campaignEntries,
+        contributors,
       };
     })
   );
 
-  const campaignsWithContributors = await Promise.all(
-    campaignsWithEntries.map(async (campaign) => {
-      const contributors = await getContributors(worldID, campaign?.id);
-
-      return { ...campaign, contributors };
-    })
-  );
-
-  return campaignsWithContributors as Campaign[];
+  return campaignsWithEntries as Campaign[];
 }
 
 export async function getCampaign(
   worldID: string,
   campaignID: string
 ): Promise<Campaign | undefined> {
-  const campaign = await db
-    .collection('worlds')
-    .doc(worldID)
-    .collection('campaigns')
-    .doc(campaignID)
-    .withConverter(new Converter<Campaign>())
-    .get();
-  return campaign.data();
+  const campaignDB = (
+    await db
+      .collection('worlds')
+      .doc(worldID)
+      .collection('campaigns')
+      .doc(campaignID)
+      .withConverter(new Converter<CampaignDB>())
+      .get()
+  ).data();
+
+  const campaign = async (): Promise<Campaign | undefined> => {
+    if (campaignDB) {
+      const entries = await getCampaignEntries(worldID, campaignDB.id);
+      const contributors = await getContributors(worldID, campaignDB.id);
+      return {
+        ...campaignDB,
+        entries,
+        contributors,
+      };
+    }
+    return undefined;
+  };
+
+  return await campaign();
 }
 
 export async function getCampaignEntries(
@@ -220,7 +244,8 @@ export async function getCampaignEntry(
 
 export async function getEntries(
   worldID: string,
-  publicWorld: boolean
+  isPublicWorld: boolean,
+  isReader: boolean
 ): Promise<Entry[]> {
   const entries = await db
     .collection('worlds')
@@ -229,7 +254,7 @@ export async function getEntries(
     .withConverter(new Converter<Entry>())
     .get();
 
-  if (publicWorld) {
+  if (isPublicWorld && !isReader) {
     const entryHierarchy: EntryHierarchy[] = createEntryHierarchy(
       entries.docs.map((entry) => entry.data())
     );
