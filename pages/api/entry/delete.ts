@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import { Converter, db } from '@/lib/db';
 import { Entry, PermissionLevel, World } from '@/types';
-import { hasPermission } from '@/utils/hasPermission';
+import { hasPermission } from '@/utils/validation/hasPermission';
 import { FieldValue } from 'firebase-admin/firestore';
 import { NextApiRequest, NextApiResponse } from 'next';
 

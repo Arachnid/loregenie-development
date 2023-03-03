@@ -12,12 +12,14 @@ interface Props {
 
 export default async function WorldPage({ params }: Props) {
   const session: Session | null = await getServerSession(authOptions);
-  const world = await getWorld(params.worldID, session?.user?.email as string);
+  const email = session?.user?.email;
+  const world = await getWorld(params.worldID, email as string);
 
-  if (!world || !session?.user?.email) {
+  if (!world || !email) {
     notFound();
   }
-  const permissions = await getPermissions(params.worldID, session.user.email);
+
+  const permissions = await getPermissions(email, params.worldID);
 
   return (
     <>

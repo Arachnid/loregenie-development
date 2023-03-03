@@ -1,6 +1,6 @@
 import { storage } from '@/lib/db';
 import { PermissionLevel } from '@/types';
-import { hasPermission } from '@/utils/hasPermission';
+import { hasPermission } from '@/utils/validation/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export const config = {

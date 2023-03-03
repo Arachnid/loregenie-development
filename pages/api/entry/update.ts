@@ -1,7 +1,7 @@
 import admin from 'firebase-admin';
 import { Converter, db } from '@/lib/db';
 import { Entry, PermissionLevel, World } from '@/types';
-import { hasPermission } from '@/utils/hasPermission';
+import { hasPermission } from '@/utils/validation/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(

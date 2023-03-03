@@ -15,15 +15,16 @@ interface Props {
 
 export default async function Layout({ children, params }: Props) {
   const session = await getServerSession(authOptions);
+  const email = session?.user?.email;
   const world: World | undefined = await getWorld(
     params.worldID,
-    session?.user?.email as string
+    email as string
   );
-  if (!session?.user?.email || !world) {
+  if (!email || !world) {
     notFound();
   }
 
-  const permissions = await getPermissions(world.id, session.user.email);
+  const permissions = await getPermissions(email, world.id);
 
   return (
     <>

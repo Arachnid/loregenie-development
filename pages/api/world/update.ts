@@ -1,7 +1,6 @@
 import { Converter, db } from '@/lib/db';
 import { PermissionLevel, WorldDB } from '@/types';
-import { contributorSanityCheck } from '@/utils/contributorSanityCheck';
-import { hasPermission } from '@/utils/hasPermission';
+import { updateValidation } from '@/utils/validation/updateValidation';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -18,15 +17,7 @@ export default async function handler(
   const docData = (await docRef.get()).data();
 
   try {
-    if (
-      !(await hasPermission(
-        request,
-        response,
-        worldData.id,
-        PermissionLevel.writer
-      )) ||
-      !(await contributorSanityCheck(request, response, worldData, docData))
-    ) {
+    if (!(await updateValidation(request, response, worldData, docData))) {
       response.statusCode = 500;
       response.send({});
       return;

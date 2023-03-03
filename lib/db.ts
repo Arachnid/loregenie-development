@@ -290,58 +290,49 @@ export async function getEntry(worldID: string, entryID: string) {
   return entry.data();
 }
 
-export async function getPermissions(
-  worldID: string,
+const permissionList = (
+  data: CampaignDB | WorldDB,
   email: string
-): Promise<string[]> {
-  const world = await db
-    .collection('worlds')
-    .doc(worldID)
-    .withConverter(new Converter<World>())
-    .get();
-
-  if (world.data()?.admins.includes(email)) {
+): string[] => {
+  if (data.admins.includes(email)) {
     return ['admin', 'writer', 'reader'];
-  } else if (world.data()?.writers.includes(email)) {
+  }
+  if (data.writers.includes(email)) {
     return ['writer', 'reader'];
-  } else if (world.data()?.readers.includes(email)) {
+  }
+  if (data.readers.includes(email)) {
     return ['reader'];
-  } else {
-    return [];
   }
-}
+  return [];
+};
 
-export async function getCampaignPermissions(
+export async function getPermissions(
+  email: string,
   worldID: string,
-  campaignID: string,
-  email: string
+  campaignID?: string
 ): Promise<string[]> {
-  const world = await db
+  const worldRef = db
     .collection('worlds')
     .doc(worldID)
-    .withConverter(new Converter<World>())
-    .get();
-  const campaign = await db
-    .collection('worlds')
-    .doc(worldID)
-    .collection('campaigns')
-    .doc(campaignID)
-    .withConverter(new Converter<Campaign>())
-    .get();
+    .withConverter(new Converter<WorldDB>());
 
-  if (world.data()?.readers.includes(email)) {
-    if (campaign.data()?.admins.includes(email)) {
-      return ['admin', 'writer', 'reader'];
-    } else if (campaign.data()?.writers.includes(email)) {
-      return ['writer', 'reader'];
-    } else if (campaign.data()?.readers.includes(email)) {
-      return ['reader'];
-    } else {
-      return [];
+  if (campaignID) {
+    const campaign = (
+      await worldRef.withConverter(new Converter<CampaignDB>()).get()
+    ).data();
+
+    if (campaign) {
+      return permissionList(campaign, email);
     }
-  } else {
-    return [];
   }
+
+  const world = (await worldRef.get()).data();
+
+  if (world) {
+    return permissionList(world, email);
+  }
+
+  return [];
 }
 
 export async function getContributors(

@@ -1,7 +1,6 @@
 import { Converter, db } from '@/lib/db';
-import { CampaignDB, PermissionLevel } from '@/types';
-import { contributorSanityCheck } from '@/utils/contributorSanityCheck';
-import { hasPermission } from '@/utils/hasPermission';
+import { CampaignDB } from '@/types';
+import { updateValidation } from '@/utils/validation/updateValidation';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -27,21 +26,7 @@ export default async function handler(
   const docData = (await docRef.get()).data();
 
   try {
-    if (
-      !(await hasPermission(
-        request,
-        response,
-        worldID,
-        PermissionLevel.writer
-      )) ||
-      !(await contributorSanityCheck(
-        request,
-        response,
-        campaignData,
-        docData,
-        worldID
-      ))
-    ) {
+    if (!(await updateValidation(request, response, campaignData, docData))) {
       response.statusCode = 500;
       response.send({});
       return;

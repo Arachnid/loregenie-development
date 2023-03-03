@@ -1,4 +1,4 @@
-import { getCampaignPermissions, getPermissions } from '@/lib/db';
+import { getPermissions } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { PermissionLevel } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -18,17 +18,12 @@ export const hasPermission = async (
       authOptions
     );
     let permissions: string[] = [];
+    const email = session?.user?.email as string;
+    
     if (campaignID) {
-      permissions = await getCampaignPermissions(
-        worldID,
-        campaignID,
-        session?.user?.email as string
-      );
+      permissions = await getPermissions(email, worldID, campaignID);
     } else {
-      permissions = await getPermissions(
-        worldID,
-        session?.user?.email as string
-      );
+      permissions = await getPermissions(email, worldID);
     }
     if (!permissions.includes(permissionLevel)) {
       console.log('user does not have permission for that action.');
