@@ -35,8 +35,13 @@ const ClientEntryPage = ({
   session,
 }: Props) => {
   const [entryData, setEntryData] = useState<Entry>(currentEntry);
+  const [mounted, setMounted] = useState(false);
   const { setClient } = useClientContext();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setClient({ world, entry: currentEntry });
@@ -136,12 +141,15 @@ const ClientEntryPage = ({
     return result;
   };
 
+  if (!mounted) {
+    return <div className='w-full h-full bg-white' />;
+  }
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<Entry>
         session={session}
         data={entryData}
-        currentData={currentEntry}
         setData={setEntryData}
         onSave={onSave}
         onDelete={onDelete}
@@ -168,7 +176,11 @@ const ClientEntryPage = ({
               </div>
             </div>
           </div>
-          <div className={`relative flex w-full ${!entryData.image && 'pb-[100%] xs:pb-[440px]'} xs:w-[440px] xs:mx-auto md:min-h-0 md:pb-0 md:w-[170px] md:h-[170px] rounded-lg bg-lore-beige-400`}>
+          <div
+            className={`relative flex w-full ${
+              !entryData.image && 'pb-[100%] xs:pb-[440px]'
+            } xs:w-[440px] xs:mx-auto md:min-h-0 md:pb-0 md:w-[170px] md:h-[170px] rounded-lg bg-lore-beige-400`}
+          >
             <div className='absolute flex bottom-2 right-2'>
               <ImageSettings<Entry>
                 data={entryData}
@@ -180,7 +192,7 @@ const ClientEntryPage = ({
             {entryData.image && (
               <img
                 className='object-cover w-full h-full rounded-lg aspect-square'
-                src={entryData.image}
+                src={`${entryData.image}?${Date.now()}`}
                 alt=''
               />
             )}

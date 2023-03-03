@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import GenieForm from '@/components/GenieForm';
-import { Campaign, Category, Entry, LoreSchemas, World } from '@/types';
+import { Campaign, Entry, LoreSchemas, World } from '@/types';
 import { useClientContext } from '@/hooks/useClientContext';
 import ParentDropDown from '@/components/dropdown/ParentDropDown';
 import CategoryDropDown from '@/components/dropdown/CategoryDropDown';

@@ -8,7 +8,6 @@ import SharingModal from '@/components/SharingModal';
 
 type Props<T extends LoreSchemas> = {
   data: T;
-  currentData: T;
   setData: Dispatch<SetStateAction<T>>;
   onSave: () => Promise<void>;
   onDelete: () => Promise<void>;
@@ -19,7 +18,6 @@ type Props<T extends LoreSchemas> = {
 
 const PageHeader = <T extends LoreSchemas>({
   data,
-  currentData,
   setData,
   onSave,
   onDelete,
@@ -29,6 +27,7 @@ const PageHeader = <T extends LoreSchemas>({
 }: Props<T>) => {
   const [showModal, setShowModal] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [initialData] = useState(data);
 
   return (
     <>
@@ -60,7 +59,7 @@ const PageHeader = <T extends LoreSchemas>({
                   onSave();
                   window.location.reload();
                 }}
-                disabled={JSON.stringify(currentData) === JSON.stringify(data)}
+                disabled={JSON.stringify(initialData) === JSON.stringify(data)}
               >
                 Save
               </button>
