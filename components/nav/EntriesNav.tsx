@@ -16,7 +16,7 @@ export default async function EntriesNav({ worldID, email }: Props) {
   if (!world) {
     notFound();
   }
-  const permissions = await getPermissions(worldID, email);
+  const permissions = await getPermissions(email, worldID);
 
   return (
     <ClientEntriesNav

@@ -13,14 +13,17 @@ type Props = {
 
 const GenerateNewPage = async ({ params }: Props) => {
   const session: Session | null = await getServerSession(authOptions);
-  const world: World | undefined =
-    await getWorld(params.worldID, session?.user?.email as string);
+  const email = session?.user?.email;
+  const world: World | undefined = await getWorld(
+    params.worldID,
+    email as string
+  );
 
-  if (!session?.user?.email || !world) {
+  if (!email || !world) {
     notFound();
   }
 
-  const permissions = await getPermissions(params.worldID, session.user.email);
+  const permissions = await getPermissions(email, params.worldID);
 
   return (
     <GenerateFormPage

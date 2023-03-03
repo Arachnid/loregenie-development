@@ -1,4 +1,4 @@
-import { getCampaign, getCampaignPermissions, getWorld } from '@/lib/db';
+import { getCampaign, getPermissions, getWorld } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { Session, getServerSession } from 'next-auth';
@@ -18,19 +18,20 @@ export default async function CampaignPage({ params }: Props) {
     params.campaignID
   );
   const session: Session | null = await getServerSession(authOptions);
+  const email = session?.user?.email;
 
   const world: World | undefined = await getWorld(
     params.worldID,
-    session?.user?.email as string
+    email as string
   );
 
-  if (!campaign || !session?.user?.email || !world) {
+  if (!campaign || !email || !world) {
     notFound();
   }
-  const permissions = await getCampaignPermissions(
+  const permissions = await getPermissions(
+    email,
     params.worldID,
-    params.campaignID,
-    session.user.email
+    params.campaignID
   );
 
   return (

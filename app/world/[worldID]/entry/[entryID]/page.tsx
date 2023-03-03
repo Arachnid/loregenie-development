@@ -15,15 +15,16 @@ interface Props {
 export default async function EntryPage({ params }: Props) {
   const entry = await getEntry(params.worldID, params.entryID);
   const session: Session | null = await getServerSession(authOptions);
+  const email = session?.user?.email;
   const world: World | undefined = await getWorld(
     params.worldID,
-    session?.user?.email as string
+    email as string
   );
-  
-  if (!entry || !session?.user?.email || !world) {
+
+  if (!entry || !email || !world) {
     notFound();
   }
-  const permissions = await getPermissions(params.worldID, session.user.email);
+  const permissions = await getPermissions(email, params.worldID);
 
   return (
     <ClientEntryPage

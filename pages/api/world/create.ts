@@ -2,7 +2,7 @@ import { Converter, db } from '@/lib/db';
 import { aiGenerate } from '@/lib/ai';
 import { WorldDB } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { contributorSanityCheck } from '@/utils/contributorSanityCheck';
+import { contributorSanityCheck } from '@/utils/validation/contributorSanityCheck';
 
 export default async function handler(
   request: NextApiRequest,
@@ -26,7 +26,7 @@ export default async function handler(
   }
 
   try {
-    if (!contributorSanityCheck(request, response, worldData, worldData)) {
+    if (!contributorSanityCheck({ request, response, clientData: worldData })) {
       response.statusCode = 500;
       response.send({});
       return;

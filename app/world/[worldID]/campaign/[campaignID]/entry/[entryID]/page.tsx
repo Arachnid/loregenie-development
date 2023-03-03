@@ -2,7 +2,7 @@ import ClientEntryPage from '@/components/pages/ClientEntryPage';
 import {
   getCampaignEntries,
   getCampaignEntry,
-  getCampaignPermissions,
+  getPermissions,
   getWorld,
 } from '@/lib/db';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
@@ -25,22 +25,23 @@ const CampaignEntryPage = async ({ params }: Props) => {
     params.entryID
   );
   const session: Session | null = await getServerSession(authOptions);
+  const email = session?.user?.email;
   const world: World | undefined = await getWorld(
     params.worldID,
-    session?.user?.email as string
+    email as string
   );
   const entries: Entry[] = await getCampaignEntries(
     params.worldID,
     params.campaignID
   );
 
-  if (!campaignEntry || !session?.user?.email || !world) {
+  if (!campaignEntry || !email || !world) {
     notFound();
   }
-  const permissions = await getCampaignPermissions(
+  const permissions = await getPermissions(
+    email,
     params.worldID,
-    params.campaignID,
-    session.user.email
+    params.campaignID
   );
 
   return (

@@ -1,7 +1,7 @@
 import { Converter, db } from '@/lib/db';
 import { CampaignDB, PermissionLevel } from '@/types';
-import { contributorSanityCheck } from '@/utils/contributorSanityCheck';
-import { hasPermission } from '@/utils/hasPermission';
+import { contributorSanityCheck } from '@/utils/validation/contributorSanityCheck';
+import { hasPermission } from '@/utils/validation/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -21,13 +21,13 @@ export default async function handler(
         worldID,
         PermissionLevel.writer
       )) ||
-      !contributorSanityCheck(
+      !contributorSanityCheck({
         request,
         response,
-        campaignData,
-        campaignData,
-        worldID
-      )
+        clientData: campaignData,
+        dbData: campaignData,
+        worldID,
+      })
     ) {
       response.statusCode = 500;
       response.send({});
