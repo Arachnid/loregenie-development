@@ -1,5 +1,6 @@
 import { Converter, db } from '@/lib/db';
-import { Campaign, PermissionLevel } from '@/types';
+import { CampaignDB, PermissionLevel } from '@/types';
+import { contributorSanityCheck } from '@/utils/contributorSanityCheck';
 import { hasPermission } from '@/utils/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -7,12 +8,26 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { campaignData, worldID }: { campaignData: Campaign; worldID: string } =
-    JSON.parse(request.body);
-    
+  const {
+    campaignData,
+    worldID,
+  }: { campaignData: CampaignDB; worldID: string } = JSON.parse(request.body);
+
   try {
     if (
-      !(await hasPermission(request, response, worldID, PermissionLevel.writer))
+      !(await hasPermission(
+        request,
+        response,
+        worldID,
+        PermissionLevel.writer
+      )) ||
+      !contributorSanityCheck(
+        request,
+        response,
+        campaignData,
+        campaignData,
+        worldID
+      )
     ) {
       response.statusCode = 500;
       response.send({});
@@ -22,7 +37,7 @@ export default async function handler(
       .collection('worlds')
       .doc(worldID)
       .collection('campaigns')
-      .withConverter(new Converter<Campaign>())
+      .withConverter(new Converter<CampaignDB>())
       .add(campaignData);
     response.json(campaign.id);
   } catch (error) {

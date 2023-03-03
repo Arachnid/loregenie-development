@@ -1,24 +1,39 @@
 import { Converter, db } from '@/lib/db';
 import { aiGenerate } from '@/lib/ai';
-import { World } from '@/types';
+import { WorldDB } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { contributorSanityCheck } from '@/utils/contributorSanityCheck';
 
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  let worldData: Partial<World> = JSON.parse(request.body);
-  if(worldData.prompt) {
+  let worldData: WorldDB = JSON.parse(request.body);
+  if (worldData.prompt) {
     const prompt = worldData.prompt;
-    worldData = Object.assign(worldData, await aiGenerate<Partial<World>>('world', {
-      name: 'Name for the setting',
-      description: 'A 2-4 paragraph description of the setting',
-    }, [], prompt));
+    worldData = Object.assign(
+      worldData,
+      await aiGenerate<Partial<WorldDB>>(
+        'world',
+        {
+          name: 'Name for the setting',
+          description: 'A 2-4 paragraph description of the setting',
+        },
+        [],
+        prompt
+      )
+    );
   }
+
   try {
+    if (!contributorSanityCheck(request, response, worldData, worldData)) {
+      response.statusCode = 500;
+      response.send({});
+      return;
+    }
     const world = await db
       .collection('worlds')
-      .withConverter(new Converter<Partial<World>>())
+      .withConverter(new Converter<WorldDB>())
       .add(worldData);
     response.json(world.id);
   } catch (error) {

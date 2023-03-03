@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Category,
-  Entry,
-  isCampaign,
-  isEntry,
-  LoreSchemas,
-  World,
-} from '@/types';
+import { Category, Entry, isCampaign, isEntry, LoreSchemas } from '@/types';
 import { getIcon } from '@/utils/getIcon';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';

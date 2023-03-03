@@ -31,8 +31,13 @@ const WorldPage = ({
   contributors,
 }: Props) => {
   const [worldData, setWorldData] = useState<WorldDB>(worldDBConverter(world));
+  const [mounted, setMounted] = useState(false);
   const { setClient } = useClientContext();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setClient({ world });
@@ -118,11 +123,14 @@ const WorldPage = ({
     }
   };
 
+  if (!mounted) {
+    return <div className='w-full h-full bg-white' />;
+  }
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<WorldDB>
         data={worldData}
-        currentData={world}
         setData={setWorldData}
         onSave={onSave}
         onDelete={onDelete}

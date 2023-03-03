@@ -30,9 +30,16 @@ const ClientCampaignPage = ({
   session,
   contributors,
 }: Props) => {
-  const [campaignData, setCampaignData] = useState<CampaignDB>(campaignDBConverter(campaign));
+  const [campaignData, setCampaignData] = useState<CampaignDB>(
+    campaignDBConverter(campaign)
+  );
+  const [mounted, setMounted] = useState(false);
   const { setClient } = useClientContext();
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     setClient({ world, campaign });
@@ -45,7 +52,6 @@ const ClientCampaignPage = ({
         body: JSON.stringify({
           worldID: world.id,
           campaignID: campaign.id,
-          permissions,
         }),
       });
       router.push(`/world/${world.id}`);
@@ -61,9 +67,7 @@ const ClientCampaignPage = ({
         method: 'POST',
         body: JSON.stringify({
           campaignData,
-          campaignID: campaign.id,
           worldID: world.id,
-          permissions,
         }),
       });
       router.refresh();
@@ -78,7 +82,7 @@ const ClientCampaignPage = ({
       const filePath = `worlds/${world.id}/campaigns/${campaign.id}/image`;
       await fetch('/api/image/create', {
         method: 'POST',
-        body: JSON.stringify({ base64, filePath, permissions }),
+        body: JSON.stringify({ base64, filePath, worldID: world.id }),
       }).then((res) =>
         res.json().then((url: string) => {
           setCampaignData({ ...campaignData, image: url });
@@ -90,11 +94,14 @@ const ClientCampaignPage = ({
     }
   };
 
+  if (!mounted) {
+    return <div className='w-full h-full bg-white' />;
+  }
+
   return (
     <div className='flex flex-col w-full h-full mb-12'>
       <PageHeader<CampaignDB>
         data={campaignData}
-        currentData={campaign}
         setData={setCampaignData}
         onSave={onSave}
         onDelete={onDelete}
@@ -115,7 +122,7 @@ const ClientCampaignPage = ({
           {campaignData.image && (
             <img
               className='object-cover w-full h-full rounded-lg'
-              src={campaignData.image}
+              src={`${campaignData.image}?${Date.now()}`}
               alt=''
             />
           )}

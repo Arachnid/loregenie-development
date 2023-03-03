@@ -1,5 +1,6 @@
 import { Converter, db } from '@/lib/db';
-import { PermissionLevel, World } from '@/types';
+import { PermissionLevel, WorldDB } from '@/types';
+import { contributorSanityCheck } from '@/utils/contributorSanityCheck';
 import { hasPermission } from '@/utils/hasPermission';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -7,8 +8,15 @@ export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  const { worldData }: { worldData: World } = JSON.parse(request.body);
-  
+  const { worldData }: { worldData: WorldDB } = JSON.parse(request.body);
+
+  const docRef = db
+    .collection('worlds')
+    .doc(worldData.id)
+    .withConverter(new Converter<WorldDB>());
+
+  const docData = (await docRef.get()).data();
+
   try {
     if (
       !(await hasPermission(
@@ -16,17 +24,14 @@ export default async function handler(
         response,
         worldData.id,
         PermissionLevel.writer
-      ))
+      )) ||
+      !(await contributorSanityCheck(request, response, worldData, docData))
     ) {
       response.statusCode = 500;
       response.send({});
       return;
     }
-    await db
-      .collection('worlds')
-      .doc(worldData.id)
-      .withConverter(new Converter<World>())
-      .update(worldData);
+    await docRef.update(worldData);
   } catch (error) {
     console.log('error updating world in database: ', error);
     response.statusCode = 500;
