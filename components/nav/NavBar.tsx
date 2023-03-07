@@ -72,7 +72,7 @@ const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
           />
         </div>
       </div>
-      {showMenu && setShowMenu && (
+      {setShowMenu && (
         <button
           className='flex items-center gap-2 text-lore-blue-400 md:hidden w-fit'
           onClick={() => setShowMenu(!showMenu)}

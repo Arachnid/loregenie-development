@@ -49,11 +49,7 @@ export default function BaseLayout({
             {children}
           </div>
           {permissions.includes('writer') && (
-            <div
-              className={`absolute z-20 flex-row-reverse bottom-4 right-4 ${
-                showMenu ? 'hidden' : 'flex'
-              }`}
-            >
+            <div hidden={showMenu}>
               <GenieWand />
             </div>
           )}
