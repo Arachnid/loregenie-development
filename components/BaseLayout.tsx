@@ -49,7 +49,7 @@ export default function BaseLayout({
             {children}
           </div>
           {permissions.includes('writer') && (
-            <div hidden={showMenu}>
+            <div className='flex' hidden={showMenu}>
               <GenieWand />
             </div>
           )}
