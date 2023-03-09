@@ -94,6 +94,24 @@ const ClientCampaignPage = ({
     }
   };
 
+  const onImageDelete = async () => {
+    try {
+      const filePath = `worlds/${world.id}/campaigns/${campaign.id}/image`;
+      await fetch('/api/image/delete', {
+        method: 'POST',
+        body: JSON.stringify({
+          filePath,
+          worldID: world.id,
+        }),
+      }).then(() => {
+        setCampaignData({ ...campaignData, image: '' });
+        router.refresh();
+      });
+    } catch (error) {
+      console.log('error deleting image: ', error);
+    }
+  };
+
   if (!mounted) {
     return <div className='w-full h-full bg-white' />;
   }
@@ -117,6 +135,7 @@ const ClientCampaignPage = ({
               setData={setCampaignData}
               permissions={permissions}
               onUpload={onImageUpload}
+              onDelete={onImageDelete}
             />
           </div>
           {campaignData.image && (

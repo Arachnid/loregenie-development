@@ -97,6 +97,24 @@ const ClientEntryPage = ({
     }
   };
 
+  const onImageDelete = async () => {
+    try {
+      const filePath = `worlds/${world.id}/entries/${currentEntry.id}/image`;
+      await fetch('/api/image/delete', {
+        method: 'POST',
+        body: JSON.stringify({
+          filePath,
+          worldID: world.id,
+        }),
+      }).then(() => {
+        setEntryData({ ...entryData, image: '' });
+        router.refresh();
+      });
+    } catch (error) {
+      console.log('error deleting image: ', error);
+    }
+  };
+
   const getParents = (entries: Entry[]): EntryHierarchy[] => {
     const result: EntryHierarchy[] = [];
     const parentHierarchy: EntryHierarchy[] = createEntryHierarchy(entries);
@@ -187,6 +205,7 @@ const ClientEntryPage = ({
                 setData={setEntryData}
                 permissions={permissions}
                 onUpload={onImageUpload}
+                onDelete={onImageDelete}
               />
             </div>
             {entryData.image && (
