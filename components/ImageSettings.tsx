@@ -9,6 +9,7 @@ type Props<T extends LoreSchemas> = {
   setData: Dispatch<SetStateAction<T>>;
   permissions: string[];
   onUpload: (uploadedFile: File) => Promise<void>;
+  onDelete: () => Promise<void>;
 };
 
 const ImageSettings = <T extends LoreSchemas>({
@@ -16,6 +17,7 @@ const ImageSettings = <T extends LoreSchemas>({
   setData,
   permissions,
   onUpload,
+  onDelete,
 }: Props<T>) => {
   const [editImage, setEditImage] = useState(false);
   const uploadImageRef = useRef<HTMLInputElement>(null);
@@ -43,7 +45,7 @@ const ImageSettings = <T extends LoreSchemas>({
           <input
             type='file'
             ref={uploadImageRef}
-            accept='image/*'
+            accept='image/png, image/jpeg'
             onChange={(e) => {
               if (e.target.files) {
                 onUpload(e.target.files[0]);
@@ -63,7 +65,7 @@ const ImageSettings = <T extends LoreSchemas>({
             <button
               className='flex items-center self-stretch justify-center gap-2 px-4 py-3 transition-all duration-300 ease-out bg-white border-2 rounded-lg text-lore-blue-400 border-lore-beige-500 h-11 hover:bg-lore-beige-400'
               onClick={() => {
-                setData({ ...data, image: '' });
+                onDelete();
                 setEditImage(false);
               }}
             >

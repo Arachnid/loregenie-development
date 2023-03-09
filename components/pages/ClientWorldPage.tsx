@@ -123,6 +123,24 @@ const WorldPage = ({
     }
   };
 
+  const onImageDelete = async () => {
+    try {
+      const filePath = `worlds/${world.id}/image`;
+      await fetch('/api/image/delete', {
+        method: 'POST',
+        body: JSON.stringify({
+          filePath,
+          worldID: world.id,
+        }),
+      }).then(() => {
+        setWorldData({ ...worldData, image: '' });
+        router.refresh();
+      });
+    } catch (error) {
+      console.log('error deleting image: ', error);
+    }
+  };
+
   if (!mounted) {
     return <div className='w-full h-full bg-white' />;
   }
@@ -146,6 +164,7 @@ const WorldPage = ({
               setData={setWorldData}
               permissions={permissions}
               onUpload={onImageUpload}
+              onDelete={onImageDelete}
             />
           </div>
           {worldData.image && (
