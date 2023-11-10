@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Converter, db, storage } from '@/lib/db';
 import { aiGenerate, aiGenerateImage } from '@/lib/ai';
 import { WorldDB } from '@/types';
@@ -25,7 +26,7 @@ export default async function handler(
       )
     );
     const image = await aiGenerateImage(worldData.imagePrompt, '1792x1024');
-    const fileRef = storage.bucket().file('world.png');
+    const fileRef = storage.bucket().file(`${crypto.randomUUID()}.png`);
     await fileRef
       .save(
         Buffer.from(
