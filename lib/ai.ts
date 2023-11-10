@@ -1,12 +1,16 @@
 import OpenAI from 'openai';
+import { ChatCompletionMessageParam, ChatCompletionSystemMessageParam } from 'openai/resources';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
   
-const PROMPT_TEMPLATE = (kind: string, prompt: string, context: Array<string>, template: string) => `${context.map((c) => `---\n${c}\n---`).join('\n')}
+const PROMPT_TEMPLATE = (kind: string, prompt: string, context: Array<string>, template: string) => `
+The user is requesting a ${kind}. Here is relevant context to the setting in which this ${kind} exists:
 
-The user is requesting a ${kind}. Respond with a JSON object, following this template exactly:
+${context.map((c) => `---\n${c}\n---`).join('\n')}
+
+Respond with a JSON object, following this template exactly:
 
 ---
 ${template}
@@ -21,13 +25,15 @@ function formatObject(obj: {[key: string]: any}): string {
   return Object.keys(obj).map((key) => ` - ${key}: ${obj[key]}`).join('\n');
 }
 
-export async function aiGenerate<T>(kind: string, template: {[Property in keyof T]: string}, context: Array<{[key: string]: any}>, prompt: string): Promise<T> {
+export async function aiGenerate<T>(kind: string, template: {[Property in keyof T]: string}, context: Array<{[key: string]: string}>, prompt: string): Promise<T> {
     const fullPrompt = PROMPT_TEMPLATE(kind, prompt, context.map((c) => formatObject(c)), formatObject(template));
+    const messages: Array<ChatCompletionMessageParam> = [
+      {role: 'system', content: fullPrompt},
+      {role: 'user', content: prompt},
+    ];
+    console.log(JSON.stringify(messages, undefined, 2));
     const result = await openai.chat.completions.create({
-        messages: [
-          {role: 'system', content: fullPrompt},
-          {role: 'user', content: prompt},
-        ],
+        messages,
         model,
         response_format: {type: 'json_object'},
     });

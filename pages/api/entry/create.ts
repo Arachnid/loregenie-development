@@ -1,6 +1,7 @@
 import admin from 'firebase-admin';
+import crypto from 'crypto';
 import { Converter, db, storage } from '@/lib/db';
-import { Entry, PermissionLevel, World } from '@/types';
+import { Entry, PermissionLevel, World, WorldDB } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { hasPermission } from '@/utils/validation/hasPermission';
 import { aiGenerate, aiGenerateImage } from '@/lib/ai';
@@ -80,6 +81,12 @@ export default async function handler(
     }
 
     if(entryData.prompt) {
+      const docRef = db
+        .collection('worlds')
+        .doc(worldID)
+        .withConverter(new Converter<WorldDB>());
+      const worldData = (await docRef.get()).data() as WorldDB;
+
       const prompt = entryData.prompt;
       const category = entryData.category as string;
       entryData = Object.assign(
@@ -91,13 +98,13 @@ export default async function handler(
             imagePrompt: `A description of an image that captures the ${category}, written in a way that someone who has never heard of the ${category} could paint a picture`,
             description: DESCRIPTIONS[category]
           },
-          [],
+          [{name: worldData.name, description: worldData.description}],
           prompt
         )
       );
       console.log(entryData);
       const image = await aiGenerateImage(entryData.imagePrompt, '1024x1024');
-      const fileRef = storage.bucket().file('world.png');
+      const fileRef = storage.bucket().file(`${crypto.randomUUID()}.png`);
       await fileRef
         .save(
           Buffer.from(
