@@ -18,13 +18,13 @@ export default async function handler(
         {
           name: 'Name for the setting',
           description: 'A detailed, 2-4 paragraph description of the setting',
-          imageDescription: 'A description of a header image that captures the setting, written in a way that someone who has never heard of the setting could paint a picture.'
+          imagePrompt: 'A description of a header image that captures the setting, written in a way that someone who has never heard of the setting could paint a picture.'
         },
         [],
         prompt
       )
     );
-    const image = await aiGenerateImage(worldData.imageDescription);
+    const image = await aiGenerateImage(worldData.imagePrompt, '1792x1024');
     const fileRef = storage.bucket().file('world.png');
     await fileRef
       .save(
