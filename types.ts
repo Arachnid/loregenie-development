@@ -3,7 +3,7 @@ export interface WorldDB {
   name: string;
   description: string;
   image: string;
-  imageDescription: string;
+  imagePrompt: string;
   readers: string[];
   writers: string[];
   admins: string[];
@@ -32,7 +32,9 @@ export interface Entry {
   readonly id: string;
   name: string;
   description: string;
+  prompt: string;
   image: string;
+  imagePrompt: string;
   public: boolean;
   category?: Category;
   parent?: {

@@ -34,12 +34,12 @@ export async function aiGenerate<T>(kind: string, template: {[Property in keyof 
     return JSON.parse(result.choices[0].message.content as string) as T;
 }
 
-export async function aiGenerateImage(prompt: string): Promise<string> {
+export async function aiGenerateImage(prompt: string, size: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792'): Promise<string> {
   const result = await openai.images.generate({
     model: imageModel,
     prompt,
     n: 1,
-    size: '1792x1024',
+    size,
     response_format: 'b64_json',
   });
   return result.data[0].b64_json as string;
