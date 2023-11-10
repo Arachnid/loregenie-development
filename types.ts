@@ -3,6 +3,7 @@ export interface WorldDB {
   name: string;
   description: string;
   image: string;
+  imageDescription: string;
   readers: string[];
   writers: string[];
   admins: string[];
