@@ -3,6 +3,7 @@ import ClientEntriesNav from '@/components/nav/ClientEntriesNav';
 import { World } from '@/types';
 import EntriesList from '@/components/nav/EntriesList';
 import { notFound } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface Props {
   worldID: string;
@@ -10,13 +11,35 @@ interface Props {
 }
 
 export default async function EntriesNav({ worldID, email }: Props) {
-  const world: World | undefined =
-    await getWorld(worldID, email);
+  const [world, setWorld] = useState<World | undefined>(undefined);
+  const [permissions, setPermissions] = useState<any>();
+  // const world: World | undefined =
+  //   await getWorld(worldID, email);
 
-  if (!world) {
-    notFound();
-  }
-  const permissions = await getPermissions(email, worldID);
+    useEffect(() => {
+      async function fetchData() {
+        const fetchedWorld = await getWorld(worldID, email);
+        if (!fetchedWorld) {
+          notFound();
+        } else {
+          setWorld(fetchedWorld);
+          const fetchedPermissions = await getPermissions(email, worldID);
+          setPermissions(fetchedPermissions);
+        }
+      }
+  
+      fetchData();
+    }, [worldID, email]);
+  
+    if (!world || !permissions) {
+      // Render loading state or null
+      notFound();
+    }
+
+  // if (!world) {
+  //   notFound();
+  // }
+  // const permissions = await getPermissions(email, worldID);
 
   return (
     <ClientEntriesNav
