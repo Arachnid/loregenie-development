@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 type Props = {
-  onCreate: (prompt?: string) => Promise<void>;
+  onCreate: (prompt?: string ) => Promise<void>;
   setOpen?: Dispatch<SetStateAction<boolean>>;
   children?: JSX.Element;
   disabled: boolean;

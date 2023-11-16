@@ -40,7 +40,7 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
       category: string;
       url: string;
     }[] = [];
-    entries.map((entry) =>
+    entries.map((entry: any) =>
       result.push({
         id: entry.id,
         name: entry.name,
@@ -57,7 +57,7 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
       })
     );
     campaigns.map((campaign) =>
-      campaign.entries.map((campaignEntry) =>
+      campaign.entries.map((campaignEntry: any) =>
         result.push({
           id: campaignEntry.id,
           name: campaignEntry.name,

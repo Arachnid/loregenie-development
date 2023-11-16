@@ -60,8 +60,8 @@ const GenerateFormPage = ({
     }
   }, [client]);
 
-  const onCreate = async (prompt: string) => {
-    form.prompt = prompt;
+  const onCreate = async (prompt?: string) => {
+    form.prompt = prompt!;
     try {
       await fetch('/api/entry/create', {
         method: 'POST',
