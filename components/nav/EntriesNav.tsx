@@ -1,3 +1,5 @@
+"use-client"
+
 import { getPermissions, getWorld } from '@/lib/db';
 import ClientEntriesNav from '@/components/nav/ClientEntriesNav';
 import { World } from '@/types';
@@ -10,11 +12,10 @@ interface Props {
   email: string;
 }
 
-export default async function EntriesNav({ worldID, email }: Props) {
+export default function EntriesNav({ worldID, email }: Props) {
   const [world, setWorld] = useState<World | undefined>(undefined);
   const [permissions, setPermissions] = useState<any>();
-  // const world: World | undefined =
-  //   await getWorld(worldID, email);
+
 
     useEffect(() => {
       async function fetchData() {
