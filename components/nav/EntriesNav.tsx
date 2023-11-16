@@ -1,4 +1,4 @@
-"use-client"
+"use client"
 
 import { getPermissions, getWorld } from '@/lib/db';
 import ClientEntriesNav from '@/components/nav/ClientEntriesNav';
