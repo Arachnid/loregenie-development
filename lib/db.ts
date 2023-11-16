@@ -1,3 +1,5 @@
+'use server'
+
 import admin from 'firebase-admin';
 import {
   DocumentData,
@@ -81,7 +83,6 @@ export async function getWorld(
   worldID: string,
   email: string
 ): Promise<World | undefined> {
-  'use server'
   const worldDB = (
     await db
       .collection('worlds')
@@ -311,8 +312,7 @@ export async function getPermissions(
   email: string,
   worldID: string,
   campaignID?: string
-): Promise<string[]> {
-  'use server'
+): Promise<string[]> {  
   const worldRef = db
     .collection('worlds')
     .doc(worldID)
