@@ -81,6 +81,7 @@ export async function getWorld(
   worldID: string,
   email: string
 ): Promise<World | undefined> {
+  'use server'
   const worldDB = (
     await db
       .collection('worlds')
@@ -311,6 +312,7 @@ export async function getPermissions(
   worldID: string,
   campaignID?: string
 ): Promise<string[]> {
+  'use server'
   const worldRef = db
     .collection('worlds')
     .doc(worldID)
