@@ -45,4 +45,4 @@ ui-debug.log
 /exported-firebase-data
 firebase-private-key.json
 storage.rules
-serviceAccountKey.json
+# serviceAccountKey.json
