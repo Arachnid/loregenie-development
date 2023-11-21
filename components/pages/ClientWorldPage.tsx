@@ -30,10 +30,13 @@ const WorldPage = ({
   session,
   contributors,
 }: Props) => {
+  
   const [worldData, setWorldData] = useState<WorldDB>(worldDBConverter(world));
   const [mounted, setMounted] = useState(false);
   const { setClient } = useClientContext();
   const router = useRouter();
+
+  console.log('hello', {world})
 
   useEffect(() => {
     setMounted(true);

@@ -81,6 +81,7 @@ export async function getWorld(
   worldID: string,
   email: string
 ): Promise<World | undefined> {
+
   const worldDB = (
     await db
       .collection('worlds')
@@ -89,12 +90,14 @@ export async function getWorld(
       .get()
   ).data();
 
+
   const world = async (): Promise<World | undefined> => {
     if (!worldDB) {
       return undefined;
     }
 
     if (worldDB.readers.includes(email) || worldDB.public) {
+      console.log('enter the readers include')
       const entries = await getEntries(
         worldDB.id,
         worldDB.public,
@@ -329,7 +332,9 @@ export async function getPermissions(
   const world = (await worldRef.get()).data();
 
   if (world) {
-    return permissionList(world, email);
+    const res = permissionList(world, email);
+    console.log({res})
+    return res;
   }
 
   return [];

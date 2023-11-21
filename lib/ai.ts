@@ -27,6 +27,7 @@ function formatObject(obj: {[key: string]: any}): string {
 
 export async function aiGenerate<T>(kind: string, template: {[Property in keyof T]: string}, context: Array<{[key: string]: string}>, prompt: string): Promise<T> {
     const fullPrompt = PROMPT_TEMPLATE(kind, prompt, context.map((c) => formatObject(c)), formatObject(template));
+    console.log({fullPrompt})
     const messages: Array<ChatCompletionMessageParam> = [
       {role: 'system', content: fullPrompt},
       {role: 'user', content: prompt},

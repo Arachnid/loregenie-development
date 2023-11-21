@@ -20,6 +20,9 @@ export default async function Layout({ children, params }: Props) {
     params.worldID,
     email as string
   );
+
+  console.log({world:  params.worldID});
+
   if (!email || !world) {
     notFound();
   }
@@ -33,6 +36,8 @@ export default async function Layout({ children, params }: Props) {
           <EntriesNav
             worldID={params.worldID}
             email={session?.user?.email as string}
+            permissions={permissions}
+            world={world}
           />
         }
         session={session}

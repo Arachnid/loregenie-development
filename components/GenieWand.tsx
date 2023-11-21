@@ -1,7 +1,9 @@
 'use client';
 
+import { aiGenerate } from '@/lib/ai';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
+//tracks the state of this component
 enum CurrentState {
   new = 'new',
   edit = 'edit',
@@ -26,6 +28,23 @@ const GenieWand = () => {
       return () => clearTimeout(timer);
     }
   }, [simulateProcessing]);
+
+  // const generateNewResponse = async () => {
+  //   if(inputPromptValue){
+  //     await aiGenerate<Partial<Entry>>(
+  //       entryData.category as string,
+  //       {
+  //         name: `Name for the ${category}`,
+  //         imagePrompt: `A description of an image that captures the ${category}, written in a way that someone who has never heard of the ${category} could paint a picture`,
+  //         description: DESCRIPTIONS[category]
+  //       },
+  //       [{name: worldData.name, description: worldData.description}],
+  //       prompt
+  //     )
+  //   }
+   
+  
+  // };
 
   return (
     <>
@@ -77,13 +96,15 @@ const closeButton = (
 
 const generateButton = (
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
-  setSimulateProcessing: Dispatch<SetStateAction<boolean>>
+  setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
+  onGenerate: () => void 
 ): JSX.Element => (
   <button
     className='flex items-center justify-center gap-2 p-3 bg-white rounded-full md:px-4 md:py-2.5 text-lore-blue-200'
     onClick={() => {
       setCurrentState(CurrentState.processing);
       setSimulateProcessing(true);
+      onGenerate();
     }}
   >
     <span className='text-[20px] material-icons'>auto_fix_high</span>
@@ -104,6 +125,12 @@ const inputPromptField = (
   />
 );
 
+const aiGenerateFunc = () => {
+  // Your aiGenerate logic here
+  console.log("AI Generate Called");
+};
+
+
 const newPrompt = (
   setExpanded: Dispatch<SetStateAction<boolean>>,
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
@@ -114,7 +141,7 @@ const newPrompt = (
   <>
     {closeButton(setExpanded, setCurrentState)}
     {inputPromptField(inputPromptValue, setInputPromptValue)}
-    {generateButton(setCurrentState, setSimulateProcessing)}
+    {generateButton(setCurrentState, setSimulateProcessing, aiGenerateFunc )}
   </>
 );
 
@@ -134,7 +161,7 @@ const editPrompt = (
       <span className='text-[20px] material-icons'>arrow_back</span>
     </button>
     {inputPromptField(inputPromptValue, setInputPromptValue)}
-    {generateButton(setCurrentState, setSimulateProcessing)}
+    {generateButton(setCurrentState, setSimulateProcessing, aiGenerateFunc )}
   </>
 );
 
