@@ -47,3 +47,4 @@ ui-debug.log
 firebase-private-key.json
 storage.rules
 # serviceAccountKey.json
+.env
