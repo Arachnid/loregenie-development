@@ -15,6 +15,7 @@ export const ClientProvider = (props: any) => {
     campaign: {} as Campaign,
     entry: {} as Entry,
   });
+
   const value = useMemo(() => ({ client, setClient }), [client]);
 
   return <ClientContext.Provider value={value} {...props} />;

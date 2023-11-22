@@ -1,7 +1,9 @@
 'use client';
 
-import { aiGenerate } from '@/lib/ai';
+import { modifyResponse } from '@/lib/ai';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import useStore, { AssistanState } from '@/hooks/useStore';
+import { ChatCompletionMessageParam } from 'openai/resources';
 
 //tracks the state of this component
 enum CurrentState {
@@ -20,6 +22,10 @@ const GenieWand = () => {
   );
   // const [hidden, setHidden] = useState('hidden');
 
+  const [messageHist, setMessageHist] = useState<Array<ChatCompletionMessageParam>>([]);
+  const store = useStore();
+  const worldId = store.world.id;
+
   useEffect(() => {
     if (simulateProcessing) {
       const timer = setTimeout(() => {
@@ -30,22 +36,79 @@ const GenieWand = () => {
     }
   }, [simulateProcessing]);
 
-  // const generateNewResponse = async () => {
-  //   if(inputPromptValue){
-  //     await aiGenerate<Partial<Entry>>(
-  //       entryData.category as string,
-  //       {
-  //         name: `Name for the ${category}`,
-  //         imagePrompt: `A description of an image that captures the ${category}, written in a way that someone who has never heard of the ${category} could paint a picture`,
-  //         description: DESCRIPTIONS[category]
-  //       },
-  //       [{name: worldData.name, description: worldData.description}],
-  //       prompt
-  //     )
-  //   }
-   
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`/api/files/readFiles?id=${worldId}`);
+        if (!response.ok) {
+          throw new Error('Data fetching failed');
+        }
+        const result = await response.json();
+        console.log({result})
+        setMessageHist(result);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    if (worldId) {
+      fetchData();
+    }
+  }, [worldId]);
+
+  const handleGenerateClick = async () => {
   
-  // };
+    try {
+      console.log('executing...', {inputPromptValue})
+      try {
+      const response = await fetch('/api/openAi/gpt4', {
+        method: 'POST',
+        body: JSON.stringify({
+          prompt: inputPromptValue,
+          messages: messageHist,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Data fetching failed');
+      }
+      const result = await response.json();
+      console.log({result});
+
+     //update assistant file
+
+      const update_response = await fetch('/api/files/writeFiles', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: worldId,
+          airesponse: result.response,
+          messages: result.messages,
+        }),
+      });
+
+      if (!update_response.ok) {
+        throw new Error('updating file failed');
+      }
+      const updated = await update_response.json();
+
+      console.log({updated});
+
+
+      //update chat state with response
+      store.setAssistantResponse(result.response);
+
+     
+
+
+      } catch (error: any) {
+        console.log(error.message)
+      }
+     
+    } catch (error) {
+      console.error('Error generating response:', error);
+    }
+  };
+
 
   return (
     <>
@@ -68,7 +131,9 @@ const GenieWand = () => {
             setCurrentState,
             setSimulateProcessing,
             inputPromptValue,
-            setInputPromptValue
+            setInputPromptValue,
+            handleGenerateClick,
+            store,
           )}
         </div>
       )}
@@ -126,23 +191,20 @@ const inputPromptField = (
   />
 );
 
-const aiGenerateFunc = () => {
-  // Your aiGenerate logic here
-  console.log("AI Generate Called");
-};
-
 
 const newPrompt = (
   setExpanded: Dispatch<SetStateAction<boolean>>,
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
   setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
   inputPromptValue: string,
-  setInputPromptValue: Dispatch<SetStateAction<string>>
+  setInputPromptValue: Dispatch<SetStateAction<string>>,
+  handleGenerateClick: ()=>void,
+  store?: AssistanState,
 ): JSX.Element => (
   <>
     {closeButton(setExpanded, setCurrentState)}
     {inputPromptField(inputPromptValue, setInputPromptValue)}
-    {generateButton(setCurrentState, setSimulateProcessing, aiGenerateFunc )}
+    {generateButton(setCurrentState, setSimulateProcessing, handleGenerateClick )}
   </>
 );
 
@@ -150,7 +212,9 @@ const editPrompt = (
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
   setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
   inputPromptValue: string,
-  setInputPromptValue: Dispatch<SetStateAction<string>>
+  setInputPromptValue: Dispatch<SetStateAction<string>>,
+  handleGenerateClick: () => void ,
+  store?: AssistanState
 ): JSX.Element => (
   <>
     <button
@@ -162,7 +226,7 @@ const editPrompt = (
       <span className='text-[20px] material-icons'>arrow_back</span>
     </button>
     {inputPromptField(inputPromptValue, setInputPromptValue)}
-    {generateButton(setCurrentState, setSimulateProcessing, aiGenerateFunc )}
+    {generateButton(setCurrentState, setSimulateProcessing, handleGenerateClick  )}
   </>
 );
 
@@ -226,7 +290,10 @@ const renderCurrentState = (
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
   setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
   inputPromptValue: string,
-  setInputPromptValue: Dispatch<SetStateAction<string>>
+  setInputPromptValue: Dispatch<SetStateAction<string>>,
+  handleGenerateClick: () => void,
+  store?: AssistanState,
+  
 ): JSX.Element => {
   switch (currentState) {
     case CurrentState.new:
@@ -235,14 +302,17 @@ const renderCurrentState = (
         setCurrentState,
         setSimulateProcessing,
         inputPromptValue,
-        setInputPromptValue
+        setInputPromptValue,
+        handleGenerateClick,
+        store
       );
     case CurrentState.edit:
       return editPrompt(
         setCurrentState,
         setSimulateProcessing,
         inputPromptValue,
-        setInputPromptValue
+        setInputPromptValue,
+        handleGenerateClick,
       );
     case CurrentState.processing:
       return processingPrompt(setExpanded, setCurrentState);

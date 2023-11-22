@@ -9,6 +9,7 @@ import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
 import { useClientContext } from '@/hooks/useClientContext';
 import { base64Converter } from '@/utils/base64Converter';
+import useStore from '@/hooks/useStore';
 
 type Props = {
   world: World;
@@ -33,16 +34,18 @@ const WorldPage = ({
   
   const [worldData, setWorldData] = useState<WorldDB>(worldDBConverter(world));
   const [mounted, setMounted] = useState(false);
-  const { setClient } = useClientContext();
+  const { client, setClient } = useClientContext();
+  const store = useStore();
   const router = useRouter();
 
-  console.log('hello', {world})
+  console.log('hello', {name: world.name})
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
+    store.setWorld(world);
     setClient({ world });
   }, [world]);
 
