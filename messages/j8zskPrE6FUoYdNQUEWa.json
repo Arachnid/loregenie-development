@@ -1,0 +1,10 @@
+[
+  {
+    "role": "system",
+    "content": "\nThe user is requesting a world. Here is relevant context to the setting in which this world exists:\n\n\n\nRespond with a JSON object, following this template exactly:\n\n---\n - name: Name for the setting\n - description: A detailed, 2-4 paragraph description of the setting\n - imagePrompt: A description of a header image that captures the setting, written in a way that someone who has never heard of the setting could paint a picture.\n---\n\n"
+  },
+  {
+    "role": "user",
+    "content": "elrom the large"
+  }
+]

@@ -94,7 +94,7 @@ const ParentDropDown = <T extends LoreSchemas>({
             </div>
             <div className='flex flex-col self-stretch p-2 overflow-y-scroll grow scrollbar-hide'>
               <div className='flex flex-col self-stretch grow text-lore-blue-400'>
-                {filteredSearch.map((schema, index) => (
+                {filteredSearch.map((schema: any, index) => (
                   <button
                     className='flex items-center self-stretch gap-2 p-2 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
                     onClick={() => {

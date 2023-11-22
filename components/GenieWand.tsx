@@ -1,7 +1,12 @@
 'use client';
 
+import { modifyResponse } from '@/lib/ai';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import useStore, { AssistanState } from '@/hooks/useStore';
+import { ChatCompletionMessageParam } from 'openai/resources';
+import { World } from '@/types';
 
+//tracks the state of this component
 enum CurrentState {
   new = 'new',
   edit = 'edit',
@@ -12,20 +17,142 @@ enum CurrentState {
 const GenieWand = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [inputPromptValue, setInputPromptValue] = useState<string>('');
-  const [simulateProcessing, setSimulateProcessing] = useState<boolean>(false);
+  const [processing, setProcessing] = useState<boolean>(false);
   const [currentState, setCurrentState] = useState<CurrentState>(
     CurrentState.new
   );
 
+  const [messageHist, setMessageHist] = useState<Array<ChatCompletionMessageParam>>([]);
+  const [abortController, setAbortController] = useState<AbortController| null>(null);
+  const store = useStore();
+  const worldId = store.world.id;
+
   useEffect(() => {
-    if (simulateProcessing) {
-      const timer = setTimeout(() => {
+    if (!processing) {
         setCurrentState(CurrentState.complete);
-        setSimulateProcessing(false);
-      }, 3000);
-      return () => clearTimeout(timer);
+    } else {
+      setCurrentState(CurrentState.processing)
     }
-  }, [simulateProcessing]);
+  }, [processing]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+
+        const response = await fetch(`/api/files/readFiles?id=${worldId}`);
+        if (!response.ok) {
+          throw new Error('Data fetching failed');
+        }
+        const result = await response.json();
+        setMessageHist(result);
+       
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    if (worldId) {
+      fetchData();
+    }
+  }, [worldId]);
+
+
+
+  const handleGenerateClick = async () => {
+    try {
+      setProcessing(true);
+      try {
+
+
+        const controller = new AbortController();
+        setAbortController(controller);
+
+      const response = await fetch('/api/openAi/gpt4', {
+        method: 'POST',
+        body: JSON.stringify({
+          prompt: inputPromptValue,
+          messages: messageHist,
+        }),
+        signal: controller.signal
+      });
+
+      if (!response.ok) {
+        throw new Error('Data fetching failed');
+      }
+      const result = await response.json();
+
+      //update chat state with response
+      store.setAssistantResponse(result.response);
+      store.saveToLocalStorage(worldId, result.response)
+      localStorage.setItem('assistantResponse', JSON.stringify(result.response));
+      console.log({ass: store.assistantResponse })
+
+     //update assistant file
+
+      const update_response = await fetch('/api/files/writeFiles', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: worldId,
+          airesponse: result.response,
+          messages: result.messages,
+        }),
+      });
+
+      if (!update_response.ok) {
+        throw new Error('updating file failed');
+      }
+      const updated = await update_response.json();
+      
+
+      setProcessing(false);
+     
+
+
+      } catch (error: any) {
+        setProcessing(false);
+      }
+     
+    } catch (error) {
+      console.error('Error generating response:', error);
+    }
+  };
+
+  const updateWorldPage = async (  ) => {
+    try {
+      const updatedWorld : Partial<World>= store.world;
+      updatedWorld.description = store.assistantResponse.description;
+      updatedWorld.name = store.assistantResponse.name;
+      updatedWorld.imagePrompt = store.assistantResponse.imagePrompt;
+
+      const response = await fetch('/api/world/update', {
+        method: 'POST',
+        body: JSON.stringify({
+          worldData: updatedWorld,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update world');
+      }
+      const updatedWrld = await response.json();
+      store.setWorld(updatedWrld);
+
+    } catch (error: any) {
+      console.log({error, msg: error.message})
+    }
+  }
+
+  const cancelFetch = () => {
+    if (abortController) {
+      abortController.abort();
+    }
+  };
+  
+  useEffect(() => {
+    console.log({assres: store.assistantResponse})
+  },[store.assistantResponse])
+
 
   return (
     <>
@@ -46,9 +173,13 @@ const GenieWand = () => {
             currentState,
             setExpanded,
             setCurrentState,
-            setSimulateProcessing,
+            setProcessing,
             inputPromptValue,
-            setInputPromptValue
+            setInputPromptValue,
+            handleGenerateClick,
+            store,
+            updateWorldPage,
+            cancelFetch,
           )}
         </div>
       )}
@@ -59,13 +190,17 @@ const GenieWand = () => {
 const closeButton = (
   setExpanded: Dispatch<SetStateAction<boolean>>,
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
-  processing?: boolean
+  cancelFetch: () => void,
+  processing?: boolean,
 ): JSX.Element => (
   <button
     className={`flex items-center justify-center gap-2 p-2.5 ${
       processing && 'md:px-4 md:py-2'
     } text-white border-2 border-white rounded-full`}
     onClick={() => {
+      if(processing){
+        cancelFetch();
+      }
       setExpanded(false);
       setCurrentState(CurrentState.new);
     }}
@@ -77,13 +212,15 @@ const closeButton = (
 
 const generateButton = (
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
-  setSimulateProcessing: Dispatch<SetStateAction<boolean>>
+  setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
+  onGenerate: () => void 
 ): JSX.Element => (
   <button
     className='flex items-center justify-center gap-2 p-3 bg-white rounded-full md:px-4 md:py-2.5 text-lore-blue-200'
     onClick={() => {
       setCurrentState(CurrentState.processing);
       setSimulateProcessing(true);
+      onGenerate();
     }}
   >
     <span className='text-[20px] material-icons'>auto_fix_high</span>
@@ -104,17 +241,21 @@ const inputPromptField = (
   />
 );
 
+
 const newPrompt = (
   setExpanded: Dispatch<SetStateAction<boolean>>,
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
   setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
   inputPromptValue: string,
-  setInputPromptValue: Dispatch<SetStateAction<string>>
+  setInputPromptValue: Dispatch<SetStateAction<string>>,
+  handleGenerateClick: ()=>void,
+  cancelFetch: () => void,
+  store?: AssistanState,
 ): JSX.Element => (
   <>
-    {closeButton(setExpanded, setCurrentState)}
+    {closeButton(setExpanded, setCurrentState, cancelFetch )}
     {inputPromptField(inputPromptValue, setInputPromptValue)}
-    {generateButton(setCurrentState, setSimulateProcessing)}
+    {generateButton(setCurrentState, setSimulateProcessing, handleGenerateClick )}
   </>
 );
 
@@ -122,7 +263,9 @@ const editPrompt = (
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
   setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
   inputPromptValue: string,
-  setInputPromptValue: Dispatch<SetStateAction<string>>
+  setInputPromptValue: Dispatch<SetStateAction<string>>,
+  handleGenerateClick: () => void ,
+  store?: AssistanState
 ): JSX.Element => (
   <>
     <button
@@ -134,13 +277,14 @@ const editPrompt = (
       <span className='text-[20px] material-icons'>arrow_back</span>
     </button>
     {inputPromptField(inputPromptValue, setInputPromptValue)}
-    {generateButton(setCurrentState, setSimulateProcessing)}
+    {generateButton(setCurrentState, setSimulateProcessing, handleGenerateClick  )}
   </>
 );
 
 const processingPrompt = (
   setExpanded: Dispatch<SetStateAction<boolean>>,
-  setCurrentState: Dispatch<SetStateAction<CurrentState>>
+  setCurrentState: Dispatch<SetStateAction<CurrentState>>,
+  cancelFetch: () => void,
 ): JSX.Element => (
   <>
     <div className='flex items-center justify-between w-full md:gap-6'>
@@ -150,7 +294,7 @@ const processingPrompt = (
         </div>
         <p className='font-medium text-white'>The Genie is thinking</p>
       </div>
-      {closeButton(setExpanded, setCurrentState, true)}
+      {closeButton(setExpanded, setCurrentState, cancelFetch, true)}
     </div>
   </>
 );
@@ -158,39 +302,59 @@ const processingPrompt = (
 const completedPrompt = (
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
   setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
-  setExpanded: Dispatch<SetStateAction<boolean>>
-): JSX.Element => (
+  setExpanded: Dispatch<SetStateAction<boolean>>,
+  store: AssistanState,
+  updateWorldPage: () => void
+): JSX.Element => {
+
+  const setEditableResponse = (e: any) => {
+    store.setAssistantResponse({...store.assistantResponse, description: e});
+  }
+
+  return (
   <>
-    <button
-      className='flex items-center justify-center gap-2 px-4 py-2 font-medium text-white border-2 border-white rounded-full bg-lore-blue-200 grow md:px-8'
-      onClick={() => {
-        setCurrentState(CurrentState.edit);
-      }}
-    >
-      <span className='text-[20px] material-icons-outlined'>edit</span>
-      <p>Edit</p>
-    </button>
-    <button
-      className='flex items-center justify-center gap-2 px-4 py-2 font-medium text-white border-2 border-white rounded-full bg-lore-blue-200 grow md:px-8'
-      onClick={() => {
-        setCurrentState(CurrentState.processing);
-        setSimulateProcessing(true);
-      }}
-    >
-      <span className='text-[20px] material-icons'>auto_fix_high</span>
-      <p>Reroll</p>
-    </button>
-    <button
-      className='flex items-center justify-center gap-2 px-4 py-2.5 font-medium bg-white rounded-full grow text-lore-blue-200 md:px-8'
-      onClick={() => {
-        setExpanded(false);
-      }}
-    >
-      <span className='text-[20px] material-icons-outlined'>check_circle</span>
-      <p>Done</p>
-    </button>
+
+    <div className='flex flex-col gap-2 p-4 bg-white rounded-md shadow-lg absolute bottom-[72px] w-[60vw] right-0'>
+        <textarea
+          className='w-full h-40 p-2 text-gray-800 border rounded-md focus:outline-none focus:ring-2 focus:ring-lore-blue-300'
+          value={store.assistantResponse.description}
+          onChange={(e) => setEditableResponse(e.target.value)}
+        />
+      </div>
+
+      <button
+        className='flex items-center justify-center gap-2 px-4 py-2 font-medium text-white border-2 border-white rounded-full bg-lore-blue-200 grow md:px-8'
+        onClick={() => {
+          setCurrentState(CurrentState.edit);
+        }}
+      >
+        <span className='text-[20px] material-icons-outlined'>edit</span>
+        <p>Edit</p>
+      </button>
+      <button
+        className='flex items-center justify-center gap-2 px-4 py-2 font-medium text-white border-2 border-white rounded-full bg-lore-blue-200 grow md:px-8'
+        onClick={() => {
+          setCurrentState(CurrentState.processing);
+          setSimulateProcessing(true);
+        }}
+      >
+        <span className='text-[20px] material-icons'>auto_fix_high</span>
+        <p>Reroll</p>
+      </button>
+      <button
+        className='flex items-center justify-center gap-2 px-4 py-2.5 font-medium bg-white rounded-full grow text-lore-blue-200 md:px-8'
+        onClick={async () => {
+          //call api db and update world
+          await updateWorldPage()
+          setExpanded(false);
+        }}
+      >
+        <span className='text-[20px] material-icons-outlined'>check_circle</span>
+        <p>Done</p>
+      </button>
+
   </>
-);
+)};
 
 const renderCurrentState = (
   currentState: CurrentState,
@@ -198,7 +362,12 @@ const renderCurrentState = (
   setCurrentState: Dispatch<SetStateAction<CurrentState>>,
   setSimulateProcessing: Dispatch<SetStateAction<boolean>>,
   inputPromptValue: string,
-  setInputPromptValue: Dispatch<SetStateAction<string>>
+  setInputPromptValue: Dispatch<SetStateAction<string>>,
+  handleGenerateClick: () => void,
+  store: AssistanState,
+  updateWorldPage: () => void,
+  cancelFetch: () => void
+  
 ): JSX.Element => {
   switch (currentState) {
     case CurrentState.new:
@@ -207,22 +376,28 @@ const renderCurrentState = (
         setCurrentState,
         setSimulateProcessing,
         inputPromptValue,
-        setInputPromptValue
+        setInputPromptValue,
+        handleGenerateClick,
+        cancelFetch,
+        store
       );
     case CurrentState.edit:
       return editPrompt(
         setCurrentState,
         setSimulateProcessing,
         inputPromptValue,
-        setInputPromptValue
+        setInputPromptValue,
+        handleGenerateClick,
       );
     case CurrentState.processing:
-      return processingPrompt(setExpanded, setCurrentState);
+      return processingPrompt(setExpanded, setCurrentState, cancelFetch);
     case CurrentState.complete:
       return completedPrompt(
         setCurrentState,
         setSimulateProcessing,
-        setExpanded
+        setExpanded,
+        store,
+        updateWorldPage
       );
     default:
       return <></>;

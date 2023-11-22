@@ -4,27 +4,36 @@ import { aiGenerate, aiGenerateImage } from '@/lib/ai';
 import { WorldDB } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { contributorSanityCheck } from '@/utils/validation/contributorSanityCheck';
+import writeDataToFile from '@/utils/storeMessages';
+import { ChatCompletionMessageParam } from 'openai/resources';
 
 export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
   let worldData: WorldDB = JSON.parse(request.body);
+  let msgHistory: Array<ChatCompletionMessageParam> = [];
+  let assistantResponse: any;
+
   if (worldData.prompt) {
     const prompt = worldData.prompt;
-    worldData = Object.assign(
-      worldData,
-      await aiGenerate<Partial<WorldDB>>(
-        'world',
-        {
-          name: 'Name for the setting',
-          description: 'A detailed, 2-4 paragraph description of the setting',
-          imagePrompt: 'A description of a header image that captures the setting, written in a way that someone who has never heard of the setting could paint a picture.'
-        },
-        [],
-        prompt
-      )
-    );
+
+
+    const { response, messages } = await aiGenerate<Partial<WorldDB>>(
+      'world',
+      {
+        name: 'Name for the setting',
+        description: 'A detailed, 2-4 paragraph description of the setting',
+        imagePrompt: 'A description of a header image that captures the setting, written in a way that someone who has never heard of the setting could paint a picture.'
+      },
+      [],
+      prompt
+    )
+
+    msgHistory = messages;
+    assistantResponse = response;
+    worldData = Object.assign( worldData, response );
+
     const image = await aiGenerateImage(worldData.imagePrompt, '1792x1024');
     const fileRef = storage.bucket().file(`${crypto.randomUUID()}.png`);
     await fileRef
@@ -47,7 +56,11 @@ export default async function handler(
       .collection('worlds')
       .withConverter(new Converter<WorldDB>())
       .add(worldData);
+
+    writeDataToFile( world.id, [...msgHistory, {"role": "assistant", "content": JSON.stringify(assistantResponse)}], './messages');
+
     response.json(world.id);
+
   } catch (error) {
     console.log('error writing world to database: ', error);
     response.statusCode = 500;

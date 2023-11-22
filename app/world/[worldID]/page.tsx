@@ -1,3 +1,4 @@
+"use server"
 import { getPermissions, getWorld } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
@@ -20,6 +21,7 @@ export default async function WorldPage({ params }: Props) {
   }
 
   const permissions = await getPermissions(email, params.worldID);
+  console.log({permissions})
 
   return (
     <>

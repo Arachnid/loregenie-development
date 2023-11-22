@@ -9,6 +9,7 @@ import PageBody from '@/components/PageBody';
 import { Session } from 'next-auth';
 import { useClientContext } from '@/hooks/useClientContext';
 import { base64Converter } from '@/utils/base64Converter';
+import useStore from '@/hooks/useStore';
 
 type Props = {
   world: World;
@@ -30,18 +31,30 @@ const WorldPage = ({
   session,
   contributors,
 }: Props) => {
+  
   const [worldData, setWorldData] = useState<WorldDB>(worldDBConverter(world));
   const [mounted, setMounted] = useState(false);
-  const { setClient } = useClientContext();
+  const { client, setClient } = useClientContext();
+  const store = useStore();
   const router = useRouter();
+
+  console.log('hello', {name: world.name})
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(()=>{
+    setWorldData({...worldData, ...store.world});
+  },[store.world])
+
   useEffect(() => {
+    store.setWorld(world);
     setClient({ world });
   }, [world]);
+
+
+
 
   const blankCampaign = {
     name: '',

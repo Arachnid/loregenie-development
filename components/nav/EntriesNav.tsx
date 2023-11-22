@@ -4,19 +4,21 @@ import { World } from '@/types';
 import EntriesList from '@/components/nav/EntriesList';
 import { notFound } from 'next/navigation';
 
-interface Props {
-  worldID: string;
-  email: string;
-}
+export default function EntriesNav({ worldID, email, permissions, world }: any) {
+  // let world: World | undefined | any;
+  // let permissions: any;
 
-export default async function EntriesNav({ worldID, email }: Props) {
-  const world: World | undefined =
-    await getWorld(worldID, email);
-
-  if (!world) {
-    notFound();
-  }
-  const permissions = await getPermissions(email, worldID);
+  // try {
+  //   world = getWorld(worldID, email);
+  //   if (!world) {
+  //     throw new Error('World not found');
+  //   }
+  //   permissions =  getPermissions(email, worldID);
+  // } catch (error) {
+  //   // Handle error
+  //   console.error(error);
+  //   return <div>Error loading data</div>; // or use notFound() as per your app's logic
+  // }
 
   return (
     <ClientEntriesNav

@@ -23,7 +23,7 @@
     "@uiw/react-md-editor": "^3.20.2",
     "eslint": "8.29.0",
     "eslint-config-next": "13.0.7",
-    "firebase-admin": "^11.4.0",
+    "firebase-admin": "^11.11.0",
     "material-icons": "^1.13.1",
     "next": "^13.1.5",
     "next-auth": "^4.19.2",
@@ -38,7 +38,8 @@
     "slate-history": "^0.86.0",
     "slate-react": "^0.91.2",
     "tailwind-scrollbar-hide": "^1.1.7",
-    "typescript": "4.9.4"
+    "typescript": "4.9.4",
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@tailwindcss/line-clamp": "^0.4.2",

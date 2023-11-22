@@ -41,23 +41,23 @@ const MarkdownEditor = <T extends {}>({
   data,
   setData,
 }: Props<T>) => {
-  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+  const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
   const initialValue = useMemo(() => deserialize(initialText || ''), []);
-  const decorate = useCallback(([node, path]) => {
-    const ranges = [];
+  const decorate = useCallback(([node, path]: any): any => {
+    const ranges: any = [];
 
     if (!Text.isText(node)) {
       return ranges;
     }
 
-    const getLength = (token) => {
+    const getLength = (token: any) => {
       if (typeof token === 'string') {
         return token.length;
       } else if (typeof token.content === 'string') {
         return token.content.length;
       } else {
-        return token.content.reduce((l, t) => l + getLength(t), 0);
+        return token.content.reduce((l: any, t: any) => l + getLength(t), 0);
       }
     };
 
@@ -104,7 +104,7 @@ const MarkdownEditor = <T extends {}>({
   );
 };
 
-const Leaf = ({ attributes, children, leaf }) => {
+const Leaf = ({ attributes, children, leaf }: any) => {
   return (
     <span
       {...attributes}

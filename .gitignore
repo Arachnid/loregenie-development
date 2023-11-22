@@ -28,6 +28,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -45,4 +46,5 @@ ui-debug.log
 /exported-firebase-data
 firebase-private-key.json
 storage.rules
-serviceAccountKey.json
+# serviceAccountKey.json
+.env
