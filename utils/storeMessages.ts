@@ -56,8 +56,6 @@ export default function writeDataToFile(id: string, newData: Array<ChatCompletio
 export function readDataFromFile(id: string, directory = './data'): Promise<Array<ChatCompletionMessageParam>> {
     return new Promise((resolve, reject) => {
       const filePath = path.join(process.cwd(), directory, `${id}.json`);
-      // const filePath = path.join(__dirname,'../../', directory, `${id}.json`);
-      console.log({filePath});
   
       // Check if the file exists
       if (!fs.existsSync(filePath)) {
@@ -74,8 +72,6 @@ export function readDataFromFile(id: string, directory = './data'): Promise<Arra
         try {
           // Parse the file data as JSON
           const data = JSON.parse(fileData);
-          console.log({resdata: data});
-
           resolve(data);
         } catch (parseErr) {
           reject(parseErr);
