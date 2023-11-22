@@ -72,7 +72,9 @@ const GenieWand = () => {
         throw new Error('Data fetching failed');
       }
       const result = await response.json();
-      console.log({result})
+      console.log({result});
+      
+      store.setAssistantResponse(result.response);
 
       } catch (error: any) {
         console.log(error.message)

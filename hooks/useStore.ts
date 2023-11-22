@@ -6,8 +6,8 @@ export type AssistanState = {
     world: World;
     setWorld: (world: World) => void;
     conversation: Array<ChatCompletionMessageParam>,
-    assistantResponse?: Partial<World>,
-    setAssistantResponse?: (response: Partial<World>) => void;
+    assistantResponse: Partial<World>,
+    setAssistantResponse: (response: Partial<World>) => void;
 }
 
 const useStore = create<AssistanState>((set) => ({
