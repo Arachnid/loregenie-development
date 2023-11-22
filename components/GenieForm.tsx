@@ -1,10 +1,11 @@
 'use client';
 
+// Import necessary hooks and components
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 
 type Props = {
-  onCreate: (prompt?: string ) => Promise<void>;
+  onCreate: (prompt?: string) => Promise<void>;
   setOpen?: Dispatch<SetStateAction<boolean>>;
   children?: JSX.Element;
   disabled: boolean;
@@ -13,6 +14,16 @@ type Props = {
 const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
   const router = useRouter();
   const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleGenerate = async () => {
+    try {
+      setLoading(true); // Set loading to true when the button is clicked
+      await onCreate(prompt);
+    } finally {
+      setLoading(false); // Set loading back to false after the operation is complete (success or failure)
+    }
+  };
 
   return (
     <div className='relative flex flex-col w-full pt-20 gap-4 md:gap-10 md:w-[640px] min-w-max'>
@@ -32,15 +43,25 @@ const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
             onChange={(e) => setPrompt(e.target.value)}
           />
           <button
-            className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-red-400 disabled:opacity-50 disabled:hover:bg-lore-red-400 hover:bg-lore-red-500'
-            disabled={prompt.length === 0 || disabled}
-            onClick={() => onCreate(prompt)}
-          >
-            <span className='text-[20px] material-icons'>auto_fix_high</span>
-            <p className='font-medium leading-5'>
-              {children ? 'Generate' : 'Generate world'}
-            </p>
-          </button>
+  className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-red-400 disabled:opacity-50 disabled:hover:bg-lore-red-400 hover:bg-lore-red-500'
+  disabled={prompt.length === 0 || disabled || loading}
+  onClick={handleGenerate}
+>
+  {loading ? (
+    <>
+      <span className='text-[20px] material-icons animate-spin'>autorenew</span>
+      <p className='ml-2 font-medium leading-5'>Genie is thinking...</p>
+    </>
+  ) : (
+    <>
+      <span className='text-[20px] material-icons'>auto_fix_high</span>
+      <p className='font-medium leading-5'>
+        {children ? 'Generate' : 'Generate world'}
+      </p>
+    </>
+  )}
+</button>
+
         </div>
         <div className='absolute bottom-[-80px] md:bottom-[-100px] p-4 left-0 flex w-full gap-2 md:px-10 md:gap-6 text-lore-blue-400'>
           <button
