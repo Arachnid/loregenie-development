@@ -9,6 +9,8 @@ export default async function handler(
   const { prompt, messages } = JSON.parse(request.body);
 
   try {
+    console.log(messages);
+
     // const data = await readDataFromFile(id as string, './messages');
     const data = await modifyResponse(prompt, messages);
     
