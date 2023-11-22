@@ -18,6 +18,7 @@ const GenieWand = () => {
   const [currentState, setCurrentState] = useState<CurrentState>(
     CurrentState.new
   );
+  // const [hidden, setHidden] = useState('hidden');
 
   useEffect(() => {
     if (simulateProcessing) {
