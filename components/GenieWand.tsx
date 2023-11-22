@@ -73,8 +73,31 @@ const GenieWand = () => {
       }
       const result = await response.json();
       console.log({result});
-      
+
+     //update assistant file
+
+      const update_response = await fetch('/api/files/writeFiles', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: worldId,
+          airesponse: result.response,
+          messages: result.messages,
+        }),
+      });
+
+      if (!update_response.ok) {
+        throw new Error('updating file failed');
+      }
+      const updated = await update_response.json();
+
+      console.log({updated});
+
+
+      //update chat state with response
       store.setAssistantResponse(result.response);
+
+     
+
 
       } catch (error: any) {
         console.log(error.message)
@@ -84,6 +107,7 @@ const GenieWand = () => {
       console.error('Error generating response:', error);
     }
   };
+
 
   return (
     <>
