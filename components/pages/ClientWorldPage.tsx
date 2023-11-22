@@ -44,10 +44,17 @@ const WorldPage = ({
     setMounted(true);
   }, []);
 
+  useEffect(()=>{
+    setWorldData({...worldData, ...store.world});
+  },[store.world])
+
   useEffect(() => {
     store.setWorld(world);
     setClient({ world });
   }, [world]);
+
+
+
 
   const blankCampaign = {
     name: '',

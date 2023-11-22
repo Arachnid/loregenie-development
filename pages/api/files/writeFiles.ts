@@ -9,7 +9,7 @@ export default async function handler(
   const { messages, airesponse, id } = JSON.parse(request.body);
 
   try {
-    const data = await writeDataToFile(id as string, [...messages, {"role": "assistant", "content": JSON.stringify(airesponse)}], './messages');
+    const data = await writeDataToFile(id as string, [...messages, {"role": "assistant", "content": JSON.stringify(airesponse)}], './messages', true);
     
 
     response.json(data);

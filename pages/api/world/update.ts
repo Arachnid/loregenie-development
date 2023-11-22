@@ -22,12 +22,20 @@ export default async function handler(
       response.send({});
       return;
     }
+
     await docRef.update(worldData);
+
+    // Retrieve the updated document
+    const updatedDoc = await docRef.get();
+    const updatedData = updatedDoc.data();
+
+    if (updatedData) {
+      response.json(updatedData); // Send the updated data
+    } else {
+      throw new Error("Failed to retrieve updated data.");
+    }
   } catch (error) {
-    console.log('error updating world in database: ', error);
-    response.statusCode = 500;
-    response.send({});
-    return;
+    console.error('Error updating world in database:', error);
+    response.status(500).send({ error: 'Error updating world in database.' });
   }
-  response.send({});
 }
