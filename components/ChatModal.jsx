@@ -42,7 +42,7 @@ const AiChat = ({ aiResults }) => {
 export default function ChatModal({ onClose, inputValue, onSubmit }) {
   return (
     <>
-      <div className=""></div>
+      <div className="">
       <div className="relative h-[90vh] max-w-[54rem] px-[2.81rem] bg-[#fff] rounded-[1.25rem] overflow-x-auto">
         <div
           onClick={onClose}
@@ -78,22 +78,43 @@ export default function ChatModal({ onClose, inputValue, onSubmit }) {
           />
         </div>
         <div className="sticky bottom-0 w-full p-2 mt-[5.19rem]">
-          <div className="px-4 pt-2 pb-2 flex items-center justify-between bg-[#4C7F8F] h-10 rounded-[1.25rem]">
+          <div className="px-3 py-2 flex items-center justify-between bg-[#4C7F8F] rounded-full">
+            <div className="w-[70%] flex justify-between">
             <input
               type="text"
               placeholder="Type your message..."
-              className="flex-grow px-2 py-1 mr-2 border border-gray-300 rounded-[3.13rem] focus:outline-none"
+              className="w-full flex-grow rounded-full px-2 py-1 mr-2 border border-gray-300 focus:outline-none"
               value={inputValue}
             />
+            <button className="p-4 bg-[#4C7F8F] rounded-full">
+            <Image
+          src="/send-2.svg"
+          width={24}
+          height={24}
+          alt=""
+        />
+            </button>
+            </div>
+            
+            <div>
             <button
               onClick={onSubmit}
               type="button"
               className="p-2 bg-[white] text-[#4C7F8F] rounded-[2rem] focus:outline-none focus:ring focus:border-blue-300"
             >
-              Send
+              Done
             </button>
+            </div>
           </div>
         </div>
+      </div>
+
+
+      <button className="fixed bottom-0 right-0 p-4 m-4 bg-[#4C7F8F] rounded-full">
+  Chat
+</button>
+
+
       </div>
     </>
   );
