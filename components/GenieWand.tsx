@@ -21,7 +21,6 @@ const GenieWand = () => {
   const [currentState, setCurrentState] = useState<CurrentState>(
     CurrentState.new
   );
-  // const [hidden, setHidden] = useState('hidden');
 
   const [messageHist, setMessageHist] = useState<Array<ChatCompletionMessageParam>>([]);
   const [abortController, setAbortController] = useState<AbortController| null>(null);
@@ -30,11 +29,7 @@ const GenieWand = () => {
 
   useEffect(() => {
     if (!processing) {
-      // const timer = setTimeout(() => {
         setCurrentState(CurrentState.complete);
-        // setProcessing(false);
-      // }, 3000);
-      // return () => clearTimeout(timer);
     } else {
       setCurrentState(CurrentState.processing)
     }
@@ -62,22 +57,16 @@ const GenieWand = () => {
     }
   }, [worldId]);
 
-  useEffect(()=>{
-    console.log('rerendered');
-  },[store.world])
 
 
   const handleGenerateClick = async () => {
     try {
       setProcessing(true);
-      console.log('executing...', {inputPromptValue})
       try {
 
 
         const controller = new AbortController();
         setAbortController(controller);
-
-        console.log({messageHist});
 
       const response = await fetch('/api/openAi/gpt4', {
         method: 'POST',
@@ -92,7 +81,6 @@ const GenieWand = () => {
         throw new Error('Data fetching failed');
       }
       const result = await response.json();
-      console.log({result});
 
       //update chat state with response
       store.setAssistantResponse(result.response);
@@ -116,7 +104,6 @@ const GenieWand = () => {
       }
       const updated = await update_response.json();
       
-      console.log({updated});
 
       setProcessing(false);
      
@@ -124,7 +111,6 @@ const GenieWand = () => {
 
       } catch (error: any) {
         setProcessing(false);
-        console.log(error.message)
       }
      
     } catch (error) {
@@ -150,7 +136,6 @@ const GenieWand = () => {
         throw new Error('Failed to update world');
       }
       const updatedWrld = await response.json();
-      console.log({updatedWrld});
       store.setWorld(updatedWrld);
 
     } catch (error: any) {
@@ -163,6 +148,7 @@ const GenieWand = () => {
       abortController.abort();
     }
   };
+  
   useEffect(() => {
     console.log({assres: store.assistantResponse})
   },[store.assistantResponse])
@@ -320,48 +306,13 @@ const completedPrompt = (
   store: AssistanState,
   updateWorldPage: () => void
 ): JSX.Element => {
-  // const des = store.assistantResponse.description;
-  // console.log(des)
-  // const [text, setText] = useState('');
 
   const setEditableResponse = (e: any) => {
     store.setAssistantResponse({...store.assistantResponse, description: e});
   }
-  // useEffect(() => {
-  //   setEditableResponse(store.assistantResponse.description || '');
-  // }, [store.assistantResponse]);
 
   return (
   <>
-   {/* modify here  */}
-        {/* <button
-          className='flex items-center justify-center gap-2 px-4 py-2 font-medium text-white border-2 border-white rounded-full bg-lore-blue-200 grow md:px-8'
-          onClick={() => {
-            setCurrentState(CurrentState.edit);
-          }}
-        >
-          <span className='text-[20px] material-icons-outlined'>edit</span>
-          <p>Edit</p>
-        </button>
-        <button
-          className='flex items-center justify-center gap-2 px-4 py-2 font-medium text-white border-2 border-white rounded-full bg-lore-blue-200 grow md:px-8'
-          onClick={() => {
-            setCurrentState(CurrentState.processing);
-            setSimulateProcessing(true);
-          }}
-        >
-          <span className='text-[20px] material-icons'>auto_fix_high</span>
-          <p>Reroll</p>
-        </button>
-        <button
-          className='flex items-center justify-center gap-2 px-4 py-2.5 font-medium bg-white rounded-full grow text-lore-blue-200 md:px-8'
-          onClick={() => {
-            setExpanded(false);
-          }}
-        >
-          <span className='text-[20px] material-icons-outlined'>check_circle</span>
-          <p>Done</p>
-        </button> */}
 
     <div className='flex flex-col gap-2 p-4 bg-white rounded-md shadow-lg absolute bottom-[72px] w-[60vw] right-0'>
         <textarea
@@ -369,12 +320,6 @@ const completedPrompt = (
           value={store.assistantResponse.description}
           onChange={(e) => setEditableResponse(e.target.value)}
         />
-        {/* <button
-          className='self-end px-4 py-2 text-white bg-lore-blue-200 rounded-md hover:bg-lore-blue-300'
-          // onClick={() => setEditableResponse()}
-        >
-          Save Changes
-        </button> */}
       </div>
 
       <button

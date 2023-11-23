@@ -21,8 +21,6 @@ export default async function Layout({ children, params }: Props) {
     email as string
   );
 
-  console.log({world:  params.worldID});
-
   if (!email || !world) {
     notFound();
   }
