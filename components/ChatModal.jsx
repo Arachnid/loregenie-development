@@ -43,78 +43,72 @@ export default function ChatModal({ onClose, inputValue, onSubmit }) {
   return (
     <>
       <div className="">
-      <div className="relative h-[90vh] max-w-[54rem] px-[2.81rem] bg-[#fff] rounded-[1.25rem] overflow-x-auto">
-        <div
-          onClick={onClose}
-          className="sticky top-0 w-full pt-[3.56rem] pb-2 flex items-center bg-white"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="52"
-            height="16"
-            viewBox="0 0 52 16"
-            fill="none"
+        <div className="relative h-[90vh] max-w-[54rem] px-[2.81rem] bg-[#fff] rounded-[1.25rem] overflow-x-auto">
+          <div
+            onClick={onClose}
+            className="sticky top-0 w-full pt-[3.56rem] pb-2 flex items-center bg-white"
           >
-            <path
-              d="M0.292892 7.29289C-0.0976295 7.68342 -0.0976295 8.31658 0.292892 8.70711L6.65685 15.0711C7.04738 15.4616 7.68054 15.4616 8.07107 15.0711C8.46159 14.6805 8.46159 14.0474 8.07107 13.6569L2.41422 8L8.07107 2.34315C8.46159 1.95262 8.46159 1.31946 8.07107 0.928932C7.68054 0.538408 7.04738 0.538408 6.65685 0.928932L0.292892 7.29289ZM52 7L1 7V9L52 9V7Z"
-              fill="black"
-            />
-          </svg>
-        </div>
-        <div className="flex flex-col gap-10 ">
-          <UserChat userDp="" prompt="Background" />
-          <AiChat
-            aiResults="My customers always come first, and my profits always come second I owe
-        a debt of gratitude to a mysterious benefactor who set me up in this
-        line of work I am so paranoid of the law that I often over-react to
-        perceived threats"
-          />
-          <UserChat userDp="" prompt="Background" />
-          <AiChat
-            aiResults="My customers always come first, and my profits always come second I owe
-        a debt of gratitude to a mysterious benefactor who set me up in this
-        line of work I am so paranoid of the law that I often over-react to
-        perceived threats"
-          />
-        </div>
-        <div className="sticky bottom-0 w-full p-2 mt-[5.19rem]">
-          <div className="px-3 py-2 flex items-center justify-between bg-[#4C7F8F] rounded-full">
-            <div className="w-[70%] flex justify-between">
-            <input
-              type="text"
-              placeholder="Type your message..."
-              className="w-full flex-grow rounded-full px-2 py-1 mr-2 border border-gray-300 focus:outline-none"
-              value={inputValue}
-            />
-            <button className="p-4 bg-[#4C7F8F] rounded-full">
-            <Image
-          src="/send-2.svg"
-          width={24}
-          height={24}
-          alt=""
-        />
-            </button>
-            </div>
-            
-            <div>
-            <button
-              onClick={onSubmit}
-              type="button"
-              className="p-2 bg-[white] text-[#4C7F8F] rounded-[2rem] focus:outline-none focus:ring focus:border-blue-300"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="52"
+              height="16"
+              viewBox="0 0 52 16"
+              fill="none"
             >
-              Done
-            </button>
+              <path
+                d="M0.292892 7.29289C-0.0976295 7.68342 -0.0976295 8.31658 0.292892 8.70711L6.65685 15.0711C7.04738 15.4616 7.68054 15.4616 8.07107 15.0711C8.46159 14.6805 8.46159 14.0474 8.07107 13.6569L2.41422 8L8.07107 2.34315C8.46159 1.95262 8.46159 1.31946 8.07107 0.928932C7.68054 0.538408 7.04738 0.538408 6.65685 0.928932L0.292892 7.29289ZM52 7L1 7V9L52 9V7Z"
+                fill="black"
+              />
+            </svg>
+          </div>
+          <div className="flex flex-col gap-10 ">
+            <UserChat userDp="" prompt="Background" />
+            <AiChat
+              aiResults="My customers always come first, and my profits always come second I owe
+        a debt of gratitude to a mysterious benefactor who set me up in this
+        line of work I am so paranoid of the law that I often over-react to
+        perceived threats"
+            />
+            <UserChat userDp="" prompt="Background" />
+            <AiChat
+              aiResults="My customers always come first, and my profits always come second I owe
+        a debt of gratitude to a mysterious benefactor who set me up in this
+        line of work I am so paranoid of the law that I often over-react to
+        perceived threats"
+            />
+          </div>
+          <div className="sticky bottom-0 w-full p-2 mt-[5.19rem]">
+            <div className="px-3 py-2 flex items-center justify-between bg-[#4C7F8F] rounded-full">
+              <div className="w-[70%] flex justify-between bg-white rounded-full px-2 py-1">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  className="w-full flex-grow rounded-full px-2 py-1 mr-2 border border-transparent focus:outline-none"
+                  value={inputValue}
+                />
+                <button className="p-4 bg-[#4C7F8F] rounded-full">
+                  <Image src="/send-2.svg" width={24} height={24} alt="" />
+                </button>
+              </div>
+
+              <div className="flex bg-[white] rounded-full p-2">
+              <Image src="/check.svg" width={20} height={20} alt="" />
+                <button
+                  onClick={onSubmit}
+                  type="button"
+                  className="p-2 bg-[white] text-[#4C7F8F] rounded-[2rem] focus:outline-none focus:ring focus:border-blue-300"
+                >
+                  
+                  Done
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-
-      <button className="fixed bottom-0 right-0 p-4 m-4 bg-[#4C7F8F] rounded-full">
-  Chat
-</button>
-
-
+        <button className="fixed bottom-0 right-0 p-4 m-4 bg-[#4C7F8F] rounded-full">
+        <span className='text-[20px] material-icons'>auto_fix_high</span>
+        </button>
       </div>
     </>
   );
