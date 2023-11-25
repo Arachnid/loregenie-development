@@ -79,17 +79,6 @@ export default function ChatModal({ onClose, inputValue, onSubmit }) {
           </div>
           <div className="sticky bottom-0 w-full p-2 mt-[5.19rem] bg-white md:pb-10 md:pt-5 pb-5 pt-3">
             <div className="px-3 py-2 flex items-center justify-between bg-[#4C7F8F] rounded-full gap-3">
-              {/* <div className="w-[36rem] flex justify-between bg-white rounded-full px-2 py-1">
-                <input
-                  type="text"
-                  placeholder="Make it longer"
-                  className="w-full flex-grow rounded-full px-2 py-1 mr-2 border border-transparent focus:outline-none"
-                  value={inputValue}
-                />
-                <button className="p-4 bg-[#4C7F8F] rounded-full">
-                  <Image src="/send-2.svg" width={24} height={24} alt="" />
-                </button>
-              </div> */}
               <div className="w-full sm:w-[36rem] flex justify-between bg-white rounded-full px-2 py-1">
                 <input
                   type="text"
