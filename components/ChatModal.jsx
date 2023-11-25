@@ -14,7 +14,7 @@ const UserChat = ({ userDp, prompt }) => {
         />
         <p className="text-xl leading-none font-semibold">You</p>
       </div>
-      <p className="text-[2rem] font-bold">{prompt}</p>
+      <p className="text-[1.5rem] font-bold">{prompt}</p>
     </div>
   );
 };
@@ -32,7 +32,7 @@ const AiChat = ({ aiResults }) => {
         />
         <p className="text-xl leading-none font-semibold">AI</p>
       </div>
-      <div className="px-[1.5rem] py-[2.19rem] rounded-lg text-base italic bg-[#4C7F8F1A]">
+      <div className="px-[1.5rem] py-[1.5rem] rounded-lg text-base italic bg-[#4C7F8F1A] text-[0.9rem]">
         {aiResults}
       </div>
     </div>
@@ -92,18 +92,24 @@ export default function ChatModal({ onClose, inputValue, onSubmit }) {
               </div>
 
               <div className="flex items-center justify-center bg-[white] rounded-full px-4 py-1 w-[8.47919rem]">
-                <Image src="/check.svg" width={20} height={20} alt="" />
+                {/* <Image src="/check.svg" width={20} height={20} alt="" /> */}
                 <button
                   onClick={onSubmit}
                   type="button"
                   className="p-2 leading-none bg-[white] text-[#4C7F8F] rounded-[2rem] focus:outline-none "
                 >
-                  Done
+                  X
                 </button>
               </div>
             </div>
           </div>
         </div>
+
+        
+        <button className="fixed bottom-0 right-0 p-4 m-4 bg-[#4C7F8F] rounded-full">
+          <span className="text-[20px] material-icons">auto_fix_high</span>
+        </button>
+
       </div>
     </>
   );
