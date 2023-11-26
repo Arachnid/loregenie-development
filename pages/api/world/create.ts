@@ -1,11 +1,12 @@
 import crypto from 'crypto';
 import { Converter, db, storage } from '@/lib/db';
 import { aiGenerate, aiGenerateImage } from '@/lib/ai';
-import { WorldDB } from '@/types';
+import { World, WorldDB } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { contributorSanityCheck } from '@/utils/validation/contributorSanityCheck';
 import writeDataToFile from '@/utils/storeMessages';
 import { ChatCompletionMessageParam } from 'openai/resources';
+import { AiAssistant } from '@/lib/aiAssistant';
 
 export default async function handler(
   request: NextApiRequest,
@@ -57,7 +58,18 @@ export default async function handler(
       .withConverter(new Converter<WorldDB>())
       .add(worldData);
 
-    writeDataToFile( world.id, [...msgHistory, {"role": "assistant", "content": JSON.stringify(assistantResponse)}], './messages');
+
+      const worldSnapshot = await world.get();
+      const data = worldSnapshot.data();
+    
+      console.log({data_of_world: data})
+    
+      writeDataToFile( world.id, data, './messages');
+
+    const ai = new AiAssistant(world as any);
+    const res = await ai.startConversation({message: `tell me about ${data?.name}`});
+
+    // writeDataToFile( world.id, [...msgHistory, {"role": "assistant", "content": JSON.stringify(assistantResponse)}], './messages');
 
     response.json(world.id);
 

@@ -8,7 +8,7 @@ import path from 'path';
  * @param newData The new conversation data to be stored or appended.
  * @param directory The directory where the file will be stored.
  */
-export default function writeDataToFile(id: string, newData: Array<ChatCompletionMessageParam>, directory = './data', reset=false) {
+export default function writeDataToFile(id: string, newData: any, directory = './data', reset=false) {
   const filePath = path.join(directory, `${id}.json`);
 
   // Ensure the directory exists
@@ -27,7 +27,9 @@ export default function writeDataToFile(id: string, newData: Array<ChatCompletio
       let existingData = JSON.parse(fileData);
       let updatedData = [...existingData, ...newData];
       if(reset) {
-       updatedData = [ ...newData];
+      //  updatedData = [ ...newData];
+       updatedData = newData;
+
       }
       
 

@@ -13,7 +13,7 @@ import {
 } from "openai/resources/beta/threads/messages/messages";
 import { World } from "@/types";
 
-class AiAssistant {
+export class AiAssistant {
   private openai: OpenAI;
   private assistantId: string = "";
   private world: World;
@@ -135,6 +135,8 @@ class AiAssistant {
         "You are a helpful assistant, use the knowledge base provided to answer questions and use the functions provided when neccessary",
       model: "gpt-4-1106-preview",
       tools: [
+        {type: "code_interpreter"},
+        {type:"retrieval"},
         {
           type: "function",
           function: {
@@ -157,6 +159,8 @@ class AiAssistant {
       ],
       file_ids: [this.fileId],
     });
+
+    console.log({assistant: assistant });
     this.assistantId = assistant.id;
   }
 
@@ -412,9 +416,9 @@ class AiAssistant {
 
       return {
         message,
-        assistantId,
-        threadId,
-        fileId,
+        assistantId: assistantId || this.assistantId,
+        threadId: threadId || this.threadId,
+        fileId: fileId || this.fileId,
         assistant_response: response,
       };
     } catch (error) {

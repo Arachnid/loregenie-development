@@ -6,6 +6,7 @@ import { Session } from 'next-auth';
 import { ClientProvider } from '@/context/ClientContext';
 import GenieWand from '@/components/GenieWand';
 import { usePathname } from 'next/navigation';
+import ChatModal from './ChatModal';
 
 interface Props {
   nav: JSX.Element;
@@ -24,7 +25,7 @@ export default function BaseLayout({
 }: Props) {
   const [showMenu, setShowMenu] = useState(false);
   const pathname = usePathname();
-
+  console.log({session})
   useEffect(() => {
     setShowMenu(false);
   }, [pathname]);
@@ -50,7 +51,8 @@ export default function BaseLayout({
           </div>
           {permissions.includes('writer') && (
             <div className='flex' hidden={showMenu}>
-              <GenieWand />
+              {/* <GenieWand /> */}
+              <ChatModal user={session.user}/>
             </div>
           )}
         </div>
