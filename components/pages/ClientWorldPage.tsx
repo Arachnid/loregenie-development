@@ -40,13 +40,12 @@ const WorldPage = ({
 
 
   useEffect(() => {
-    store.setWorld(world)
     setMounted(true);
   }, []);
 
 
   useEffect(() => {
-    const newWorldData = { ...worldData };
+    const newWorldData: WorldDB = { ...worldData };
   
     if (store.world.description && store.world.description !== worldData.description) {
       newWorldData.description = store.world.description;
