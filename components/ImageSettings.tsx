@@ -1,8 +1,9 @@
 'use client';
 
-import { LoreSchemas } from '@/types';
+import { LoreSchemas, World } from '@/types';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import OutsideClickHandler from 'react-outside-click-handler';
+import useStore from '@/hooks/useStore';
 
 type Props<T extends LoreSchemas> = {
   data: T;
@@ -19,14 +20,43 @@ const ImageSettings = <T extends LoreSchemas>({
   onUpload,
   onDelete,
 }: Props<T>) => {
-  const [editImage, setEditImage] = useState(false);
+  const [editImage, setEditImage] = useState(false);  
+  const [processing, setProcessing] = useState<boolean>(false);
+
   const uploadImageRef = useRef<HTMLInputElement>(null);
+  const store = useStore();
 
   const handleUpload = () => {
     if (uploadImageRef.current) {
       uploadImageRef.current.click();
     }
   };
+
+  const generateNewImage = async () => {
+      try {
+        console.log({promptimg: data.imagePrompt})
+        setProcessing(true);
+        const response = await fetch('/api/openAi/generateImage', {
+          method: 'POST',
+          body: JSON.stringify({ prompt: data.imagePrompt, size: '1792x1024' })
+        });
+
+        if (!response.ok) {
+          throw new Error('Data fetching failed');
+        }
+        const result = await response.json();
+        setProcessing(false);
+        
+        data.image = result;
+
+        store.setWorld({...store.world, image: result});
+       
+        console.log({result})
+      } catch (error: any) {
+        setProcessing(false)
+        console.log(error.message)
+      }
+  }
 
   return (
     <OutsideClickHandler
@@ -37,10 +67,20 @@ const ImageSettings = <T extends LoreSchemas>({
         <div className='absolute -translate-x-[200px] flex flex-col gap-2 p-2 bg-white rounded-lg border-lore-beige-500 border-2 w-[200px]'>
           <button
             className='flex items-center self-stretch justify-center gap-2 px-4 py-3 text-white transition-all duration-300 ease-out rounded-lg bg-lore-blue-400 hover:bg-lore-blue-500 disabled:hover:bg-lore-blue-400 disabled:opacity-50'
-            disabled
-          >
-            <span className='text-[20px] material-icons'>auto_fix_high</span>
-            <p className='font-medium leading-5'>Generate new</p>
+            // {data.imagePrompt && 'disabled': ''}}
+            onClick={()=>{generateNewImage()}}
+          > {
+            !processing ? (
+            <>
+              <span className='text-[20px] material-icons'>auto_fix_high</span>
+              <p className='font-medium leading-5'>Generate new</p>
+            </>
+            ):(
+              <p className='font-medium leading-5'>Generating... </p>
+            )
+          }
+            
+            
           </button>
           <input
             type='file'
