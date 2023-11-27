@@ -2,9 +2,10 @@
 
 import { isEntry, LoreSchemas, User } from '@/types';
 import { Session } from 'next-auth';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import AlertDialog from '@/components/AlertDialog';
 import SharingModal from '@/components/SharingModal';
+import useStore from '@/hooks/useStore';
 
 type Props<T extends LoreSchemas> = {
   data: T;
@@ -25,9 +26,22 @@ const PageHeader = <T extends LoreSchemas>({
   session,
   contributors,
 }: Props<T>) => {
+  const store = useStore();
+
   const [showModal, setShowModal] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
-  const [initialData] = useState(data);
+
+  const [isChanged, setIsChanged] = useState(false);
+
+  useEffect(() => {
+    store.saveToLocalStorage(store.world.id, store.world);
+  },[])
+
+  useEffect(() => {
+    const hasChanged = JSON.stringify(store.loadFromLocalStorage(store.world.id)) === JSON.stringify(store.world);
+    setIsChanged(hasChanged);
+  }, [store.world]); 
+  
 
   return (
     <>
@@ -59,7 +73,7 @@ const PageHeader = <T extends LoreSchemas>({
                   onSave();
                   window.location.reload();
                 }}
-                disabled={JSON.stringify(initialData) === JSON.stringify(data)}
+                disabled={isChanged}
               >
                 Save
               </button>

@@ -49,6 +49,7 @@ const ImageSettings = <T extends LoreSchemas>({
         
         data.image = result;
 
+
         store.setWorld({...store.world, image: result});
        
         console.log({result})
@@ -57,6 +58,7 @@ const ImageSettings = <T extends LoreSchemas>({
         console.log(error.message)
       }
   }
+  
 
   return (
     <OutsideClickHandler

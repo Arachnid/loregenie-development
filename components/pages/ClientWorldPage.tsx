@@ -40,6 +40,7 @@ const WorldPage = ({
 
 
   useEffect(() => {
+    store.setWorld(world)
     setMounted(true);
   }, []);
 
@@ -65,30 +66,6 @@ const WorldPage = ({
     }
   }, [store.world, worldData]);
   
-
-  // useEffect(() => {
-  //   if (
-  //     store.world.description !== worldData.description || 
-  //     store.world.name !== worldData.name || 
-  //     store.world.imagePrompt !== worldData.imagePrompt || 
-  //     store.world.image !== worldData.image
-  //     ) {
-  //     setWorldData({ 
-  //       ...worldData, 
-  //       description: store.world.description, 
-  //       name: store.world.name, 
-  //       imagePrompt: store.world.imagePrompt,  
-  //       image: store.world.image
-  //     });
-  //   }
-  // }, [worldData.image, store.world.image, store.world.description, worldData.description, worldData.name, store.world.name, worldData.imagePrompt, store.world.imagePrompt]);
-
-  // useEffect(() => {
-  //   store.setWorld(world);
-  //   setClient({ world });
-  // }, [world]);
-
-
 
 
   const blankCampaign = {
@@ -187,6 +164,11 @@ const WorldPage = ({
     } catch (error) {
       console.log('error deleting image: ', error);
     }
+  };
+
+  const onImageChange = () => {
+    console.log('called to set image');
+    setWorldData({ ...worldData, image: store.world.image });
   };
 
   if (!mounted) {
