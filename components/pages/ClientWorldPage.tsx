@@ -38,15 +38,17 @@ const WorldPage = ({
   const store = useStore();
   const router = useRouter();
 
-  console.log('hello', {name: world.name})
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  useEffect(()=>{
-    setWorldData({...worldData, ...store.world});
-  },[store.world])
+
+  useEffect(() => {
+    if (store.world.description !== worldData.description || store.world.name !== worldData.name || store.world.imagePrompt !== worldData.imagePrompt) {
+      setWorldData({ ...worldData, description: store.world.description, name: store.world.name, imagePrompt: store.world.imagePrompt  });
+    }
+  }, [store.world.description, worldData.description, worldData.name, store.world.name, worldData.imagePrompt, store.world.imagePrompt]);
 
   useEffect(() => {
     store.setWorld(world);

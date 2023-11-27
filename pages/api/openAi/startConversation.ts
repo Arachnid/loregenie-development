@@ -1,5 +1,5 @@
-import { modifyResponse } from '@/lib/ai';
 import { AiAssistant } from '@/lib/aiAssistant';
+import { World, WorldDB } from '@/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
@@ -7,16 +7,12 @@ export default async function handler(
     response: NextApiResponse
   ) {
     
-  const { world, message } = JSON.parse(request.body);
+  const { world, message }:{world: World | WorldDB, message: any} = JSON.parse(request.body);
 
   try {
 
-
-    // const data = await readDataFromFile(id as string, './messages');
-    // const data = await modifyResponse(prompt, messages);
-    const ai = new AiAssistant(world);
-    const res = await ai.startConversation({message});
-    console.log({res})
+    const ai = new AiAssistant();
+    const res = await ai.startConversation({message,assistantId: world.assistantId, threadId: world.threadId, world: world});
 
     response.json(res);
   } catch (error: any) {

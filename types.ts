@@ -9,6 +9,8 @@ export interface WorldDB {
   admins: string[];
   public: boolean;
   prompt?: string;
+  assistantId?: string;
+  threadId?: string;
 }
 
 export interface World extends WorldDB {

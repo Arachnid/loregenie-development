@@ -65,10 +65,28 @@ export default function ChatModal({ onClose, inputValue, onSubmit, user }: any) 
     }
   };
 
+  function analyzeResponse(response: any) {
+    try {
+      const obj = typeof response === 'string' ? JSON.parse(response) : response;
+      if (obj && typeof obj === 'object' && 'name' in obj && 'description' in obj && 'imagePrompt' in obj) {
+        world.description = obj?.description;
+        world.name = obj?.name;
+        world.imagePrompt = obj?.imagePrompt;
+        store.setWorld(world);
+        return 'Your page has been updated';
+      }
+      return response;
+    } catch (error) {
+      // If JSON.parse() fails, it's a plain string
+      return response;
+    }
+  }
 
   const sendMessage = async () => {
+    const userInput = input;
+    setInput('');
     if (input.trim() !== '') {
-      setMessages((messages: any) => [...messages, { role: 'user', content: input }]);
+      setMessages((messages: any) => [...messages, { role: 'user', content: userInput }]);
   
       // Add typing indication
       const typingTimeout = setTimeout(() => {
@@ -77,9 +95,9 @@ export default function ChatModal({ onClose, inputValue, onSubmit, user }: any) 
   
       const response = await fetch('/api/openAi/startConversation', {
         method: 'POST',
-        body: JSON.stringify({ world: world, message: input })
+        body: JSON.stringify({ world: world, message: userInput })
       });
-      setInput('');
+  
       // Clear the typing timeout upon receiving the response
       clearTimeout(typingTimeout);
 
@@ -87,14 +105,18 @@ export default function ChatModal({ onClose, inputValue, onSubmit, user }: any) 
         throw new Error('Data fetching failed');
       }
       const result = await response.json();
+
+      // if response is a json object store object in session.
+      const updateMessage = analyzeResponse(result.assistant_response);
+      // set update message to updated
   
       // Replace typing indication with actual response
       setMessages((messages: any) => {
         const updatedMessages = messages.slice(0, -1); // Remove the typing indication
-        return [...updatedMessages, { role: 'assistant', content: result.assistant_response }];
+        return [...updatedMessages, { role: 'assistant', content: updateMessage }];
       });
       
-      
+      setInput('');
     }
   };
 
