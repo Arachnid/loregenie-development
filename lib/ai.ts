@@ -28,29 +28,6 @@ function formatObject(obj: {[key: string]: any}): string {
   return Object.keys(obj).map((key) => ` - ${key}: ${obj[key]}`).join('\n');
 }
 
-// export async function aiGenerate<T>(kind: string, template: {[Property in keyof T]: string}, context: Array<{[key: string]: string}>, prompt: string): Promise<T> {
-    
-//     // formating prompt
-//     const fullPrompt = PROMPT_TEMPLATE(kind, prompt, context.map((c) => formatObject(c)), formatObject(template));
-//     console.log({fullPrompt})
-
-//     //preparing message to make call to openai
-//     const messages: Array<ChatCompletionMessageParam> = [
-//       {role: 'system', content: fullPrompt},
-//       {role: 'user', content: prompt},
-//     ];
-//     console.log(JSON.stringify(messages, undefined, 2));
-
-//     //call to open AI
-//     const result = await openai.chat.completions.create({
-//         messages,
-//         model,
-//         response_format: {type: 'json_object'},
-//     });
-
-//     return JSON.parse(result.choices[0].message.content as string) as T;
-// }
-
 export async function aiGenerate<T>(
   kind: string, 
   template: {[Property in keyof T]: string}, 

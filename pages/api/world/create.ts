@@ -68,8 +68,9 @@ export default async function handler(
       //store world & IDs
 
     worldData = Object.assign( worldData, response );
-
-    const image = await aiGenerateImage(worldData.imagePrompt, '1792x1024');
+    
+    // const image = await aiGenerateImage(worldData.imagePrompt, '1792x1024');
+    const image = await newAssistant.generateImage({prompt: worldData.imagePrompt, size: '1792x1024'});
     const fileRef = storage.bucket().file(`${crypto.randomUUID()}.png`);
     await fileRef
       .save(

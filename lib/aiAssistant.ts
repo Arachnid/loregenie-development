@@ -517,4 +517,15 @@ export class AiAssistant {
       console.log({ error });
     }
   }
+
+  async generateImage({prompt, size = '1792x1024' }:{prompt: string, size: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792'}): Promise<string> {
+    const result = await this.openai.images.generate({
+      model: 'dall-e-3',
+      prompt,
+      n: 1,
+      size,
+      response_format: 'b64_json',
+    });
+    return result.data[0].b64_json as string;
+  }
 }
