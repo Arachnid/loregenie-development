@@ -148,7 +148,6 @@ const GenieWand = () => {
       abortController.abort();
     }
   };
-  
   useEffect(() => {
     console.log({assres: store.assistantResponse})
   },[store.assistantResponse])

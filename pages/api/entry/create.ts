@@ -107,7 +107,6 @@ export default async function handler(
         prompt
       );
       
-      console.log("hi world",{ response, messages } )
 
       // writeDataToFile( worldID, messages, './messages');
 

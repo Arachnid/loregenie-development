@@ -11,6 +11,9 @@ const nextConfig = {
       transform: '@mui/icons-material/{{member}}',
     },
   },
+  images: {
+    domains: ['cdn.discordapp.com'],
+  },
 };
 
 module.exports = nextConfig;
