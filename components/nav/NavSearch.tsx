@@ -5,6 +5,7 @@ import { getActiveID } from "@/utils/getActiveID";
 import { getIcon } from "@/utils/getIcon";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { MdClose, MdOutlineSearch } from "react-icons/md";
 
 type Props = {
   children: JSX.Element;
@@ -80,7 +81,7 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
 
   return (
     <>
-      <div className="mb-[2px] flex items-center justify-between gap-2 self-stretch bg-white py-[18px] px-4 text-lore-blue-400">
+      <div className="mb-[2px] flex items-center justify-between gap-2 self-stretch bg-white px-4 py-[18px] text-lore-blue-400">
         <input
           className="grow leading-5 placeholder:text-lore-blue-400 focus-visible:outline-none"
           placeholder="Search"
@@ -90,18 +91,16 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
           onChange={(event) => setSearchValue(event.target.value)}
         />
         {searchValue ? (
-          <span
-            className="material-icons cursor-pointer"
+          <MdClose
+            className="h-5 w-5 cursor-pointer"
             onClick={() => setSearchValue("")}
-          >
-            close
-          </span>
+          />
         ) : (
-          <span className="material-icons-outlined cursor-default">search</span>
+          <MdOutlineSearch className="h-5 w-5 cursor-default" />
         )}
       </div>
       {searchValue ? (
-        <div className="h-full gap-4 overflow-y-scroll bg-lore-beige-400 p-4 text-lore-blue-400 scrollbar-hide">
+        <div className="scrollbar-hide h-full gap-4 overflow-y-scroll bg-lore-beige-400 p-4 text-lore-blue-400">
           {filteredSearch.map((element) => (
             <button
               className={`flex items-center gap-2  self-stretch p-2 ${
@@ -109,13 +108,13 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
               }`}
               onClick={() => router.push(element.url)}
             >
-              {getIcon(element.category, "material-icons-outlined text-[20px]")}
+              {getIcon(element.category, "h-5 w-5")}
               <p className="flex grow font-medium leading-5">{element.name}</p>
             </button>
           ))}
         </div>
       ) : (
-        <div className="h-full gap-4 overflow-y-scroll bg-lore-beige-400 p-4 scrollbar-hide">
+        <div className="scrollbar-hide h-full gap-4 overflow-y-scroll bg-lore-beige-400 p-4">
           {children}
         </div>
       )}

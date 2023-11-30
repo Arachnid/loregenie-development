@@ -2,7 +2,7 @@ import { getPermissions } from "@/lib/db";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { CampaignDB, PermissionLevel, WorldDB } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession, Session } from "next-auth";
+import { Session, getServerSession } from "next-auth";
 
 export type ContributorSanityCheck = {
   request: NextApiRequest;

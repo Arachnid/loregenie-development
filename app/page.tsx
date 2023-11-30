@@ -3,10 +3,7 @@ import HomePage from "@/components/pages/HomePage";
 import { getWorlds } from "@/lib/db";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { World } from "@/types";
-import { Inter } from "@next/font/google";
 import { getServerSession } from "next-auth";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default async function Home() {
   const session = await getServerSession(authOptions);

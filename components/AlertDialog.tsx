@@ -7,7 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import { Dispatch, SetStateAction, useState } from "react";
+import { SetStateAction, useState } from "react";
 
 interface Props {
   title: string;
@@ -15,7 +15,7 @@ interface Props {
   confirmText?: string;
   confirmValue?: string;
   alertOpen: boolean;
-  setAlertOpen: Dispatch<SetStateAction<boolean>>;
+  setAlertOpen: (value: SetStateAction<boolean>) => void;
   action: () => Promise<void>;
 }
 

@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import Prism from "prismjs";
 import "prismjs/components/prism-markdown";
 import { SetStateAction, useCallback, useMemo } from "react";
-import { BaseEditor, createEditor, Descendant, Node, Text } from "slate";
+import { BaseEditor, Descendant, Node, Text, createEditor } from "slate";
 import { withHistory } from "slate-history";
 import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 
@@ -84,7 +84,7 @@ const MarkdownEditor = <T extends {}>({
   return (
     <Slate
       editor={editor}
-      value={initialValue as Descendant[]}
+      initialValue={initialValue as Descendant[]}
       onChange={(value) => {
         const isAstChange = editor.operations.some(
           (op) => "set_selection" !== op.type,

@@ -4,6 +4,12 @@ import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect } from "react";
+import {
+  MdClose,
+  MdMenu,
+  MdOutlineNotifications,
+  MdOutlineSettings,
+} from "react-icons/md";
 
 type Props = {
   session: Session | null;
@@ -59,8 +65,8 @@ const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
               Sign In
             </button>
           )}
-          <span className="material-icons-outlined">notifications</span>
-          <span className="material-icons-outlined">settings</span>
+          <MdOutlineNotifications className="h-6 w-6" />
+          <MdOutlineSettings className="h-6 w-6" />
           <img
             className="h-8 w-8 rounded-full"
             src={
@@ -78,9 +84,9 @@ const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
           onClick={() => setShowMenu(!showMenu)}
         >
           {showMenu ? (
-            <span className="material-icons">close</span>
+            <MdClose className="h-5 w-5" />
           ) : (
-            <span className="material-icons">menu</span>
+            <MdMenu className="h-5 w-5" />
           )}
           <h2 className="text-xl font-medium leading-6">{worldName}</h2>
         </button>

@@ -4,6 +4,7 @@ import PermissionDropDown from "@/components/dropdown/PermissionDropDown";
 import { CampaignDB, WorldDB } from "@/types";
 import { Session } from "next-auth";
 import { Dispatch, SetStateAction } from "react";
+import { MdClose } from "react-icons/md";
 
 type Props<T extends WorldDB | CampaignDB> = {
   email: string;
@@ -71,7 +72,7 @@ const Contributor = <T extends WorldDB | CampaignDB>({
           <div className="h-5 w-5" />
         ) : (
           <span
-            className="material-icons cursor-pointer text-[20px] text-lore-blue-400"
+            className="material-icons cursor-pointer text-lore-blue-400"
             onClick={() => {
               setData({
                 ...data,
@@ -81,7 +82,7 @@ const Contributor = <T extends WorldDB | CampaignDB>({
               });
             }}
           >
-            close
+            <MdClose className="h-5 w-5" />
           </span>
         )}
       </div>

@@ -1,11 +1,13 @@
 "use client";
 
 import GenieForm from "@/components/GenieForm";
+import { Button } from "@/components/ui/button";
 import { World } from "@/types";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { MdEast } from "react-icons/md";
 import OutsideClickHandler from "react-outside-click-handler";
 import removeMd from "remove-markdown";
 
@@ -50,7 +52,7 @@ const HomePage = ({ worlds, session }: Props) => {
 
   return (
     <>
-      <div className="flex h-full flex-col justify-between overflow-y-scroll bg-lore-beige-100 scrollbar-hide">
+      <div className="scrollbar-hide flex h-full flex-col justify-between overflow-y-scroll bg-lore-beige-100">
         <img
           className="fixed h-full w-full translate-y-80 object-cover mix-blend-multiply"
           src="/background.svg"
@@ -110,12 +112,10 @@ const HomePage = ({ worlds, session }: Props) => {
                   homebrew campaign.
                 </p>
               </div>
-              <div className="flex items-center justify-center gap-2 rounded-full bg-lore-red-400 px-8 py-6 font-medium transition-all duration-300 ease-out hover:bg-lore-red-500">
-                <p className="min-w-max text-center text-xl leading-6">
-                  Get Started
-                </p>
-                <span className="material-icons">east</span>
-              </div>
+              <Button size="xl" className="gap-4">
+                Get Started
+                <MdEast className="h-5 w-5" />
+              </Button>
             </div>
           </div>
         </div>
@@ -139,7 +139,7 @@ const HomePage = ({ worlds, session }: Props) => {
             onOutsideClick={() => setGenieFormOpen(false)}
             display="contents"
           >
-            <div className="absolute top-1/2 left-1/2 z-20 w-full -translate-x-1/2 -translate-y-1/2 px-2 md:w-auto">
+            <div className="absolute left-1/2 top-1/2 z-20 w-full -translate-x-1/2 -translate-y-1/2 px-2 md:w-auto">
               <GenieForm
                 onCreate={onCreate}
                 setOpen={setGenieFormOpen}

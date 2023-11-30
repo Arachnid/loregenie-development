@@ -3,6 +3,7 @@
 import { Category, Entry, isCampaign, isEntry, LoreSchemas } from "@/types";
 import { getIcon } from "@/utils/getIcon";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { MdClose, MdExpandLess, MdExpandMore, MdSearch } from "react-icons/md";
 import OutsideClickHandler from "react-outside-click-handler";
 import { filterLogic } from "./filterLogic";
 
@@ -37,14 +38,13 @@ const ParentDropDown = <T extends LoreSchemas>({
   };
 
   const handleIcon = (schema: LoreSchemas): JSX.Element => {
-    const classString = "material-icons-outlined text-[20px]";
     if (isEntry(schema)) {
-      return getIcon(schema.category as Category, classString);
+      return getIcon(schema.category as Category, "w-5 h-5");
     }
     if (isCampaign(schema)) {
-      return getIcon("Campaign", classString);
+      return getIcon("Campaign", "w-5 h-5");
     }
-    return getIcon("Home", classString);
+    return getIcon("Home", "w-5 h-5");
   };
 
   useEffect(() => {
@@ -65,9 +65,9 @@ const ParentDropDown = <T extends LoreSchemas>({
           <p className="flex grow">{parentDisplay}</p>
           {permissions.includes("writer") &&
             (dropDownOpen ? (
-              <span className="material-icons text-[20px]">expand_less</span>
+              <MdExpandLess className="h-5 w-5" />
             ) : (
-              <span className="material-icons text-[20px]">expand_more</span>
+              <MdExpandMore className="h-5 w-5" />
             ))}
         </button>
         {dropDownOpen && (
@@ -80,19 +80,15 @@ const ParentDropDown = <T extends LoreSchemas>({
                 onChange={(event) => setSearchValue(event?.target.value)}
               />
               {searchValue ? (
-                <span
-                  className="material-icons cursor-pointer text-[20px]"
+                <MdClose
+                  className="h-5 w-5 cursor-pointer"
                   onClick={() => setSearchValue("")}
-                >
-                  close
-                </span>
+                />
               ) : (
-                <span className="material-icons cursor-default text-[20px]">
-                  search
-                </span>
+                <MdSearch className="h-5 w-5 cursor-pointer" />
               )}
             </div>
-            <div className="flex grow flex-col self-stretch overflow-y-scroll p-2 scrollbar-hide">
+            <div className="scrollbar-hide flex grow flex-col self-stretch overflow-y-scroll p-2">
               <div className="flex grow flex-col self-stretch text-lore-blue-400">
                 {filteredSearch.map((schema: any, index) => (
                   <button

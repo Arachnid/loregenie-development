@@ -3,6 +3,7 @@
 import useStore from "@/hooks/useStore";
 import { LoreSchemas } from "@/types";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { MdAdd, MdAutoFixHigh, MdClose, MdMoreVert } from "react-icons/md";
 import OutsideClickHandler from "react-outside-click-handler";
 
 type Props<T extends LoreSchemas> = {
@@ -75,9 +76,7 @@ const ImageSettings = <T extends LoreSchemas>({
             {" "}
             {!processing ? (
               <>
-                <span className="material-icons text-[20px]">
-                  auto_fix_high
-                </span>
+                <MdAutoFixHigh className="h-5 w-5" />
                 <p className="font-medium leading-5">Generate new</p>
               </>
             ) : (
@@ -100,7 +99,7 @@ const ImageSettings = <T extends LoreSchemas>({
             className="flex items-center justify-center gap-2 self-stretch rounded-lg bg-lore-blue-400 px-4 py-3 text-white transition-all duration-300 ease-out hover:bg-lore-blue-500"
             onClick={() => handleUpload()}
           >
-            <span className="material-icons text-[20px]">add</span>
+            <MdAdd className="h-5 w-5" />
             <p className="font-medium leading-5">Upload new</p>
           </button>
           {data.image && (
@@ -111,7 +110,7 @@ const ImageSettings = <T extends LoreSchemas>({
                 setEditImage(false);
               }}
             >
-              <span className="material-icons text-[20px]">close</span>
+              <MdClose className="h-5 w-5" />
               <p className="font-medium leading-5">Remove</p>
             </button>
           )}
@@ -119,12 +118,10 @@ const ImageSettings = <T extends LoreSchemas>({
       )}
       {permissions.includes("writer") && (
         <button
-          className="flex h-11 w-11 items-center justify-center gap-2 rounded-full bg-lore-red-400 p-3 transition-all duration-300 ease-out hover:bg-lore-red-500"
+          className="flex h-11 w-11 items-center justify-center gap-2 rounded-full bg-lore-red-400 p-3 text-white transition-all duration-300 ease-out hover:bg-lore-red-500"
           onClick={() => setEditImage(!editImage)}
         >
-          <span className="material-icons text-[20px] text-white">
-            more_vert
-          </span>
+          <MdMoreVert className="h-5 w-5" />
         </button>
       )}
     </OutsideClickHandler>

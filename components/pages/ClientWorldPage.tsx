@@ -10,6 +10,7 @@ import { base64Converter } from "@/utils/base64Converter";
 import { Session } from "next-auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { MdAdd } from "react-icons/md";
 
 type Props = {
   world: World;
@@ -186,7 +187,7 @@ const WorldPage = ({
         session={session}
         contributors={contributors}
       />
-      <div className="isolate flex grow flex-col items-start gap-6 overflow-y-scroll bg-white p-4 scrollbar-hide md:gap-10 md:px-16 md:py-6">
+      <div className="scrollbar-hide isolate flex grow flex-col items-start gap-6 overflow-y-scroll bg-white p-4 md:gap-10 md:px-16 md:py-6">
         <div className="relative min-h-[352px] w-full rounded-2xl bg-lore-beige-400">
           <div className="absolute bottom-4 right-4 flex">
             <ImageSettings<WorldDB>
@@ -219,7 +220,7 @@ const WorldPage = ({
                 className="flex w-[100px] items-center justify-center gap-2 rounded-lg bg-lore-red-400 px-4 py-3 text-white transition-all duration-300 ease-out hover:bg-lore-red-500"
                 onClick={() => onCreateCampaign()}
               >
-                <span className="material-icons text-[20px]">add</span>
+                <MdAdd className="h-5 w-5" />
                 <p className="font-medium leading-5">New</p>
               </button>
             )}

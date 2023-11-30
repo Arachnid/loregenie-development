@@ -3,6 +3,7 @@
 import useStore from "@/hooks/useStore";
 import Image from "next/image";
 import { useState } from "react";
+import { MdAutoFixHigh } from "react-icons/md";
 
 const UserChat = ({ userDp, prompt }: any) => {
   const image = userDp || "/userprofile.png";
@@ -20,7 +21,7 @@ const UserChat = ({ userDp, prompt }: any) => {
         <p className="text-xl font-semibold leading-none">You</p>
       </div>
       {/* <p className="text-[1.5rem] font-bold">{prompt}</p> */}
-      <div className="rounded-lg bg-[#4C7F8F1A] px-[1.5rem] py-[1.5rem] text-base text-[0.9rem] italic">
+      <div className="rounded-lg bg-[#4C7F8F1A] px-[1.5rem] py-[1.5rem] text-[0.9rem] text-base italic">
         {prompt}
       </div>
     </div>
@@ -40,7 +41,7 @@ const AiChat = ({ aiResults }: any) => {
         />
         <p className="text-xl font-semibold leading-none">AI</p>
       </div>
-      <div className="rounded-lg bg-[#4C7F8F1A] px-[1.5rem] py-[1.5rem] text-base text-[0.9rem] italic">
+      <div className="rounded-lg bg-[#4C7F8F1A] px-[1.5rem] py-[1.5rem] text-[0.9rem] text-base italic">
         {aiResults}
       </div>
     </div>
@@ -178,7 +179,7 @@ export default function ChatModal({
             </span>
           </div>
 
-          <div className="chatview h-full w-full overflow-auto pt-[30px] pb-[10px] pl-[20px] pr-[20px]">
+          <div className="chatview h-full w-full overflow-auto pb-[10px] pl-[20px] pr-[20px] pt-[30px]">
             {messages.map((msg: any, index: any) => renderMessage(msg, index))}
           </div>
 
@@ -189,7 +190,7 @@ export default function ChatModal({
                   type="text"
                   name=""
                   id=""
-                  className=" flex h-full w-full rounded-[50px] pl-[20px] pr-[20px] pt-[10px] pb-[10px] outline-none focus:outline-none"
+                  className=" flex h-full w-full rounded-[50px] pb-[10px] pl-[20px] pr-[20px] pt-[10px] outline-none focus:outline-none"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -223,7 +224,7 @@ export default function ChatModal({
           className="fixed bottom-0 right-0 z-50 flex items-center justify-center gap-2 rounded-tl-[30px] bg-lore-blue-200 p-4 text-white md:bottom-4 md:right-4 md:rounded-full"
           onClick={() => setExpanded(true)}
         >
-          <span className="material-icons text-[28px]">auto_fix_high</span>
+          <MdAutoFixHigh className="h-7 w-7" />
         </button>
       )}
     </>

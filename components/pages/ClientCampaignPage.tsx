@@ -127,7 +127,7 @@ const ClientCampaignPage = ({
         session={session}
         contributors={contributors}
       />
-      <div className="isolate flex grow flex-col items-start gap-6 overflow-y-scroll bg-white p-4 scrollbar-hide md:gap-10 md:px-16 md:py-6">
+      <div className="scrollbar-hide isolate flex grow flex-col items-start gap-6 overflow-y-scroll bg-white p-4 md:gap-10 md:px-16 md:py-6">
         <div className="relative max-h-[352px] min-h-[352px] w-full rounded-2xl bg-lore-beige-400">
           <div className="absolute bottom-4 right-4 flex">
             <ImageSettings<CampaignDB>

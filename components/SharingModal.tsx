@@ -5,6 +5,7 @@ import PermissionDropDown from "@/components/dropdown/PermissionDropDown";
 import { CampaignDB, isEntry, LoreSchemas, User, WorldDB } from "@/types";
 import { Session } from "next-auth";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { MdAdd, MdClose, MdLink } from "react-icons/md";
 import OutsideClickHandler from "react-outside-click-handler";
 
 type Props<T extends LoreSchemas> = {
@@ -93,17 +94,15 @@ const SharingModal = <T extends LoreSchemas>({
         onOutsideClick={() => setShowModal(false)}
         display="contents"
       >
-        <div className="absolute top-1/2 left-1/2 z-20 w-[97%] min-w-max -translate-x-1/2 -translate-y-1/2 rounded-lg bg-lore-beige-400 md:w-[571px]">
+        <div className="absolute left-1/2 top-1/2 z-20 w-[97%] min-w-max -translate-x-1/2 -translate-y-1/2 rounded-lg bg-lore-beige-400 md:w-[571px]">
           <div className="flex items-center justify-center gap-2 self-stretch rounded-t-lg bg-lore-beige-500 px-6 py-4">
             <p className="grow text-2xl font-medium leading-7">
               {isEntry(data) ? "Visibility" : "Sharing settings"}
             </p>
-            <span
-              className="material-icons cursor-pointer"
+            <MdClose
+              className="h-5 w-5 cursor-pointer"
               onClick={() => setShowModal(false)}
-            >
-              close
-            </span>
+            />
           </div>
           <div className="flex flex-col gap-6 self-stretch p-6">
             <div className="flex flex-col gap-2 self-stretch md:flex-row">
@@ -133,7 +132,7 @@ const SharingModal = <T extends LoreSchemas>({
                     .then(() => alert("link copied!"))
                 }
               >
-                <span className="material-icons text-[20px]">link</span>
+                <MdLink className="h-5 w-5" />
                 <p className="font-medium leading-5">Copy link</p>
               </button>
             </div>
@@ -212,7 +211,7 @@ const SharingModal = <T extends LoreSchemas>({
                       className="flex h-11 items-center justify-center gap-2 rounded-lg border-2 border-lore-beige-500 bg-white px-4 py-3 text-lore-blue-400"
                       onClick={() => onAdd()}
                     >
-                      <span className="material-icons text-[20px]">add</span>
+                      <MdAdd className="h-5 w-5" />
                       <p className="font-medium leading-5">Add</p>
                     </button>
                   </div>

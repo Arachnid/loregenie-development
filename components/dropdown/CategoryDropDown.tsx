@@ -3,6 +3,7 @@
 import { Category, Entry } from "@/types";
 import { getIcon } from "@/utils/getIcon";
 import { Dispatch, SetStateAction, useState } from "react";
+import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import OutsideClickHandler from "react-outside-click-handler";
 
 type Props = {
@@ -32,14 +33,14 @@ const CategoryDropDown = ({ setData, data, permissions }: Props) => {
           </p>
           {permissions.includes("writer") &&
             (dropDownOpen ? (
-              <span className="material-icons text-[20px]">expand_less</span>
+              <MdExpandLess className="h-5 w-5" />
             ) : (
-              <span className="material-icons text-[20px]">expand_more</span>
+              <MdExpandMore className="h-5 w-5" />
             ))}
         </button>
         {dropDownOpen && (
           <div className="absolute z-10 mt-12 flex w-full min-w-max flex-col rounded-lg border-2 border-lore-beige-500 bg-white shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
-            <div className="flex grow flex-col self-stretch overflow-y-scroll p-2 scrollbar-hide">
+            <div className="scrollbar-hide flex grow flex-col self-stretch overflow-y-scroll p-2">
               <div className="flex grow flex-col self-stretch text-lore-blue-400">
                 {data.campaign ? (
                   <button
@@ -49,10 +50,7 @@ const CategoryDropDown = ({ setData, data, permissions }: Props) => {
                       setDropDownOpen(false);
                     }}
                   >
-                    {getIcon(
-                      Category.Journal,
-                      "material-icons-outlined text-[20px]",
-                    )}
+                    {getIcon(Category.Journal, "w-5 h-5")}
                     <p className="flex grow font-medium leading-5">
                       {Category.Journal}
                     </p>
@@ -69,10 +67,7 @@ const CategoryDropDown = ({ setData, data, permissions }: Props) => {
                           }}
                           key={index}
                         >
-                          {getIcon(
-                            category,
-                            "material-icons-outlined text-[20px]",
-                          )}
+                          {getIcon(category, "w-5 h-5")}
                           <p className="flex grow font-medium leading-5">
                             {category}
                           </p>

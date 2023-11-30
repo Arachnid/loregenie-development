@@ -1,18 +1,28 @@
+import {
+  MdClass,
+  MdFolder,
+  MdHistoryEdu,
+  MdHome,
+  MdLocationOn,
+  MdPerson,
+  MdQuestionMark,
+} from "react-icons/md";
+
 export const getIcon = (category: string, className: string): JSX.Element => {
   switch (category) {
     case "Location":
-      return <span className={className}>location_on</span>;
+      return <MdLocationOn className={className} />;
     case "NPC":
-      return <span className={className}>person</span>;
+      return <MdPerson className={className} />;
     case "Lore":
-      return <span className={className}>history_edu</span>;
+      return <MdHistoryEdu className={className} />;
     case "Journal":
-      return <span className={className}>class</span>;
+      return <MdClass className={className} />;
     case "Campaign":
-      return <span className={className}>folder</span>;
+      return <MdFolder className={className} />;
     case "Home":
-      return <span className={className}>home</span>;
+      return <MdHome className={className} />;
     default:
-      return <span className={className}>question_mark</span>;
+      return <MdQuestionMark className={className} />;
   }
 };

@@ -173,7 +173,7 @@ const ClientEntryPage = ({
         onDelete={onDelete}
         permissions={permissions}
       />
-      <div className="isolate flex h-full flex-col items-start gap-6 overflow-y-scroll bg-white p-4 scrollbar-hide md:gap-10 md:px-16 md:py-6">
+      <div className="scrollbar-hide isolate flex h-full flex-col items-start gap-6 overflow-y-scroll bg-white p-4 md:gap-10 md:px-16 md:py-6">
         <div className="flex flex-col-reverse items-start gap-6 self-stretch md:flex-row">
           <div className="flex w-full flex-col items-start gap-4 rounded-lg bg-lore-beige-400 p-6 md:w-auto md:grow">
             <div className="flex flex-col gap-2 self-stretch md:flex-row md:items-center md:gap-4">

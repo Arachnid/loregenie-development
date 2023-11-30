@@ -8,6 +8,14 @@ import { Collapse } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  MdAdd,
+  MdFolder,
+  MdHome,
+  MdOutlineFolder,
+  MdOutlineHome,
+  MdRemove,
+} from "react-icons/md";
 
 type Props = {
   entries: Entry[];
@@ -97,13 +105,9 @@ const RecursiveEntries = ({
                 }}
               >
                 {selected === campaign.id ? (
-                  <span className="material-icons flex items-center justify-center text-[20px]">
-                    folder
-                  </span>
+                  <MdFolder className="h-5 w-5" />
                 ) : (
-                  <span className="material-icons-outlined flex items-center justify-center text-[20px]">
-                    folder
-                  </span>
+                  <MdOutlineFolder className="h-5 w-5" />
                 )}
                 <p>{campaign.name ? campaign.name : "Untitled Campaign"}</p>
               </Link>
@@ -117,13 +121,9 @@ const RecursiveEntries = ({
                   onClick={() => expandHandler(campaign.id, open, setOpen)}
                 >
                   {open[campaign.id] ? (
-                    <span className="material-icons flex items-center justify-center text-[16px]">
-                      remove
-                    </span>
+                    <MdRemove className="h-4 w-4" />
                   ) : (
-                    <span className="material-icons flex items-center justify-center text-[16px]">
-                      add
-                    </span>
+                    <MdAdd className="h-4 w-4" />
                   )}
                 </div>
               )}
@@ -165,7 +165,7 @@ const RecursiveEntries = ({
               <div className="flex items-center">
                 {iteration !== 1 && (
                   <img
-                    className="mb-5 -ml-[2px]"
+                    className="-ml-[2px] mb-5"
                     src="/menu-line-curve.svg"
                     alt="-"
                   />
@@ -188,14 +188,8 @@ const RecursiveEntries = ({
                   >
                     {entry.category &&
                       (selected === entry.id
-                        ? getIcon(
-                            entry.category,
-                            "flex justify-center items-center text-[20px] material-icons",
-                          )
-                        : getIcon(
-                            entry.category,
-                            "flex justify-center items-center text-[20px] material-icons-outlined",
-                          ))}
+                        ? getIcon(entry.category, "h-5 w-5")
+                        : getIcon(entry.category, "h-5 w-5"))}
                     <p className="w-max">
                       {entry.name ? entry.name : "Untitled"}
                     </p>
@@ -210,13 +204,9 @@ const RecursiveEntries = ({
                       onClick={() => expandHandler(entry.id, open, setOpen)}
                     >
                       {open[entry.id] ? (
-                        <span className="material-icons flex items-center justify-center text-[16px]">
-                          remove
-                        </span>
+                        <MdRemove className="h-4 w-4" />
                       ) : (
-                        <span className="material-icons flex items-center justify-center text-[16px]">
-                          add
-                        </span>
+                        <MdAdd className="h-4 w-4" />
                       )}
                     </div>
                   )}
@@ -270,13 +260,9 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
                 href={`/world/${world.id}`}
               >
                 {selected === world.id ? (
-                  <span className="material-icons flex h-5 w-5 items-center justify-center">
-                    home
-                  </span>
+                  <MdHome className="h-5 w-5" />
                 ) : (
-                  <span className="material-icons-outlined flex h-5 w-5 items-center justify-center">
-                    home
-                  </span>
+                  <MdOutlineHome className="h-5 w-5" />
                 )}
                 <p>{world.name ? world.name : "Untitled"}</p>
               </Link>

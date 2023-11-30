@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   modularizeImports: {
     "@mui/material": {
       transform: "@mui/material/{{member}}",

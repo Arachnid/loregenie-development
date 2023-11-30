@@ -97,7 +97,7 @@ const GenerateFormPage = ({
   }
 
   return (
-    <div className="isolate flex h-full grow flex-col items-center justify-center gap-4 overflow-y-scroll bg-white p-4 scrollbar-hide md:gap-10 md:px-16 md:py-6">
+    <div className="scrollbar-hide isolate flex h-full grow flex-col items-center justify-center gap-4 overflow-y-scroll bg-white p-4 md:gap-10 md:px-16 md:py-6">
       <GenieForm onCreate={onCreate} disabled={!Boolean(form.category)}>
         <div className="flex flex-col gap-4 self-stretch md:flex-row">
           <ParentDropDown

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import OutsideClickHandler from "react-outside-click-handler";
 
 type Props = {
@@ -30,9 +31,9 @@ const PermissionDropDown = ({
         >
           <p className="flex grow leading-5">{title}</p>
           {dropDownOpen ? (
-            <span className="material-icons text-[20px]">expand_less</span>
+            <MdExpandLess className="h-5 w-5" />
           ) : (
-            <span className="material-icons text-[20px]">expand_more</span>
+            <MdExpandMore className="h-5 w-5" />
           )}
         </button>
         {dropDownOpen && (

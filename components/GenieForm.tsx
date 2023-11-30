@@ -3,6 +3,7 @@
 // Import necessary hooks and components
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
+import { MdAdd, MdAutoFixHigh, MdAutorenew } from "react-icons/md";
 
 type Props = {
   onCreate: (prompt?: string) => Promise<void>;
@@ -29,14 +30,14 @@ const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
     <div className="relative flex w-full min-w-max flex-col gap-4 pt-20 md:w-[640px] md:gap-10">
       <div className="relative isolate flex flex-col gap-4 self-stretch rounded-2xl bg-lore-beige-400 p-4 md:gap-8 md:p-10">
         <img
-          className="absolute left-[calc(50%-320px/2)] top-[-166px] w-[320px] md:left-auto md:-right-8 md:top-[calc(50%-524px/2-56px)] md:h-[524px] md:w-[389px]"
+          className="absolute left-[calc(50%-320px/2)] top-[-166px] w-[320px] md:-right-8 md:left-auto md:top-[calc(50%-524px/2-56px)] md:h-[524px] md:w-[389px]"
           src="/genie.svg"
           alt=""
         />
         <div className="z-20 flex flex-col gap-4 self-stretch rounded-2xl">
           {children}
           <input
-            className="flex items-center justify-center gap-4 self-stretch rounded-[10px] bg-white py-3 px-5 text-center font-cinzel text-[27px] font-semibold leading-9 focus-visible:outline-none"
+            className="flex items-center justify-center gap-4 self-stretch rounded-[10px] bg-white px-5 py-3 text-center font-cinzel text-[27px] font-semibold leading-9 focus-visible:outline-none"
             placeholder="PROMPT EXAMPLE"
             type="text"
             value={prompt}
@@ -49,18 +50,14 @@ const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
           >
             {loading ? (
               <>
-                <span className="material-icons animate-spin text-[20px]">
-                  autorenew
-                </span>
+                <MdAutorenew className="h-5 w-5 animate-spin" />
                 <p className="ml-2 font-medium leading-5">
                   Genie is thinking...
                 </p>
               </>
             ) : (
               <>
-                <span className="material-icons text-[20px]">
-                  auto_fix_high
-                </span>
+                <MdAutoFixHigh className="h-5 w-5" />
                 <p className="font-medium leading-5">
                   {children ? "Generate" : "Generate world"}
                 </p>
@@ -80,7 +77,7 @@ const GenieForm = ({ onCreate, setOpen, children, disabled }: Props) => {
             onClick={() => onCreate()}
             disabled={disabled}
           >
-            <span className="material-icons text-[20px]">add</span>
+            <MdAdd className="h-5 w-5" />
             <p className="font-medium leading-5">Create blank</p>
           </button>
         </div>

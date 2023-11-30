@@ -2,12 +2,33 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ["class"],
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    fontFamily: {
+      sans: [
+        "var(--font-sans)",
+        '"Helvetica Neue"',
+        ...defaultTheme.fontFamily.sans,
+      ],
+      cinzel: ["Cinzel"],
+    },
+    screens: {
+      xs: "475px",
+      ...defaultTheme.screens,
+    },
     extend: {
       colors: {
         "lore-beige": {
@@ -30,19 +51,21 @@ module.exports = {
           100: "#D9D9D9",
         },
       },
-    },
-    fontFamily: {
-      sans: ['"Helvetica Neue"'],
-      cinzel: ["Cinzel"],
-    },
-    screens: {
-      xs: "475px",
-      ...defaultTheme.screens,
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
     },
   },
-  darkMode: "class",
-  plugins: [
-    require("tailwind-scrollbar-hide"),
-    require("@tailwindcss/line-clamp"),
-  ],
+  plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],
 };

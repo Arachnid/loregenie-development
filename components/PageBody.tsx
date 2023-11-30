@@ -5,7 +5,7 @@ import { LoreSchemas } from "@/types";
 import "@uiw/react-markdown-preview/markdown.css";
 import "@uiw/react-md-editor/markdown-editor.css";
 import { Dispatch, SetStateAction } from "react";
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import Markdown from "react-markdown";
 
 type Props<T extends LoreSchemas> = {
   data: T;
@@ -34,7 +34,7 @@ const PageBody = <T extends LoreSchemas>({
           setData={setData}
         />
       ) : (
-        <ReactMarkdown className="markdown" children={data.description} />
+        <Markdown className="markdown" children={data.description} />
       )}
       <div className="flex h-[72px] w-full" />
     </div>

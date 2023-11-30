@@ -2,7 +2,7 @@ import { getPermissions } from "@/lib/db";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { PermissionLevel } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession, Session } from "next-auth";
+import { Session, getServerSession } from "next-auth";
 
 export const hasPermission = async (
   request: NextApiRequest,

@@ -4,6 +4,13 @@ import useStore, { AssistanState } from "@/hooks/useStore";
 import { World } from "@/types";
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  MdArrowBack,
+  MdAutoFixHigh,
+  MdClose,
+  MdOutlineCheckCircle,
+  MdOutlineEdit,
+} from "react-icons/md";
 
 //tracks the state of this component
 enum CurrentState {
@@ -154,7 +161,7 @@ const GenieWand = () => {
             setCurrentState(CurrentState.new);
           }}
         >
-          <span className="material-icons text-[28px]">auto_fix_high</span>
+          <MdAutoFixHigh className="h-7 w-7" />
         </button>
       )}
       {expanded && (
@@ -195,7 +202,7 @@ const closeButton = (
       setCurrentState(CurrentState.new);
     }}
   >
-    <span className="material-icons text-[20px]">close</span>
+    <MdClose className="h-5 w-5" />
     {processing && <p className="hidden font-medium md:flex">Stop</p>}
   </button>
 );
@@ -213,7 +220,7 @@ const generateButton = (
       onGenerate();
     }}
   >
-    <span className="material-icons text-[20px]">auto_fix_high</span>
+    <MdAutoFixHigh className="h-5 w-5" />
     <p className="hidden font-medium md:flex">Generate</p>
   </button>
 );
@@ -267,7 +274,7 @@ const editPrompt = (
         setCurrentState(CurrentState.complete);
       }}
     >
-      <span className="material-icons text-[20px]">arrow_back</span>
+      <MdArrowBack className="h-5 w-5" />
     </button>
     {inputPromptField(inputPromptValue, setInputPromptValue)}
     {generateButton(
@@ -323,7 +330,7 @@ const completedPrompt = (
           setCurrentState(CurrentState.edit);
         }}
       >
-        <span className="material-icons-outlined text-[20px]">edit</span>
+        <MdOutlineEdit className="h-5 w-5" />
         <p>Edit</p>
       </button>
       <button
@@ -333,7 +340,7 @@ const completedPrompt = (
           setSimulateProcessing(true);
         }}
       >
-        <span className="material-icons text-[20px]">auto_fix_high</span>
+        <MdAutoFixHigh className="h-5 w-5" />
         <p>Reroll</p>
       </button>
       <button
@@ -344,9 +351,7 @@ const completedPrompt = (
           setExpanded(false);
         }}
       >
-        <span className="material-icons-outlined text-[20px]">
-          check_circle
-        </span>
+        <MdOutlineCheckCircle className="h-5 w-5" />
         <p>Done</p>
       </button>
     </>
