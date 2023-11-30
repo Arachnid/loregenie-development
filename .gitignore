@@ -46,6 +46,10 @@ ui-debug.log
 /exported-firebase-data
 firebase-private-key.json
 storage.rules
+private-key.json
 # serviceAccountKey.json
 .env
 /messages
+
+# jetbrains
+.idea
