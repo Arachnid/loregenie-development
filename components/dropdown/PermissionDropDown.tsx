@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import OutsideClickHandler from 'react-outside-click-handler';
+import { useState } from "react";
+import OutsideClickHandler from "react-outside-click-handler";
 
 type Props = {
   title: string;
@@ -21,54 +21,54 @@ const PermissionDropDown = ({
   return (
     <OutsideClickHandler
       onOutsideClick={() => setDropDownOpen(false)}
-      display='contents'
+      display="contents"
     >
-      <div className='flex flex-col w-full md:w-[140px] relative text-lore-blue-400'>
+      <div className="relative flex w-full flex-col text-lore-blue-400 md:w-[140px]">
         <button
-          className='flex justify-center gap-2 px-4 py-3 bg-white rounded-lg'
+          className="flex justify-center gap-2 rounded-lg bg-white px-4 py-3"
           onClick={() => setDropDownOpen(!dropDownOpen)}
         >
-          <p className='flex leading-5 grow'>{title}</p>
+          <p className="flex grow leading-5">{title}</p>
           {dropDownOpen ? (
-            <span className='text-[20px] material-icons'>expand_less</span>
+            <span className="material-icons text-[20px]">expand_less</span>
           ) : (
-            <span className='text-[20px] material-icons'>expand_more</span>
+            <span className="material-icons text-[20px]">expand_more</span>
           )}
         </button>
         {dropDownOpen && (
-          <div className='z-30 absolute flex flex-col w-full bg-white border-2 border-lore-beige-500 rounded-lg mt-12 min-w-max shadow-[0px_5px_10px_rgba(0,0,0,0.15)]'>
-            {title !== 'Admin' && (
+          <div className="absolute z-30 mt-12 flex w-full min-w-max flex-col rounded-lg border-2 border-lore-beige-500 bg-white shadow-[0px_5px_10px_rgba(0,0,0,0.15)]">
+            {title !== "Admin" && (
               <button
-                className='flex px-4 py-3 leading-5 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
+                className="flex rounded-lg px-4 py-3 leading-5 transition-all duration-300 ease-out hover:bg-lore-beige-300"
                 onClick={() => {
                   adminAction();
                   setDropDownOpen(false);
                 }}
-                id='contributor'
+                id="contributor"
               >
                 Admin
               </button>
             )}
-            {title !== 'Writer' && (
+            {title !== "Writer" && (
               <button
-                className='flex px-4 py-3 leading-5 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
+                className="flex rounded-lg px-4 py-3 leading-5 transition-all duration-300 ease-out hover:bg-lore-beige-300"
                 onClick={() => {
                   writerAction();
                   setDropDownOpen(false);
                 }}
-                id='contributor'
+                id="contributor"
               >
                 Writer
               </button>
             )}
-            {title !== 'Reader' && (
+            {title !== "Reader" && (
               <button
-                className='flex px-4 py-3 leading-5 transition-all duration-300 ease-out rounded-lg hover:bg-lore-beige-300'
+                className="flex rounded-lg px-4 py-3 leading-5 transition-all duration-300 ease-out hover:bg-lore-beige-300"
                 onClick={() => {
                   readerAction();
                   setDropDownOpen(false);
                 }}
-                id='contributor'
+                id="contributor"
               >
                 Reader
               </button>

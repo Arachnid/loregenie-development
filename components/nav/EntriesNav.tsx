@@ -1,10 +1,12 @@
-import { getPermissions, getWorld } from '@/lib/db';
-import ClientEntriesNav from '@/components/nav/ClientEntriesNav';
-import { World } from '@/types';
-import EntriesList from '@/components/nav/EntriesList';
-import { notFound } from 'next/navigation';
+import ClientEntriesNav from "@/components/nav/ClientEntriesNav";
+import EntriesList from "@/components/nav/EntriesList";
 
-export default function EntriesNav({ worldID, email, permissions, world }: any) {
+export default function EntriesNav({
+  worldID,
+  email,
+  permissions,
+  world,
+}: any) {
   // let world: World | undefined | any;
   // let permissions: any;
 
@@ -27,7 +29,11 @@ export default function EntriesNav({ worldID, email, permissions, world }: any) 
       entries={world.entries}
       campaigns={world.campaigns}
     >
-      <EntriesList entries={world.entries} campaigns={world.campaigns} world={world} />
+      <EntriesList
+        entries={world.entries}
+        campaigns={world.campaigns}
+        world={world}
+      />
     </ClientEntriesNav>
   );
 }

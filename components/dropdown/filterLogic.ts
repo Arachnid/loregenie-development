@@ -1,11 +1,11 @@
-import { Campaign, Entry, isCampaign, isEntry } from '@/types';
-import { SetStateAction } from 'react';
+import { Campaign, Entry, isCampaign, isEntry } from "@/types";
+import { SetStateAction } from "react";
 
 export const filterLogic = (
   generate: boolean | undefined,
   schema: Campaign | Entry,
   data: Entry,
-  setData: (value: SetStateAction<Entry>) => void
+  setData: (value: SetStateAction<Entry>) => void,
 ): void => {
   if (isEntry(schema) && schema.campaign) {
     buildCampaignEntryOnClick(generate, schema, data, setData);
@@ -21,7 +21,7 @@ const buildCampaignEntryOnClick = (
   generate: boolean | undefined,
   schema: Entry,
   data: Entry,
-  setData: (value: SetStateAction<Entry>) => void
+  setData: (value: SetStateAction<Entry>) => void,
 ): void => {
   if (schema.campaign) {
     if (generate) {
@@ -57,7 +57,7 @@ const buildEntryOnClick = (
   generate: boolean | undefined,
   schema: Entry,
   data: Entry,
-  setData: (value: SetStateAction<Entry>) => void
+  setData: (value: SetStateAction<Entry>) => void,
 ): void => {
   if (generate) {
     const { campaign, category, ...state } = data;
@@ -83,7 +83,7 @@ const buildCampaignOnClick = (
   generate: boolean | undefined,
   schema: Campaign,
   data: Entry,
-  setData: (value: SetStateAction<Entry>) => void
+  setData: (value: SetStateAction<Entry>) => void,
 ): void => {
   if (generate) {
     const { parent, category, ...state } = data;
@@ -102,7 +102,7 @@ const buildCampaignOnClick = (
 const buildWorldOnClick = (
   generate: boolean | undefined,
   data: Entry,
-  setData: (value: SetStateAction<Entry>) => void
+  setData: (value: SetStateAction<Entry>) => void,
 ): void => {
   if (generate) {
     const { parent, campaign, category, ...state } = data;

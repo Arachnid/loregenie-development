@@ -1,11 +1,11 @@
-import { Converter, db } from '@/lib/db';
-import { CampaignDB } from '@/types';
-import { updateValidation } from '@/utils/validation/updateValidation';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { Converter, db } from "@/lib/db";
+import { CampaignDB } from "@/types";
+import { updateValidation } from "@/utils/validation/updateValidation";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   const {
     campaignData,
@@ -17,9 +17,9 @@ export default async function handler(
   } = JSON.parse(request.body);
 
   const docRef = db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
-    .collection('campaigns')
+    .collection("campaigns")
     .doc(campaignData.id)
     .withConverter(new Converter<CampaignDB>());
 
@@ -33,7 +33,7 @@ export default async function handler(
     }
     await docRef.update(campaignData);
   } catch (error) {
-    console.log('error updating campaign to database: ', error);
+    console.log("error updating campaign to database: ", error);
     response.statusCode = 500;
     response.send({});
     return;

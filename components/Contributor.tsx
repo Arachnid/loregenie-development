@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { CampaignDB, WorldDB } from '@/types';
-import { Dispatch, SetStateAction } from 'react';
-import PermissionDropDown from '@/components/dropdown/PermissionDropDown';
-import { Session } from 'next-auth';
+import PermissionDropDown from "@/components/dropdown/PermissionDropDown";
+import { CampaignDB, WorldDB } from "@/types";
+import { Session } from "next-auth";
+import { Dispatch, SetStateAction } from "react";
 
 type Props<T extends WorldDB | CampaignDB> = {
   email: string;
@@ -23,16 +23,16 @@ const Contributor = <T extends WorldDB | CampaignDB>({
   session,
 }: Props<T>) => {
   return (
-    <div className='flex flex-col items-center self-stretch gap-2 md:flex-row'>
-      <div className='flex items-center p-[10px] pr-4 gap-2 bg-white rounded-lg md:grow md:w-auto w-full'>
-        <img className='w-6 h-6 rounded-full' src={image} alt='' />
-        <p className='leading-5 grow'>{email}</p>
+    <div className="flex flex-col items-center gap-2 self-stretch md:flex-row">
+      <div className="flex w-full items-center gap-2 rounded-lg bg-white p-[10px] pr-4 md:w-auto md:grow">
+        <img className="h-6 w-6 rounded-full" src={image} alt="" />
+        <p className="grow leading-5">{email}</p>
       </div>
-      <div className='flex items-center w-full gap-2 md:w-auto'>
+      <div className="flex w-full items-center gap-2 md:w-auto">
         {email === session.user?.email ? (
-          <div className='flex flex-col w-full md:w-[140px] text-lore-blue-400'>
+          <div className="flex w-full flex-col text-lore-blue-400 md:w-[140px]">
             <button
-              className='flex items-center gap-2 px-4 py-3 bg-white rounded-lg h-11'
+              className="flex h-11 items-center gap-2 rounded-lg bg-white px-4 py-3"
               disabled
             >
               {title}
@@ -68,10 +68,10 @@ const Contributor = <T extends WorldDB | CampaignDB>({
           />
         )}
         {email === session.user?.email ? (
-          <div className='w-5 h-5' />
+          <div className="h-5 w-5" />
         ) : (
           <span
-            className='text-[20px] material-icons text-lore-blue-400 cursor-pointer'
+            className="material-icons cursor-pointer text-[20px] text-lore-blue-400"
             onClick={() => {
               setData({
                 ...data,

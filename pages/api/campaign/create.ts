@@ -1,12 +1,12 @@
-import { Converter, db } from '@/lib/db';
-import { CampaignDB, PermissionLevel } from '@/types';
-import { contributorSanityCheck } from '@/utils/validation/contributorSanityCheck';
-import { hasPermission } from '@/utils/validation/hasPermission';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { Converter, db } from "@/lib/db";
+import { CampaignDB, PermissionLevel } from "@/types";
+import { contributorSanityCheck } from "@/utils/validation/contributorSanityCheck";
+import { hasPermission } from "@/utils/validation/hasPermission";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   const {
     campaignData,
@@ -19,7 +19,7 @@ export default async function handler(
         request,
         response,
         worldID,
-        PermissionLevel.writer
+        PermissionLevel.writer,
       )) ||
       !contributorSanityCheck({
         request,
@@ -34,14 +34,14 @@ export default async function handler(
       return;
     }
     const campaign = await db
-      .collection('worlds')
+      .collection("worlds")
       .doc(worldID)
-      .collection('campaigns')
+      .collection("campaigns")
       .withConverter(new Converter<CampaignDB>())
       .add(campaignData);
     response.json(campaign.id);
   } catch (error) {
-    console.log('error writing campaign to database: ', error);
+    console.log("error writing campaign to database: ", error);
     response.statusCode = 500;
     response.send({});
     return;

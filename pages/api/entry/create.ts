@@ -1,15 +1,13 @@
-import admin from 'firebase-admin';
-import crypto from 'crypto';
-import { Converter, db, storage } from '@/lib/db';
-import { Entry, PermissionLevel, World, WorldDB } from '@/types';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { hasPermission } from '@/utils/validation/hasPermission';
-import { aiGenerate, aiGenerateImage } from '@/lib/ai';
-import writeDataToFile from '@/utils/storeMessages';
+import { aiGenerate, aiGenerateImage } from "@/lib/ai";
+import { Converter, db, storage } from "@/lib/db";
+import { Entry, PermissionLevel, World, WorldDB } from "@/types";
+import { hasPermission } from "@/utils/validation/hasPermission";
+import crypto from "crypto";
+import admin from "firebase-admin";
+import { NextApiRequest, NextApiResponse } from "next";
 
-
-const DESCRIPTIONS: {[key: string]: string} = {
-  'NPC': `A markdown block describing the NPC in this format:
+const DESCRIPTIONS: { [key: string]: string } = {
+  NPC: `A markdown block describing the NPC in this format:
 **<NPC's gender> <NPC's race> <NPC's class or profession>, <NPC's alignment>**
 
 # Summary
@@ -32,7 +30,7 @@ const DESCRIPTIONS: {[key: string]: string} = {
 <A paragraph describing the NPC's history and background.>
 `,
 
-  'Location': `A markdown block describing the location. Locations can be as broad as entire continents or as specific as a single room; pay attention to the user's prompt to determine what to describe. Adhere strictly to this format:
+  Location: `A markdown block describing the location. Locations can be as broad as entire continents or as specific as a single room; pay attention to the user's prompt to determine what to describe. Adhere strictly to this format:
 # Summary
 <A 1-sentence summary of the location.>
 
@@ -40,19 +38,18 @@ const DESCRIPTIONS: {[key: string]: string} = {
 <A detailed description of the location. Be expansive and evocative in your prose.>
 `,
 
-
-  'Lore': `A markdown block describing the event. Adhere strictly to this format:
+  Lore: `A markdown block describing the event. Adhere strictly to this format:
 # Summary
 <A 1-sentence summary of the event.>
 
 # Description
 <A detailed description of the event or lore. Be expansive and evocative in your prose.>
-`
-}
+`,
+};
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   let { entryData, worldID }: { entryData: Entry; worldID: string } =
     JSON.parse(request.body);
@@ -68,60 +65,52 @@ export default async function handler(
     }
 
     let collectionRef: admin.firestore.CollectionReference<Entry | World> = db
-      .collection('worlds')
+      .collection("worlds")
       .withConverter(new Converter<World>());
 
     if (entryData.campaign) {
       collectionRef = collectionRef
         .doc(worldID)
-        .collection('campaigns')
+        .collection("campaigns")
         .doc(entryData.campaign.id)
-        .collection('entries')
+        .collection("entries")
         .withConverter(new Converter<Entry>());
     } else {
       collectionRef = collectionRef
         .doc(worldID)
-        .collection('entries')
+        .collection("entries")
         .withConverter(new Converter<Entry>());
     }
 
-    if(entryData.prompt) {
+    if (entryData.prompt) {
       const docRef = db
-        .collection('worlds')
+        .collection("worlds")
         .doc(worldID)
         .withConverter(new Converter<WorldDB>());
       const worldData = (await docRef.get()).data() as WorldDB;
 
       const prompt = entryData.prompt;
       const category = entryData.category as string;
-      
 
       const { response, messages } = await aiGenerate<Partial<Entry>>(
         entryData.category as string,
         {
           name: `Name for the ${category}`,
           imagePrompt: `A description of an image that captures the ${category}, written in a way that someone who has never heard of the ${category} could paint a picture`,
-          description: DESCRIPTIONS[category]
+          description: DESCRIPTIONS[category],
         },
-        [{name: worldData.name, description: worldData.description}],
-        prompt
+        [{ name: worldData.name, description: worldData.description }],
+        prompt,
       );
-      
 
       // writeDataToFile( worldID, messages, './messages');
 
       entryData = Object.assign(entryData, response);
 
       console.log(entryData);
-      const image = await aiGenerateImage(entryData.imagePrompt, '1024x1024');
+      const image = await aiGenerateImage(entryData.imagePrompt, "1024x1024");
       const fileRef = storage.bucket().file(`${crypto.randomUUID()}.png`);
-      await fileRef
-        .save(
-          Buffer.from(
-            image,
-            'base64'
-          )
-        );
+      await fileRef.save(Buffer.from(image, "base64"));
       entryData.image = fileRef.publicUrl();
     }
 
@@ -129,7 +118,9 @@ export default async function handler(
 
     response.json((await entry.get()).data());
   } catch (error: any) {
-    console.log('error writing entry to database: ', error, {error_message: error.message});
+    console.log("error writing entry to database: ", error, {
+      error_message: error.message,
+    });
     response.statusCode = 500;
     response.send({});
     return;

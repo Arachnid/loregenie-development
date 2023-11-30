@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import './/globals.css';
+import { ReactNode } from "react";
+import ".//globals.css";
 
 export default async function RootLayout({
   children,
@@ -7,11 +7,9 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <head />
-      <body className='bg-lore-beige-500 tracking-wide'>
-        {children}
-      </body>
+      <body className="bg-lore-beige-500 tracking-wide">{children}</body>
     </html>
   );
 }

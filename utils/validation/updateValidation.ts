@@ -1,13 +1,13 @@
-import { WorldDB, CampaignDB, PermissionLevel } from '@/types';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { contributorSanityCheck } from './contributorSanityCheck';
-import { hasPermission } from './hasPermission';
+import { CampaignDB, PermissionLevel, WorldDB } from "@/types";
+import { NextApiRequest, NextApiResponse } from "next";
+import { contributorSanityCheck } from "./contributorSanityCheck";
+import { hasPermission } from "./hasPermission";
 
 export const updateValidation = async (
   request: NextApiRequest,
   response: NextApiResponse,
   clientData: WorldDB | CampaignDB,
-  dbData: WorldDB | CampaignDB | undefined
+  dbData: WorldDB | CampaignDB | undefined,
 ): Promise<boolean> => {
   if (!dbData) {
     return false;
@@ -18,7 +18,7 @@ export const updateValidation = async (
       request,
       response,
       clientData.id,
-      PermissionLevel.writer
+      PermissionLevel.writer,
     ))
   ) {
     return false;

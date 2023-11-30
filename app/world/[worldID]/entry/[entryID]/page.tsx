@@ -1,9 +1,9 @@
-import { getEntry, getPermissions, getWorld } from '@/lib/db';
-import { notFound } from 'next/navigation';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Session, getServerSession } from 'next-auth';
-import ClientEntryPage from '@/components/pages/ClientEntryPage';
-import { World } from '@/types';
+import ClientEntryPage from "@/components/pages/ClientEntryPage";
+import { getEntry, getPermissions, getWorld } from "@/lib/db";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { World } from "@/types";
+import { getServerSession, Session } from "next-auth";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: {
@@ -18,7 +18,7 @@ export default async function EntryPage({ params }: Props) {
   const email = session?.user?.email;
   const world: World | undefined = await getWorld(
     params.worldID,
-    email as string
+    email as string,
   );
 
   if (!entry || !email || !world) {

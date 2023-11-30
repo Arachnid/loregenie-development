@@ -1,5 +1,5 @@
 export const getActiveID = (pathname: string | null): string | undefined => {
-  const idAfterLastSlash = '([^/]+$)';
+  const idAfterLastSlash = "([^/]+$)";
   let activeID: string;
 
   if (pathname) {

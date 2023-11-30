@@ -1,12 +1,12 @@
-import admin from 'firebase-admin';
-import { Converter, db } from '@/lib/db';
-import { Entry, PermissionLevel, World } from '@/types';
-import { hasPermission } from '@/utils/validation/hasPermission';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { Converter, db } from "@/lib/db";
+import { Entry, PermissionLevel, World } from "@/types";
+import { hasPermission } from "@/utils/validation/hasPermission";
+import admin from "firebase-admin";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   const {
     entryData,
@@ -26,27 +26,27 @@ export default async function handler(
     }
 
     let docRef: admin.firestore.DocumentReference<World | Entry> = db
-      .collection('worlds')
+      .collection("worlds")
       .doc(worldID)
       .withConverter(new Converter<World>());
 
     if (entryData.campaign) {
       docRef = docRef
-        .collection('campaigns')
+        .collection("campaigns")
         .doc(entryData.campaign.id)
-        .collection('entries')
+        .collection("entries")
         .doc(entryData.id)
         .withConverter(new Converter<Entry>());
     } else {
       docRef = docRef
-        .collection('entries')
+        .collection("entries")
         .doc(entryData.id)
         .withConverter(new Converter<Entry>());
     }
 
     await docRef.set(entryData);
   } catch (error) {
-    console.log('error updating entry to database: ', error);
+    console.log("error updating entry to database: ", error);
     response.statusCode = 500;
     response.send({});
     return;

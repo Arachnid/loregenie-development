@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Campaign, CampaignDB, User, World } from '@/types';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import PageHeader from '@/components/PageHeader';
-import ImageSettings from '@/components/ImageSettings';
-import PageBody from '@/components/PageBody';
-import { Session } from 'next-auth';
-import { useClientContext } from '@/hooks/useClientContext';
-import { base64Converter } from '@/utils/base64Converter';
+import ImageSettings from "@/components/ImageSettings";
+import PageBody from "@/components/PageBody";
+import PageHeader from "@/components/PageHeader";
+import { useClientContext } from "@/hooks/useClientContext";
+import { Campaign, CampaignDB, User, World } from "@/types";
+import { base64Converter } from "@/utils/base64Converter";
+import { Session } from "next-auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type Props = {
   world: World;
@@ -31,7 +31,7 @@ const ClientCampaignPage = ({
   contributors,
 }: Props) => {
   const [campaignData, setCampaignData] = useState<CampaignDB>(
-    campaignDBConverter(campaign)
+    campaignDBConverter(campaign),
   );
   const [mounted, setMounted] = useState(false);
   const { setClient } = useClientContext();
@@ -47,8 +47,8 @@ const ClientCampaignPage = ({
 
   const onDelete = async () => {
     try {
-      await fetch('/api/campaign/delete', {
-        method: 'POST',
+      await fetch("/api/campaign/delete", {
+        method: "POST",
         body: JSON.stringify({
           worldID: world.id,
           campaignID: campaign.id,
@@ -57,14 +57,14 @@ const ClientCampaignPage = ({
       router.push(`/world/${world.id}`);
       router.refresh();
     } catch (error) {
-      console.log('error deleting campaign: ', error);
+      console.log("error deleting campaign: ", error);
     }
   };
 
   const onSave = async () => {
     try {
-      await fetch('/api/campaign/update', {
-        method: 'POST',
+      await fetch("/api/campaign/update", {
+        method: "POST",
         body: JSON.stringify({
           campaignData,
           worldID: world.id,
@@ -72,7 +72,7 @@ const ClientCampaignPage = ({
       });
       router.refresh();
     } catch (error) {
-      console.log('error updating campaign: ', error);
+      console.log("error updating campaign: ", error);
     }
   };
 
@@ -80,44 +80,44 @@ const ClientCampaignPage = ({
     try {
       const base64: string = (await base64Converter(uploadedFile)) as string;
       const filePath = `worlds/${world.id}/campaigns/${campaign.id}/image`;
-      await fetch('/api/image/create', {
-        method: 'POST',
+      await fetch("/api/image/create", {
+        method: "POST",
         body: JSON.stringify({ base64, filePath, worldID: world.id }),
       }).then((res) =>
         res.json().then((url: string) => {
           setCampaignData({ ...campaignData, image: url });
           router.refresh();
-        })
+        }),
       );
     } catch (error) {
-      console.log('error submitting image: ', error);
+      console.log("error submitting image: ", error);
     }
   };
 
   const onImageDelete = async () => {
     try {
       const filePath = `worlds/${world.id}/campaigns/${campaign.id}/image`;
-      await fetch('/api/image/delete', {
-        method: 'POST',
+      await fetch("/api/image/delete", {
+        method: "POST",
         body: JSON.stringify({
           filePath,
           worldID: world.id,
         }),
       }).then(() => {
-        setCampaignData({ ...campaignData, image: '' });
+        setCampaignData({ ...campaignData, image: "" });
         router.refresh();
       });
     } catch (error) {
-      console.log('error deleting image: ', error);
+      console.log("error deleting image: ", error);
     }
   };
 
   if (!mounted) {
-    return <div className='w-full h-full bg-white' />;
+    return <div className="h-full w-full bg-white" />;
   }
 
   return (
-    <div className='flex flex-col w-full h-full mb-12'>
+    <div className="mb-12 flex h-full w-full flex-col">
       <PageHeader<CampaignDB>
         data={campaignData}
         setData={setCampaignData}
@@ -127,9 +127,9 @@ const ClientCampaignPage = ({
         session={session}
         contributors={contributors}
       />
-      <div className='flex flex-col items-start gap-6 p-4 overflow-y-scroll bg-white md:gap-10 md:px-16 md:py-6 grow isolate scrollbar-hide'>
-        <div className='relative min-h-[352px] max-h-[352px] w-full rounded-2xl bg-lore-beige-400'>
-          <div className='absolute flex bottom-4 right-4'>
+      <div className="isolate flex grow flex-col items-start gap-6 overflow-y-scroll bg-white p-4 scrollbar-hide md:gap-10 md:px-16 md:py-6">
+        <div className="relative max-h-[352px] min-h-[352px] w-full rounded-2xl bg-lore-beige-400">
+          <div className="absolute bottom-4 right-4 flex">
             <ImageSettings<CampaignDB>
               data={campaignData}
               setData={setCampaignData}
@@ -140,9 +140,9 @@ const ClientCampaignPage = ({
           </div>
           {campaignData.image && (
             <img
-              className='object-cover w-full h-full rounded-lg'
+              className="h-full w-full rounded-lg object-cover"
               src={`${campaignData.image}?${Date.now()}`}
-              alt=''
+              alt=""
             />
           )}
         </div>

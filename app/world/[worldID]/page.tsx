@@ -1,9 +1,9 @@
-"use server"
-import { getPermissions, getWorld } from '@/lib/db';
-import { notFound } from 'next/navigation';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Session, getServerSession } from 'next-auth';
-import ClientWorldPage from '@/components/pages/ClientWorldPage';
+"use server";
+import ClientWorldPage from "@/components/pages/ClientWorldPage";
+import { getPermissions, getWorld } from "@/lib/db";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession, Session } from "next-auth";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: {
@@ -21,7 +21,7 @@ export default async function WorldPage({ params }: Props) {
   }
 
   const permissions = await getPermissions(email, params.worldID);
-  console.log({permissions})
+  console.log({ permissions });
 
   return (
     <>

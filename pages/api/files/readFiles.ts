@@ -1,15 +1,13 @@
-import { readDataFromFile } from '@/utils/storeMessages';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { readDataFromFile } from "@/utils/storeMessages";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
-    request: NextApiRequest,
-    response: NextApiResponse
-  ) {
-    
+  request: NextApiRequest,
+  response: NextApiResponse,
+) {
   const { id } = request.query;
   try {
-    const data = await readDataFromFile(id as string, './messages');
-    
+    const data = await readDataFromFile(id as string, "./messages");
 
     response.json(data);
   } catch (error: any) {

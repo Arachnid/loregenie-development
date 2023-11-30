@@ -1,11 +1,11 @@
-import { storage } from '@/lib/db';
-import { PermissionLevel } from '@/types';
-import { hasPermission } from '@/utils/validation/hasPermission';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { storage } from "@/lib/db";
+import { PermissionLevel } from "@/types";
+import { hasPermission } from "@/utils/validation/hasPermission";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   const { filePath, worldID }: { filePath: string; worldID: string } =
     JSON.parse(request.body);
@@ -20,7 +20,7 @@ export default async function handler(
     const fileRef = storage.bucket().file(filePath);
     const deleteImage = await fileRef.delete();
   } catch (error) {
-    console.log('error deleting image from storage: ', error);
+    console.log("error deleting image from storage: ", error);
     response.statusCode = 500;
     response.send({});
     return;

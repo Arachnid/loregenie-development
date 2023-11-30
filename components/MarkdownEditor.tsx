@@ -1,28 +1,27 @@
-import Prism from 'prismjs';
-import 'prismjs/components/prism-markdown';
-import React, { SetStateAction, useCallback, useMemo } from 'react';
-import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
-import { Text, createEditor, Descendant, BaseEditor } from 'slate';
-import { withHistory } from 'slate-history';
-import { css } from '@emotion/css';
-import { Node } from 'slate';
+import { css } from "@emotion/css";
+import Prism from "prismjs";
+import "prismjs/components/prism-markdown";
+import { SetStateAction, useCallback, useMemo } from "react";
+import { BaseEditor, createEditor, Descendant, Node, Text } from "slate";
+import { withHistory } from "slate-history";
+import { Editable, ReactEditor, Slate, withReact } from "slate-react";
 
 const serialize = (value: Descendant[]) => {
-  return value.map((n) => Node.string(n)).join('\n');
+  return value.map((n) => Node.string(n)).join("\n");
 };
 
 const deserialize = (string: string) => {
-  return string.split('\n').map((line) => {
+  return string.split("\n").map((line) => {
     return {
       children: [{ text: line }],
     };
   });
 };
 
-type CustomElement = { type: 'paragraph'; children: CustomText[] };
+type CustomElement = { type: "paragraph"; children: CustomText[] };
 type CustomText = { text: string };
 
-declare module 'slate' {
+declare module "slate" {
   interface CustomTypes {
     Editor: BaseEditor & ReactEditor;
     Element: CustomElement;
@@ -43,7 +42,7 @@ const MarkdownEditor = <T extends {}>({
 }: Props<T>) => {
   const renderLeaf = useCallback((props: any) => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
-  const initialValue = useMemo(() => deserialize(initialText || ''), []);
+  const initialValue = useMemo(() => deserialize(initialText || ""), []);
   const decorate = useCallback(([node, path]: any): any => {
     const ranges: any = [];
 
@@ -52,9 +51,9 @@ const MarkdownEditor = <T extends {}>({
     }
 
     const getLength = (token: any) => {
-      if (typeof token === 'string') {
+      if (typeof token === "string") {
         return token.length;
-      } else if (typeof token.content === 'string') {
+      } else if (typeof token.content === "string") {
         return token.content.length;
       } else {
         return token.content.reduce((l: any, t: any) => l + getLength(t), 0);
@@ -68,7 +67,7 @@ const MarkdownEditor = <T extends {}>({
       const length = getLength(token);
       const end = start + length;
 
-      if (typeof token !== 'string') {
+      if (typeof token !== "string") {
         ranges.push({
           [token.type]: true,
           anchor: { path, offset: start },
@@ -88,7 +87,7 @@ const MarkdownEditor = <T extends {}>({
       value={initialValue as Descendant[]}
       onChange={(value) => {
         const isAstChange = editor.operations.some(
-          (op) => 'set_selection' !== op.type
+          (op) => "set_selection" !== op.type,
         );
         if (isAstChange) {
           setData({ ...data, description: serialize(value) });
@@ -98,7 +97,7 @@ const MarkdownEditor = <T extends {}>({
       <Editable
         decorate={decorate}
         renderLeaf={renderLeaf}
-        placeholder='Description'
+        placeholder="Description"
       />
     </Slate>
   );
@@ -109,9 +108,9 @@ const Leaf = ({ attributes, children, leaf }: any) => {
     <span
       {...attributes}
       className={css`
-        font-weight: ${leaf.bold && 'bold'};
-        font-style: ${leaf.italic && 'italic'};
-        text-decoration: ${leaf.underlined && 'underline'};
+        font-weight: ${leaf.bold && "bold"};
+        font-style: ${leaf.italic && "italic"};
+        text-decoration: ${leaf.underlined && "underline"};
         ${leaf.title &&
         css`
           display: inline-block;

@@ -1,11 +1,11 @@
-import { db } from '@/lib/db';
-import { PermissionLevel } from '@/types';
-import { hasPermission } from '@/utils/validation/hasPermission';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { db } from "@/lib/db";
+import { PermissionLevel } from "@/types";
+import { hasPermission } from "@/utils/validation/hasPermission";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   const { worldID }: { worldID: string } = JSON.parse(request.body);
 
@@ -17,9 +17,9 @@ export default async function handler(
       response.send({});
       return;
     }
-    await db.recursiveDelete(db.collection('worlds').doc(worldID));
+    await db.recursiveDelete(db.collection("worlds").doc(worldID));
   } catch (error) {
-    console.log('error deleting world from database: ', error);
+    console.log("error deleting world from database: ", error);
     response.statusCode = 500;
     response.send({});
     return;

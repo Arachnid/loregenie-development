@@ -1,11 +1,11 @@
-import { db } from '@/lib/db';
-import { PermissionLevel } from '@/types';
-import { hasPermission } from '@/utils/validation/hasPermission';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { db } from "@/lib/db";
+import { PermissionLevel } from "@/types";
+import { hasPermission } from "@/utils/validation/hasPermission";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   const { campaignID, worldID }: { campaignID: string; worldID: string } =
     JSON.parse(request.body);
@@ -20,13 +20,13 @@ export default async function handler(
     }
     await db.recursiveDelete(
       db
-        .collection('worlds')
+        .collection("worlds")
         .doc(worldID)
-        .collection('campaigns')
-        .doc(campaignID)
+        .collection("campaigns")
+        .doc(campaignID),
     );
   } catch (error) {
-    console.log('error deleting campaign from database: ', error);
+    console.log("error deleting campaign from database: ", error);
     response.statusCode = 500;
     response.send({});
     return;

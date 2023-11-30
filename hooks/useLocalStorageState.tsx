@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const parse = (value: string) => {
   try {
@@ -11,21 +11,21 @@ const parse = (value: string) => {
 export const useLocalStorageState = <T extends {}>(
   key: string,
   initialState: T,
-): [ T, Dispatch<SetStateAction<T>>] => {
-  const [ state, setState ] = useState<T>(initialState);
+): [T, Dispatch<SetStateAction<T>>] => {
+  const [state, setState] = useState<T>(initialState);
 
   useEffect(() => {
     const item = localStorage.getItem(key);
     if (item) {
       setState(parse(item));
     }
-  }, [ key ]);
+  }, [key]);
 
   useEffect(() => {
     if (JSON.stringify(state) !== JSON.stringify(initialState)) {
       localStorage.setItem(key, JSON.stringify(state));
     }
-  }, [ initialState, key, state ]);
+  }, [initialState, key, state]);
 
-  return [ state, setState ];
+  return [state, setState];
 };

@@ -1,17 +1,9 @@
-import OpenAI, { ClientOptions } from "openai";
-import {
-  ChatCompletionMessageParam,
-  ChatCompletionSystemMessageParam,
-} from "openai/resources";
-const { OPENAI_API_KEY } = process.env;
-import fs, { stat } from "fs";
-import { readDataFromFile } from "@/utils/storeMessages";
-import path from "path";
-import {
-  MessageContentImageFile,
-  MessageContentText,
-} from "openai/resources/beta/threads/messages/messages";
 import { World, WorldDB } from "@/types";
+import fs from "fs";
+import OpenAI, { ClientOptions } from "openai";
+import { MessageContentText } from "openai/resources/beta/threads/messages/messages";
+import path from "path";
+const { OPENAI_API_KEY } = process.env;
 
 export class AiAssistant {
   private openai: OpenAI;
@@ -27,19 +19,17 @@ export class AiAssistant {
   private toolOuputs: any;
   private currentMessageObj: any;
 
-
-  constructor( ) {
+  constructor() {
     // this.worldId = world.id;
     // this.world = world;
     this.openai = new OpenAI(this.APIKEY);
   }
 
-
-  private getInstruction (kind: string, context: Array<string>) {
-    return`
+  private getInstruction(kind: string, context: Array<string>) {
+    return `
         The user is requesting a ${kind}. Here is relevant context to the setting in which this ${kind} exists:
 
-        ${context.map((c) => `---\n${c}\n---`).join('\n')}
+        ${context.map((c) => `---\n${c}\n---`).join("\n")}
 
         Respond with a JSON object, following this template exactly:
 
@@ -49,19 +39,24 @@ export class AiAssistant {
         - imagePrompt: A description of a header image that captures the setting, written in a way that someone who has never heard of the setting could paint a picture.
         ---
 
-        `
+        `;
+  }
+
+  private get template() {
+    return {
+      world: this.getInstruction("world", []),
+      campaign: (id: string) =>
+        this.getInstruction("campaign", [
+          `name: ${this.world.campaigns.find((campaign) => campaign.id === id)
+            ?.name}`,
+          `description:  ${this.world.campaigns.find(
+            (campaign) => campaign.id === id,
+          )?.description}`,
+        ]),
     };
-
-    private get template() {
-        return {
-            world: this.getInstruction('world', []),
-            campaign: (id: string ) => this.getInstruction('campaign', [`name: ${this.world.campaigns.find(campaign => campaign.id === id)?.name}`, `description:  ${this.world.campaigns.find(campaign => campaign.id === id)?.description}`])
-        };
-      }
-
+  }
 
   private customFunctions() {
-
     enum contentType {
       world = "world",
       campaign = "campaign",
@@ -74,7 +69,6 @@ export class AiAssistant {
         type: contentType;
         prompt: string;
       }) => {
-
         let template = this.template.world;
 
         const threadid = await this.createThread(true);
@@ -82,39 +76,35 @@ export class AiAssistant {
         const run = await this.runThread(template, threadid);
 
         try {
-            let retryCount = 0;
-            const maxRetries = 20;
-      
-            while (retryCount < maxRetries) {
-              let retrieval = await this.openai.beta.threads.runs.retrieve(
-                threadid,
-                run
-              );
-      
-              if (retrieval.status === "completed") {
+          let retryCount = 0;
+          const maxRetries = 20;
 
-                console.log({retrieval});
-                // save update to db / temporary storage
-                return retrieval;
+          while (retryCount < maxRetries) {
+            let retrieval = await this.openai.beta.threads.runs.retrieve(
+              threadid,
+              run,
+            );
 
-              } else if (retrieval.status === "failed") {
-                throw new Error(retrieval.last_error?.message);
-              } else {
-                await new Promise((resolve) => setTimeout(resolve, 3000));
-                retryCount++;
-              }
+            if (retrieval.status === "completed") {
+              console.log({ retrieval });
+              // save update to db / temporary storage
+              return retrieval;
+            } else if (retrieval.status === "failed") {
+              throw new Error(retrieval.last_error?.message);
+            } else {
+              await new Promise((resolve) => setTimeout(resolve, 3000));
+              retryCount++;
             }
-        
-        } catch (error:any){
-            console.log({error})
+          }
+        } catch (error: any) {
+          console.log({ error });
         }
       },
-      
-      update_page: ({type, context}:{type: string, context: any}) => {
+
+      update_page: ({ type, context }: { type: string; context: any }) => {
         let contxt = context || [];
 
-        const INSTRUCTION_FOR_WORLD_CREATION =
-        `
+        const INSTRUCTION_FOR_WORLD_CREATION = `
           The user is requesting a ${type}. Here is relevant context to the setting in which this ${type} exists:
 
           ---\n description: ${contxt?.name}\n---\n
@@ -134,22 +124,20 @@ export class AiAssistant {
         //get object from ai
         //clean object
         //store object in db
-        // read world file  
+        // read world file
         //update world file
-    }
+      },
     };
   }
 
-  async uploadFile( _filepath?: string ) {
-    if(!this.worldId){
-        return;
+  async uploadFile(_filepath?: string) {
+    if (!this.worldId) {
+      return;
     }
 
-    const filePath = _filepath ? _filepath : path.join(
-      process.cwd(),
-      "./messages",
-      `${this.worldId}.json`
-    );
+    const filePath = _filepath
+      ? _filepath
+      : path.join(process.cwd(), "./messages", `${this.worldId}.json`);
 
     // Upload a file with an "assistants" purpose
     const file = await this.openai.files.create({
@@ -166,7 +154,7 @@ export class AiAssistant {
         "You are a helpful assistant, use the knowledge base provided to answer questions and follow the instructions exactly, and use the functions provided, if they are provided when neccessary",
       model: "gpt-4-1106-preview",
       tools: [
-        {type: "code_interpreter"},
+        { type: "code_interpreter" },
         // {type:"retrieval"},
         // {
         //   type: "function",
@@ -191,16 +179,23 @@ export class AiAssistant {
           type: "function",
           function: {
             name: "update_page",
-            description: "this function allow a user to get a prompt to update the current webpage. The response is a prompt that needs to be followed",
+            description:
+              "this function allow a user to get a prompt to update the current webpage. The response is a prompt that needs to be followed",
             parameters: {
               type: "object",
               properties: {
                 type: { type: "string", enum: ["world", "campaign", "entry"] },
                 context: {
                   type: "object",
-                  properties:{
-                    name:{type: "string", description: " This is the name of the world"},
-                    description:{type: "string", description: " This is the description of the world"}
+                  properties: {
+                    name: {
+                      type: "string",
+                      description: " This is the name of the world",
+                    },
+                    description: {
+                      type: "string",
+                      description: " This is the description of the world",
+                    },
                   },
                 },
               },
@@ -212,15 +207,14 @@ export class AiAssistant {
       file_ids: fileIdArray,
     });
 
-    console.log({assistant: assistant });
+    console.log({ assistant: assistant });
     this.assistantId = assistant.id;
   }
 
   async retrieveAssistant({ assistantId }: { assistantId: string }) {
     try {
-      const myAssistant = await this.openai.beta.assistants.retrieve(
-        assistantId
-      );
+      const myAssistant =
+        await this.openai.beta.assistants.retrieve(assistantId);
       this.assistantId = myAssistant.id;
     } catch (error: any) {
       console.log({ message: error.message });
@@ -230,57 +224,53 @@ export class AiAssistant {
   async createThread(external = false) {
     const threadId = (await this.openai.beta.threads.create()).id;
 
-    if(!external){
-        this.threadId = threadId;
+    if (!external) {
+      this.threadId = threadId;
     }
-    return threadId
+    return threadId;
   }
 
   async sendMessage(message: string, _threadId?: string) {
-    
     let threadId: string;
 
-    if(_threadId) {
-        threadId = _threadId;
+    if (_threadId) {
+      threadId = _threadId;
     } else {
-        threadId = this.threadId;
+      threadId = this.threadId;
     }
-    
-    try {
 
-        const newMessage = await this.openai.beta.threads.messages.create(
-            threadId,
-          {
-            role: "user",
-            content: message,
-          }
-    
-        );
-    
-        this.currentMessageObj = newMessage;
-    
-        return newMessage;
-        
+    try {
+      const newMessage = await this.openai.beta.threads.messages.create(
+        threadId,
+        {
+          role: "user",
+          content: message,
+        },
+      );
+
+      this.currentMessageObj = newMessage;
+
+      return newMessage;
     } catch (error: any) {
-        console.log({msg: error.message, error})
+      console.log({ msg: error.message, error });
     }
   }
 
   async runThread(instructions?: string, _threadId?: string, external = false) {
     let threadId: string;
 
-    if(_threadId) {
-        threadId = _threadId;
+    if (_threadId) {
+      threadId = _threadId;
     } else {
-        threadId = this.threadId;
+      threadId = this.threadId;
     }
 
     const runs = await this.openai.beta.threads.runs.create(threadId, {
       assistant_id: this.assistantId,
-      instructions
+      instructions,
     });
 
-    if(!external){
+    if (!external) {
       this.runId = runs.id;
     }
 
@@ -290,7 +280,7 @@ export class AiAssistant {
   async checkRunIfActionIsRequired() {
     let retrieval = await this.openai.beta.threads.runs.retrieve(
       this.threadId,
-      this.runId
+      this.runId,
     );
 
     if (retrieval.status === "requires_action") {
@@ -307,22 +297,26 @@ export class AiAssistant {
       const outputPromises = this.toolCalls.map(async (val: any) => {
         const functionName = val.function.name;
         const args = JSON.parse(val.function.arguments);
-  
+
         if (functionName === "generate_new_page_content") {
-          const funcResult = await this.customFunctions().generate_new_page_content(args);
+          const funcResult =
+            await this.customFunctions().generate_new_page_content(args);
           return {
             tool_call_id: val.id,
             output: funcResult,
           };
         } else if (functionName === "update_page") {
-          const functionResult = await this.customFunctions().update_page({type: args.type, context: args.context});
+          const functionResult = await this.customFunctions().update_page({
+            type: args.type,
+            context: args.context,
+          });
           return {
             tool_call_id: val.id,
             output: functionResult,
           };
         }
       });
-  
+
       const outputs = await Promise.all(outputPromises);
       console.log({ fnc_output: outputs });
       this.toolOuputs = outputs;
@@ -330,7 +324,6 @@ export class AiAssistant {
       console.log("tool calls not yet defined by Assistant");
     }
   }
-  
 
   async runAction() {
     if (!this.toolOuputs) {
@@ -339,17 +332,16 @@ export class AiAssistant {
     }
 
     try {
-
-        const run = await this.openai.beta.threads.runs.submitToolOutputs(
-            this.threadId,
-            this.runId,
-            {
-              tool_outputs: this.toolOuputs,
-            }
-          );
-
+      const run = await this.openai.beta.threads.runs.submitToolOutputs(
+        this.threadId,
+        this.runId,
+        {
+          tool_outputs: this.toolOuputs,
+        },
+      );
     } catch (error: any) {
-        console.error(error.message)    }
+      console.error(error.message);
+    }
   }
 
   async checkStatus() {
@@ -360,10 +352,15 @@ export class AiAssistant {
       while (retryCount < maxRetries) {
         let retrieval = await this.openai.beta.threads.runs.retrieve(
           this.threadId,
-          this.runId
+          this.runId,
         );
 
-        console.log({retrieval, action: retrieval.required_action?.submit_tool_outputs?.tool_calls[0].function})
+        console.log({
+          retrieval,
+          action:
+            retrieval.required_action?.submit_tool_outputs?.tool_calls[0]
+              .function,
+        });
 
         this.runStatus = retrieval.status;
 
@@ -396,14 +393,14 @@ export class AiAssistant {
 
   async getLatestMessage() {
     const messages = await this.openai.beta.threads.messages.list(
-      this.threadId
+      this.threadId,
     );
     if (messages) {
       const lastRunMessage: OpenAI.Beta.Threads.Messages.ThreadMessage =
         messages.data
           .filter(
             (messages) =>
-              messages.run_id === this.runId && messages.role === "assistant"
+              messages.run_id === this.runId && messages.role === "assistant",
           )
           .pop()!;
 
@@ -417,24 +414,27 @@ export class AiAssistant {
     return null;
   }
 
-  async cancelRequest({runId, threadId}: {runId?: string, threadId?: string}) {
-    console.log('cancelling requests');
+  async cancelRequest({
+    runId,
+    threadId,
+  }: {
+    runId?: string;
+    threadId?: string;
+  }) {
+    console.log("cancelling requests");
     let run_id;
     let thread_id;
 
-    if(runId && threadId){
-        run_id = runId;
-        thread_id = threadId;
+    if (runId && threadId) {
+      run_id = runId;
+      thread_id = threadId;
     } else {
-        thread_id = this.threadId;
-        run_id = this.runId;
+      thread_id = this.threadId;
+      run_id = this.runId;
     }
 
     if (this.runStatus !== "completed" && this.runStatus !== "failed") {
-      const run = await this.openai.beta.threads.runs.cancel(
-        run_id,
-        thread_id
-      );
+      const run = await this.openai.beta.threads.runs.cancel(run_id, thread_id);
       console.log(run);
     }
   }
@@ -457,15 +457,14 @@ export class AiAssistant {
     filePath?: string;
   }) {
     try {
-
-        if(world){
-            this.world = world as World;
-            this.worldId = world.id;
-        }
+      if (world) {
+        this.world = world as World;
+        this.worldId = world.id;
+      }
 
       //get file
       if (!fileId) {
-        console.log('uplaoding file');
+        console.log("uplaoding file");
         await this.uploadFile(filePath);
       } else {
         this.fileId = fileId;
@@ -473,7 +472,7 @@ export class AiAssistant {
 
       //create assistant / retrieve assistant
       if (!assistantId) {
-        console.log('creating assistant');
+        console.log("creating assistant");
         await this.createAssistant();
       } else {
         this.assistantId = assistantId;
@@ -481,28 +480,28 @@ export class AiAssistant {
 
       // create thread / retrieve a thread
       if (!threadId) {
-        console.log('creating thread');
+        console.log("creating thread");
         await this.createThread();
       } else {
         this.threadId = threadId;
       }
 
       //send message
-      console.log('sending message to ai');
+      console.log("sending message to ai");
       await this.sendMessage(message);
       //run thread
-      console.log('running thread created');
+      console.log("running thread created");
       await this.runThread(threadInstruction);
       //get status
-      console.log('checking status of AI request..');
+      console.log("checking status of AI request..");
       await this.checkStatus();
       //get latest message
-      console.log('getting response form AI');
+      console.log("getting response form AI");
       const response = await this.getLatestMessage();
-      console.log({response});
+      console.log({ response });
 
       if (!response) {
-        console.log('error happened')
+        console.log("error happened");
         throw new Error("Something went wrong generating the response");
       }
 
@@ -518,13 +517,19 @@ export class AiAssistant {
     }
   }
 
-  async generateImage({prompt, size = '1792x1024' }:{prompt: string, size: '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792'}): Promise<string> {
+  async generateImage({
+    prompt,
+    size = "1792x1024",
+  }: {
+    prompt: string;
+    size: "256x256" | "512x512" | "1024x1024" | "1792x1024" | "1024x1792";
+  }): Promise<string> {
     const result = await this.openai.images.generate({
-      model: 'dall-e-3',
+      model: "dall-e-3",
       prompt,
       n: 1,
       size,
-      response_format: 'b64_json',
+      response_format: "b64_json",
     });
     return result.data[0].b64_json as string;
   }

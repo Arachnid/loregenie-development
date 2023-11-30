@@ -1,10 +1,10 @@
-import BaseLayout from '@/components/BaseLayout';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import EntriesNav from '@/components/nav/EntriesNav';
-import { notFound } from 'next/navigation';
-import { getPermissions, getWorld } from '@/lib/db';
-import { World } from '@/types';
+import BaseLayout from "@/components/BaseLayout";
+import EntriesNav from "@/components/nav/EntriesNav";
+import { getPermissions, getWorld } from "@/lib/db";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { World } from "@/types";
+import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
 
 interface Props {
   children: JSX.Element;
@@ -18,7 +18,7 @@ export default async function Layout({ children, params }: Props) {
   const email = session?.user?.email;
   const world: World | undefined = await getWorld(
     params.worldID,
-    email as string
+    email as string,
   );
 
   if (!email || !world) {

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import GenieForm from '@/components/GenieForm';
-import { Campaign, Entry, LoreSchemas, World } from '@/types';
-import { useClientContext } from '@/hooks/useClientContext';
-import ParentDropDown from '@/components/dropdown/ParentDropDown';
-import CategoryDropDown from '@/components/dropdown/CategoryDropDown';
+import CategoryDropDown from "@/components/dropdown/CategoryDropDown";
+import ParentDropDown from "@/components/dropdown/ParentDropDown";
+import GenieForm from "@/components/GenieForm";
+import { useClientContext } from "@/hooks/useClientContext";
+import { Campaign, Entry, LoreSchemas, World } from "@/types";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type Props = {
   world: World;
@@ -24,11 +24,11 @@ const GenerateFormPage = ({
   const router = useRouter();
   const { client } = useClientContext();
 
-  const [defaultParent, setDefaultParent] = useState('');
+  const [defaultParent, setDefaultParent] = useState("");
   const [form, setForm] = useState<Entry>({
-    name: 'Untitled',
-    description: '',
-    image: '',
+    name: "Untitled",
+    description: "",
+    image: "",
     public: false,
   } as Entry);
 
@@ -63,8 +63,8 @@ const GenerateFormPage = ({
   const onCreate = async (prompt?: string) => {
     form.prompt = prompt!;
     try {
-      await fetch('/api/entry/create', {
-        method: 'POST',
+      await fetch("/api/entry/create", {
+        method: "POST",
         body: JSON.stringify({
           entryData: form,
           worldID: world.id,
@@ -75,13 +75,13 @@ const GenerateFormPage = ({
           router.push(
             entry.campaign
               ? `/world/${world.id}/campaign/${entry.campaign.id}/entry/${entry.id}`
-              : `/world/${world.id}/entry/${entry.id}`
+              : `/world/${world.id}/entry/${entry.id}`,
           );
           router.refresh();
-        })
+        }),
       );
     } catch (error) {
-      console.log('error submitting entry: ', error);
+      console.log("error submitting entry: ", error);
     }
   };
 
@@ -97,9 +97,9 @@ const GenerateFormPage = ({
   }
 
   return (
-    <div className='flex flex-col items-center justify-center h-full gap-4 p-4 overflow-y-scroll bg-white md:gap-10 md:px-16 md:py-6 grow isolate scrollbar-hide'>
+    <div className="isolate flex h-full grow flex-col items-center justify-center gap-4 overflow-y-scroll bg-white p-4 scrollbar-hide md:gap-10 md:px-16 md:py-6">
       <GenieForm onCreate={onCreate} disabled={!Boolean(form.category)}>
-        <div className='flex flex-col self-stretch gap-4 md:flex-row'>
+        <div className="flex flex-col gap-4 self-stretch md:flex-row">
           <ParentDropDown
             setData={setForm}
             data={form}

@@ -19,7 +19,7 @@ export interface World extends WorldDB {
   contributors: User[];
 }
 
-export type CampaignDB = Omit<WorldDB, 'prompt'>;
+export type CampaignDB = Omit<WorldDB, "prompt">;
 
 export interface Campaign extends CampaignDB {
   entries: Entry[];
@@ -53,10 +53,10 @@ export const isEntry = (obj: any): obj is Entry => {
 };
 
 export enum Category {
-  NPC = 'NPC',
-  Location = 'Location',
-  Lore = 'Lore',
-  Journal = 'Journal',
+  NPC = "NPC",
+  Location = "Location",
+  Lore = "Lore",
+  Journal = "Journal",
 }
 export const isCategory = (value: string): value is Category => {
   return Object.values<string>(Category).includes(value);
@@ -81,7 +81,7 @@ export interface User {
 }
 
 export enum PermissionLevel {
-  reader = 'reader',
-  writer = 'writer',
-  admin = 'admin',
+  reader = "reader",
+  writer = "writer",
+  admin = "admin",
 }

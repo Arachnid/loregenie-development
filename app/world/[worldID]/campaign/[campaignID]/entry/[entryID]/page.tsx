@@ -1,14 +1,14 @@
-import ClientEntryPage from '@/components/pages/ClientEntryPage';
+import ClientEntryPage from "@/components/pages/ClientEntryPage";
 import {
   getCampaignEntries,
   getCampaignEntry,
   getPermissions,
   getWorld,
-} from '@/lib/db';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Entry, World } from '@/types';
-import { Session, getServerSession } from 'next-auth';
-import { notFound } from 'next/navigation';
+} from "@/lib/db";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { Entry, World } from "@/types";
+import { getServerSession, Session } from "next-auth";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: {
@@ -22,17 +22,17 @@ const CampaignEntryPage = async ({ params }: Props) => {
   const campaignEntry = await getCampaignEntry(
     params.worldID,
     params.campaignID,
-    params.entryID
+    params.entryID,
   );
   const session: Session | null = await getServerSession(authOptions);
   const email = session?.user?.email;
   const world: World | undefined = await getWorld(
     params.worldID,
-    email as string
+    email as string,
   );
   const entries: Entry[] = await getCampaignEntries(
     params.worldID,
-    params.campaignID
+    params.campaignID,
   );
 
   if (!campaignEntry || !email || !world) {
@@ -41,7 +41,7 @@ const CampaignEntryPage = async ({ params }: Props) => {
   const permissions = await getPermissions(
     email,
     params.worldID,
-    params.campaignID
+    params.campaignID,
   );
 
   return (

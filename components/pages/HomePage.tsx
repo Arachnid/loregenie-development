@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { World } from '@/types';
-import GenieForm from '@/components/GenieForm';
-import { Session } from 'next-auth';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import OutsideClickHandler from 'react-outside-click-handler';
-import { signIn } from 'next-auth/react';
-import removeMd from 'remove-markdown';
+import GenieForm from "@/components/GenieForm";
+import { World } from "@/types";
+import { Session } from "next-auth";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import OutsideClickHandler from "react-outside-click-handler";
+import removeMd from "remove-markdown";
 
 type Props = {
   worlds: World[];
@@ -20,9 +20,9 @@ const HomePage = ({ worlds, session }: Props) => {
   const router = useRouter();
 
   const world: Partial<World> = {
-    name: '',
-    description: '',
-    image: '',
+    name: "",
+    description: "",
+    image: "",
     readers: [email],
     writers: [email],
     admins: [email],
@@ -34,52 +34,56 @@ const HomePage = ({ worlds, session }: Props) => {
   const onCreate = async (prompt?: string) => {
     try {
       world.prompt = prompt;
-      await fetch('/api/world/create', {
-        method: 'POST',
+      await fetch("/api/world/create", {
+        method: "POST",
         body: JSON.stringify(world),
       }).then((res) =>
         res.json().then((worldID: string) => {
           router.push(`/world/${worldID}`);
           router.refresh();
-        })
+        }),
       );
     } catch (error) {
-      console.log('error submitting world: ', error);
+      console.log("error submitting world: ", error);
     }
   };
 
   return (
     <>
-      <div className='flex flex-col justify-between h-full overflow-y-scroll scrollbar-hide bg-lore-beige-100'>
+      <div className="flex h-full flex-col justify-between overflow-y-scroll bg-lore-beige-100 scrollbar-hide">
         <img
-          className='fixed object-cover w-full h-full translate-y-80 mix-blend-multiply'
-          src='/background.svg'
-          alt=''
+          className="fixed h-full w-full translate-y-80 object-cover mix-blend-multiply"
+          src="/background.svg"
+          alt=""
         />
-        <div className='z-10 flex flex-col items-center gap-4 p-4 md:gap-6 md:py-12'>
+        <div className="z-10 flex flex-col items-center gap-4 p-4 md:gap-6 md:py-12">
           {worlds.map((world, index) => (
             <div
-              className='flex flex-col md:justify-end gap-4 p-4 cursor-pointer rounded-2xl w-full h-[360px] bg-lore-beige-500 bg-cover md:max-w-[860px] md:h-[400px] md:p-10'
-              style={{backgroundImage: `linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url(${world.image ? world.image : '/eryndor.svg'})`}}
+              className="flex h-[360px] w-full cursor-pointer flex-col gap-4 rounded-2xl bg-lore-beige-500 bg-cover p-4 md:h-[400px] md:max-w-[860px] md:justify-end md:p-10"
+              style={{
+                backgroundImage: `linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url(${
+                  world.image ? world.image : "/eryndor.svg"
+                })`,
+              }}
               onClick={() => router.push(`/world/${world.id}`)}
               key={index}
             >
-              <div className='flex flex-col-reverse items-end justify-between h-full gap-20 md:flex-row'>
-                <div className='flex flex-col w-full gap-2 text-white'>
-                  <p className='flex font-cinzel font-medium text-[40px] leading-[54px] text-center justify-center md:justify-start'>
-                    {world.name ? world.name.toUpperCase() : 'UNTITLED'}
+              <div className="flex h-full flex-col-reverse items-end justify-between gap-20 md:flex-row">
+                <div className="flex w-full flex-col gap-2 text-white">
+                  <p className="flex justify-center text-center font-cinzel text-[40px] font-medium leading-[54px] md:justify-start">
+                    {world.name ? world.name.toUpperCase() : "UNTITLED"}
                   </p>
-                  <p className='hidden text-lg font-light leading-5 md:line-clamp-6'>
+                  <p className="hidden text-lg font-light leading-5 md:line-clamp-6">
                     {removeMd(world.description)}
                   </p>
                 </div>
-                <div className='flex gap-2 md:flex-col-reverse'>
+                <div className="flex gap-2 md:flex-col-reverse">
                   {world.contributors.map((contributor, index) => (
-                    <div className='w-12 h-12' key={index}>
+                    <div className="h-12 w-12" key={index}>
                       <img
-                        className='w-full h-full rounded-full'
+                        className="h-full w-full rounded-full"
                         src={contributor.image}
-                        alt=''
+                        alt=""
                       />
                     </div>
                   ))}
@@ -88,38 +92,38 @@ const HomePage = ({ worlds, session }: Props) => {
             </div>
           ))}
           <div
-            className='flex flex-col md:justify-end gap-4 p-4 cursor-pointer rounded-2xl w-full h-[360px] bg-lore-beige-500 bg-cover bg-top 
-            bg-[linear-gradient(0deg,rgba(0,0,0,0.75),rgba(0,0,0,0.75)),url("/create-world-background.png")]
-            md:bg-[linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url("/create-world-background.png")]
-            md:max-w-[860px] md:h-[400px] md:p-10'
+            className='flex h-[360px] w-full cursor-pointer flex-col gap-4 rounded-2xl bg-lore-beige-500 bg-[linear-gradient(0deg,rgba(0,0,0,0.75),rgba(0,0,0,0.75)),url("/create-world-background.png")] bg-cover bg-top p-4 
+            md:h-[400px]
+            md:max-w-[860px]
+            md:justify-end md:bg-[linear-gradient(180deg,rgba(0,0,0,0)0%,rgba(0,0,0,0.75)100%),url("/create-world-background.png")] md:p-10'
             onClick={() =>
               session?.user?.email ? setGenieFormOpen(true) : signIn()
             }
           >
-            <div className='flex flex-col self-stretch justify-between h-full gap-4 text-white md:gap-20 md:items-end md:flex-row'>
-              <div className='flex flex-col gap-2 grow'>
-                <p className='flex justify-center font-cinzel font-medium text-[40px] leading-[54px] text-center md:text-left md:justify-start'>
+            <div className="flex h-full flex-col justify-between gap-4 self-stretch text-white md:flex-row md:items-end md:gap-20">
+              <div className="flex grow flex-col gap-2">
+                <p className="flex justify-center text-center font-cinzel text-[40px] font-medium leading-[54px] md:justify-start md:text-left">
                   CREATE A NEW WORLD
                 </p>
-                <p className='self-stretch text-lg font-light leading-5 text-center md:text-left'>
+                <p className="self-stretch text-center text-lg font-light leading-5 md:text-left">
                   Use Lore Genie to create your next world for your next
                   homebrew campaign.
                 </p>
               </div>
-              <div className='flex items-center justify-center gap-2 px-8 py-6 font-medium transition-all duration-300 ease-out rounded-full bg-lore-red-400 hover:bg-lore-red-500'>
-                <p className='text-xl leading-6 text-center min-w-max'>
+              <div className="flex items-center justify-center gap-2 rounded-full bg-lore-red-400 px-8 py-6 font-medium transition-all duration-300 ease-out hover:bg-lore-red-500">
+                <p className="min-w-max text-center text-xl leading-6">
                   Get Started
                 </p>
-                <span className='material-icons'>east</span>
+                <span className="material-icons">east</span>
               </div>
             </div>
           </div>
         </div>
-        <div className='flex flex-col self-stretch gap-4 px-12 py-6'>
-          <div className='flex items-center self-stretch gap-40'>
-            <div className='flex flex-col items-center gap-6 md:flex-row grow'>
-              <img className='w-[83px]' src='/lore-genie-logo-2.svg' alt='' />
-              <p className='text-xs text-center md:text-left grow'>
+        <div className="flex flex-col gap-4 self-stretch px-12 py-6">
+          <div className="flex items-center gap-40 self-stretch">
+            <div className="flex grow flex-col items-center gap-6 md:flex-row">
+              <img className="w-[83px]" src="/lore-genie-logo-2.svg" alt="" />
+              <p className="grow text-center text-xs md:text-left">
                 All AI-generated content is Copyright 2022 Lore Genie and
                 licensed <u>CC-BY</u>.<br />
                 Note that we may use content you generate with Lore Genie to
@@ -133,9 +137,9 @@ const HomePage = ({ worlds, session }: Props) => {
         <>
           <OutsideClickHandler
             onOutsideClick={() => setGenieFormOpen(false)}
-            display='contents'
+            display="contents"
           >
-            <div className='absolute z-20 w-full px-2 -translate-x-1/2 -translate-y-1/2 md:w-auto top-1/2 left-1/2'>
+            <div className="absolute top-1/2 left-1/2 z-20 w-full -translate-x-1/2 -translate-y-1/2 px-2 md:w-auto">
               <GenieForm
                 onCreate={onCreate}
                 setOpen={setGenieFormOpen}
@@ -143,7 +147,7 @@ const HomePage = ({ worlds, session }: Props) => {
               />
             </div>
           </OutsideClickHandler>
-          <div className='fixed inset-0 z-10 w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50' />
+          <div className="fixed inset-0 z-10 h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50" />
         </>
       )}
     </>

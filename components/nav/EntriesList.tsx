@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Campaign, Entry, EntryHierarchy, World } from '@/types';
-import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
-import { getActiveID } from '@/utils/getActiveID';
-import { getIcon } from '@/utils/getIcon';
-import { Collapse } from '@mui/material';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Campaign, Entry, EntryHierarchy, World } from "@/types";
+import { createEntryHierarchy } from "@/utils/createEntryHierarchy";
+import { getActiveID } from "@/utils/getActiveID";
+import { getIcon } from "@/utils/getIcon";
+import { Collapse } from "@mui/material";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type Props = {
   entries: Entry[];
@@ -22,7 +22,7 @@ interface Open {
 const expandHandler = (
   id: string,
   open: Open,
-  setOpen: Dispatch<SetStateAction<Open>>
+  setOpen: Dispatch<SetStateAction<Open>>,
 ) => {
   const newOpen: Open = Object.assign({}, open, { [id]: !open[id] });
   setOpen(newOpen);
@@ -52,7 +52,7 @@ const RecursiveEntries = ({
         initialState[entry.id] = true;
         setParentToOpen(
           entries.find((entry2) => entry2.id === entry.parent?.id),
-          initialState
+          initialState,
         );
       }
       if (campaignID) {
@@ -71,7 +71,7 @@ const RecursiveEntries = ({
     if (activeEntryID) {
       setParentToOpen(
         entries.find((entry) => entry.id === activeEntryID),
-        initialState
+        initialState,
       );
     }
     return initialState;
@@ -81,15 +81,15 @@ const RecursiveEntries = ({
 
   if (campaign) {
     return (
-      <div className='flex'>
-        <ul className='flex flex-col w-full'>
-          <div className='flex items-center gap-2 p-2 transition-all duration-300 ease-out rounded-lg h-9 hover:bg-lore-beige-300'>
-            <li className='flex items-center justify-between w-full'>
+      <div className="flex">
+        <ul className="flex w-full flex-col">
+          <div className="flex h-9 items-center gap-2 rounded-lg p-2 transition-all duration-300 ease-out hover:bg-lore-beige-300">
+            <li className="flex w-full items-center justify-between">
               <Link
                 className={`flex items-center gap-2 ${
                   selected === campaign.id
-                    ? 'text-lore-red-400'
-                    : 'text-lore-blue-400'
+                    ? "text-lore-red-400"
+                    : "text-lore-blue-400"
                 }`}
                 href={`/world/${world.id}/campaign/${campaign.id}`}
                 onClick={() => {
@@ -97,31 +97,31 @@ const RecursiveEntries = ({
                 }}
               >
                 {selected === campaign.id ? (
-                  <span className='flex justify-center items-center text-[20px] material-icons'>
+                  <span className="material-icons flex items-center justify-center text-[20px]">
                     folder
                   </span>
                 ) : (
-                  <span className='flex justify-center items-center text-[20px] material-icons-outlined'>
+                  <span className="material-icons-outlined flex items-center justify-center text-[20px]">
                     folder
                   </span>
                 )}
-                <p>{campaign.name ? campaign.name : 'Untitled Campaign'}</p>
+                <p>{campaign.name ? campaign.name : "Untitled Campaign"}</p>
               </Link>
               {campaign.entries && campaign.entries.length > 0 && (
                 <div
                   className={`flex cursor-pointer ${
                     selected === campaign.id
-                      ? 'text-lore-red-400'
-                      : 'text-lore-blue-400'
+                      ? "text-lore-red-400"
+                      : "text-lore-blue-400"
                   }`}
                   onClick={() => expandHandler(campaign.id, open, setOpen)}
                 >
                   {open[campaign.id] ? (
-                    <span className='flex justify-center items-center text-[16px] material-icons'>
+                    <span className="material-icons flex items-center justify-center text-[16px]">
                       remove
                     </span>
                   ) : (
-                    <span className='flex justify-center items-center text-[16px] material-icons'>
+                    <span className="material-icons flex items-center justify-center text-[16px]">
                       add
                     </span>
                   )}
@@ -130,7 +130,7 @@ const RecursiveEntries = ({
             </li>
           </div>
           {campaign.entries && campaign.entries.length > 0 && (
-            <Collapse in={open[campaign.id]} timeout='auto' unmountOnExit>
+            <Collapse in={open[campaign.id]} timeout="auto" unmountOnExit>
               <RecursiveEntries
                 entryHierarchy={createEntryHierarchy(campaign.entries)}
                 world={world}
@@ -147,35 +147,35 @@ const RecursiveEntries = ({
   }
 
   return (
-    <div className='flex'>
+    <div className="flex">
       {iteration === 2 && (
-        <div className='flex flex-col mb-7 ml-[16px]'>
-          <div className='bg-lore-beige-500 w-[2px] h-full' />
+        <div className="mb-7 ml-[16px] flex flex-col">
+          <div className="h-full w-[2px] bg-lore-beige-500" />
         </div>
       )}
       {iteration > 2 && (
-        <div className='flex flex-col mb-7 ml-[34px]'>
-          <div className='bg-lore-beige-500 w-[2px] h-full' />
+        <div className="mb-7 ml-[34px] flex flex-col">
+          <div className="h-full w-[2px] bg-lore-beige-500" />
         </div>
       )}
-      <ul className='flex flex-col w-full'>
+      <ul className="flex w-full flex-col">
         {entryHierarchy.map((entry: EntryHierarchy, index) => {
           return (
             <div key={index}>
-              <div className='flex items-center'>
+              <div className="flex items-center">
                 {iteration !== 1 && (
                   <img
-                    className='mb-5 -ml-[2px]'
-                    src='/menu-line-curve.svg'
-                    alt='-'
+                    className="mb-5 -ml-[2px]"
+                    src="/menu-line-curve.svg"
+                    alt="-"
                   />
                 )}
-                <li className='flex items-center justify-between w-full gap-2 p-2 transition-all duration-300 ease-out rounded-lg h-9 hover:bg-lore-beige-300'>
+                <li className="flex h-9 w-full items-center justify-between gap-2 rounded-lg p-2 transition-all duration-300 ease-out hover:bg-lore-beige-300">
                   <Link
                     className={`flex items-center gap-2 ${
                       selected === entry.id
-                        ? 'text-lore-red-400'
-                        : 'text-lore-blue-400'
+                        ? "text-lore-red-400"
+                        : "text-lore-blue-400"
                     }`}
                     href={
                       campaignID
@@ -190,31 +190,31 @@ const RecursiveEntries = ({
                       (selected === entry.id
                         ? getIcon(
                             entry.category,
-                            'flex justify-center items-center text-[20px] material-icons'
+                            "flex justify-center items-center text-[20px] material-icons",
                           )
                         : getIcon(
                             entry.category,
-                            'flex justify-center items-center text-[20px] material-icons-outlined'
+                            "flex justify-center items-center text-[20px] material-icons-outlined",
                           ))}
-                    <p className='w-max'>
-                      {entry.name ? entry.name : 'Untitled'}
+                    <p className="w-max">
+                      {entry.name ? entry.name : "Untitled"}
                     </p>
                   </Link>
                   {entry.children && entry.children.length > 0 && (
                     <div
                       className={`flex cursor-pointer ${
                         selected === entry.id
-                          ? 'text-lore-red-400'
-                          : 'text-lore-blue-400'
+                          ? "text-lore-red-400"
+                          : "text-lore-blue-400"
                       }`}
                       onClick={() => expandHandler(entry.id, open, setOpen)}
                     >
                       {open[entry.id] ? (
-                        <span className='flex justify-center items-center text-[16px] material-icons'>
+                        <span className="material-icons flex items-center justify-center text-[16px]">
                           remove
                         </span>
                       ) : (
-                        <span className='flex justify-center items-center text-[16px] material-icons'>
+                        <span className="material-icons flex items-center justify-center text-[16px]">
                           add
                         </span>
                       )}
@@ -223,7 +223,7 @@ const RecursiveEntries = ({
                 </li>
               </div>
               {entry.children && entry.children.length > 0 ? (
-                <Collapse in={open[entry.id]} timeout='auto' unmountOnExit>
+                <Collapse in={open[entry.id]} timeout="auto" unmountOnExit>
                   <RecursiveEntries
                     entryHierarchy={entry.children}
                     world={world}
@@ -234,7 +234,7 @@ const RecursiveEntries = ({
                   />
                 </Collapse>
               ) : (
-                ''
+                ""
               )}
             </div>
           );
@@ -247,7 +247,7 @@ const RecursiveEntries = ({
 const EntriesList = ({ entries, campaigns, world }: Props) => {
   const pathname = usePathname();
   const [selected, setSelected] = useState<string | undefined>(
-    getActiveID(pathname)
+    getActiveID(pathname),
   );
 
   useEffect(() => {
@@ -256,35 +256,35 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
   }, [pathname]);
 
   return (
-    <div className='font-medium text-[16px]'>
-      <div className='flex'>
-        <ul className='flex flex-col w-full'>
-          <div className='flex items-center gap-2 p-2 rounded-lg h-9 hover:bg-lore-beige-300'>
-            <li className='flex items-center justify-between w-full'>
+    <div className="text-[16px] font-medium">
+      <div className="flex">
+        <ul className="flex w-full flex-col">
+          <div className="flex h-9 items-center gap-2 rounded-lg p-2 hover:bg-lore-beige-300">
+            <li className="flex w-full items-center justify-between">
               <Link
                 className={`flex items-center gap-2 ${
                   selected === world.id
-                    ? 'text-lore-red-400'
-                    : 'text-lore-blue-400'
+                    ? "text-lore-red-400"
+                    : "text-lore-blue-400"
                 }`}
                 href={`/world/${world.id}`}
               >
                 {selected === world.id ? (
-                  <span className='flex items-center justify-center w-5 h-5 material-icons'>
+                  <span className="material-icons flex h-5 w-5 items-center justify-center">
                     home
                   </span>
                 ) : (
-                  <span className='flex items-center justify-center w-5 h-5 material-icons-outlined'>
+                  <span className="material-icons-outlined flex h-5 w-5 items-center justify-center">
                     home
                   </span>
                 )}
-                <p>{world.name ? world.name : 'Untitled'}</p>
+                <p>{world.name ? world.name : "Untitled"}</p>
               </Link>
             </li>
           </div>
         </ul>
       </div>
-      <div className='mt-3'>
+      <div className="mt-3">
         {campaigns.map((campaign, index) => (
           <div key={index}>
             <RecursiveEntries
@@ -299,7 +299,7 @@ const EntriesList = ({ entries, campaigns, world }: Props) => {
           </div>
         ))}
       </div>
-      <div className='mt-4'>
+      <div className="mt-4">
         <RecursiveEntries
           entries={entries}
           entryHierarchy={createEntryHierarchy(entries)}

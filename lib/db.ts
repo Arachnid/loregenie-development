@@ -1,28 +1,28 @@
-import admin from 'firebase-admin';
 import {
-  DocumentData,
-  FirestoreDataConverter,
-  QueryDocumentSnapshot,
-  Firestore,
-} from 'firebase-admin/firestore';
-import { Storage } from 'firebase-admin/storage';
-import {
-  World,
+  Campaign,
+  CampaignDB,
   Entry,
   EntryHierarchy,
-  Campaign,
   User,
+  World,
   WorldDB,
-  CampaignDB,
-} from '@/types';
-import { createEntryHierarchy } from '@/utils/createEntryHierarchy';
+} from "@/types";
+import { createEntryHierarchy } from "@/utils/createEntryHierarchy";
+import admin from "firebase-admin";
+import {
+  DocumentData,
+  Firestore,
+  FirestoreDataConverter,
+  QueryDocumentSnapshot,
+} from "firebase-admin/firestore";
+import { Storage } from "firebase-admin/storage";
 
 if (!admin.apps.length) {
   try {
     if (process.env.GOOGLE_SERVICE_ACCOUNT) {
       admin.initializeApp({
         credential: admin.credential.cert(
-          process.env.GOOGLE_SERVICE_ACCOUNT as admin.ServiceAccount
+          process.env.GOOGLE_SERVICE_ACCOUNT as admin.ServiceAccount,
         ),
         storageBucket: process.env.GOOGLE_STORAGE_BUCKET,
       });
@@ -30,7 +30,7 @@ if (!admin.apps.length) {
       admin.initializeApp();
     }
   } catch (error) {
-    console.log('Firebase admin initialization error', (error as Error).stack);
+    console.log("Firebase admin initialization error", (error as Error).stack);
   }
 }
 
@@ -49,8 +49,8 @@ export class Converter<U> implements FirestoreDataConverter<U> {
 
 export async function getWorlds(email: string): Promise<World[]> {
   const worldsDB = await db
-    .collection('worlds')
-    .where('readers', 'array-contains', email)
+    .collection("worlds")
+    .where("readers", "array-contains", email)
     .withConverter(new Converter<WorldDB>())
     .get();
 
@@ -61,7 +61,7 @@ export async function getWorlds(email: string): Promise<World[]> {
       const entries = await getEntries(
         world.id,
         worldData.public,
-        worldData.readers.includes(email)
+        worldData.readers.includes(email),
       );
       const campaigns = await getCampaigns(world.id, email);
 
@@ -71,7 +71,7 @@ export async function getWorlds(email: string): Promise<World[]> {
         entries,
         campaigns,
       };
-    })
+    }),
   );
 
   return worlds;
@@ -79,17 +79,15 @@ export async function getWorlds(email: string): Promise<World[]> {
 
 export async function getWorld(
   worldID: string,
-  email: string
+  email: string,
 ): Promise<World | undefined> {
-
   const worldDB = (
     await db
-      .collection('worlds')
+      .collection("worlds")
       .doc(worldID)
       .withConverter(new Converter<WorldDB>())
       .get()
   ).data();
-
 
   const world = async (): Promise<World | undefined> => {
     if (!worldDB) {
@@ -97,11 +95,11 @@ export async function getWorld(
     }
 
     if (worldDB.readers.includes(email) || worldDB.public) {
-      console.log('enter the readers include')
+      console.log("enter the readers include");
       const entries = await getEntries(
         worldDB.id,
         worldDB.public,
-        worldDB.readers.includes(email)
+        worldDB.readers.includes(email),
       );
       const campaigns = await getCampaigns(worldDB.id, email);
       const contributors = await getContributors(worldDB.id);
@@ -119,13 +117,13 @@ export async function getWorld(
 
 export async function getCampaigns(
   worldID: string,
-  email: string
+  email: string,
 ): Promise<Campaign[]> {
   const campaignsDB = await db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
-    .collection('campaigns')
-    .where('readers', 'array-contains', email)
+    .collection("campaigns")
+    .where("readers", "array-contains", email)
     .withConverter(new Converter<CampaignDB>())
     .get();
 
@@ -136,7 +134,7 @@ export async function getCampaigns(
       const contributors = await getContributors(worldID, campaignData.id);
       const campaignEntries = await getCampaignEntries(
         worldID,
-        campaignData.id
+        campaignData.id,
       );
 
       if (!campaignData.readers.includes(email) && !campaignData.public) {
@@ -149,7 +147,7 @@ export async function getCampaigns(
         const publicEntryIDs: string[] = [];
 
         const recursiveEntryHierarchy = (
-          entriesHierarchy: EntryHierarchy[]
+          entriesHierarchy: EntryHierarchy[],
         ) => {
           entriesHierarchy.map((entry: EntryHierarchy) => {
             if (entry.public) {
@@ -167,7 +165,7 @@ export async function getCampaigns(
         return {
           ...campaignData,
           entries: campaignEntries.filter((entry) =>
-            publicEntryIDs.includes(entry.id)
+            publicEntryIDs.includes(entry.id),
           ),
           contributors,
         };
@@ -177,7 +175,7 @@ export async function getCampaigns(
         entries: campaignEntries,
         contributors,
       };
-    })
+    }),
   );
 
   return campaignsWithEntries as Campaign[];
@@ -185,13 +183,13 @@ export async function getCampaigns(
 
 export async function getCampaign(
   worldID: string,
-  campaignID: string
+  campaignID: string,
 ): Promise<Campaign | undefined> {
   const campaignDB = (
     await db
-      .collection('worlds')
+      .collection("worlds")
       .doc(worldID)
-      .collection('campaigns')
+      .collection("campaigns")
       .doc(campaignID)
       .withConverter(new Converter<CampaignDB>())
       .get()
@@ -215,14 +213,14 @@ export async function getCampaign(
 
 export async function getCampaignEntries(
   worldID: string,
-  campaignID: string
+  campaignID: string,
 ): Promise<Entry[]> {
   const campaignEntries = await db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
-    .collection('campaigns')
+    .collection("campaigns")
     .doc(campaignID)
-    .collection('entries')
+    .collection("entries")
     .withConverter(new Converter<Entry>())
     .get();
   return campaignEntries.docs.map((campaignEntry) => campaignEntry.data());
@@ -231,14 +229,14 @@ export async function getCampaignEntries(
 export async function getCampaignEntry(
   worldID: string,
   campaignID: string,
-  entryID: string
+  entryID: string,
 ): Promise<Entry | undefined> {
   const campaignEntry = await db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
-    .collection('campaigns')
+    .collection("campaigns")
     .doc(campaignID)
-    .collection('entries')
+    .collection("entries")
     .doc(entryID)
     .withConverter(new Converter<Entry>())
     .get();
@@ -248,18 +246,18 @@ export async function getCampaignEntry(
 export async function getEntries(
   worldID: string,
   isPublicWorld: boolean,
-  isReader: boolean
+  isReader: boolean,
 ): Promise<Entry[]> {
   const entries = await db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
-    .collection('entries')
+    .collection("entries")
     .withConverter(new Converter<Entry>())
     .get();
 
   if (isPublicWorld && !isReader) {
     const entryHierarchy: EntryHierarchy[] = createEntryHierarchy(
-      entries.docs.map((entry) => entry.data())
+      entries.docs.map((entry) => entry.data()),
     );
     const publicEntryIDs: string[] = [];
     const recursiveEntryHierarchy = (entriesHierarchy: EntryHierarchy[]) => {
@@ -284,9 +282,9 @@ export async function getEntries(
 
 export async function getEntry(worldID: string, entryID: string) {
   const entry = await db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
-    .collection('entries')
+    .collection("entries")
     .doc(entryID)
     .withConverter(new Converter<Entry>())
     .get();
@@ -295,16 +293,16 @@ export async function getEntry(worldID: string, entryID: string) {
 
 const permissionList = (
   data: CampaignDB | WorldDB,
-  email: string
+  email: string,
 ): string[] => {
   if (data.admins.includes(email)) {
-    return ['admin', 'writer', 'reader'];
+    return ["admin", "writer", "reader"];
   }
   if (data.writers.includes(email)) {
-    return ['writer', 'reader'];
+    return ["writer", "reader"];
   }
   if (data.readers.includes(email)) {
-    return ['reader'];
+    return ["reader"];
   }
   return [];
 };
@@ -312,10 +310,10 @@ const permissionList = (
 export async function getPermissions(
   email: string,
   worldID: string,
-  campaignID?: string
-): Promise<string[]> {  
+  campaignID?: string,
+): Promise<string[]> {
   const worldRef = db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
     .withConverter(new Converter<WorldDB>());
 
@@ -333,7 +331,7 @@ export async function getPermissions(
 
   if (world) {
     const res = permissionList(world, email);
-    console.log({res})
+    console.log({ res });
     return res;
   }
 
@@ -342,23 +340,23 @@ export async function getPermissions(
 
 export async function getContributors(
   worldID: string,
-  campaignID?: string
+  campaignID?: string,
 ): Promise<User[]> {
   let docRef: admin.firestore.DocumentReference<World | Campaign> = db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldID)
     .withConverter(new Converter<World>());
 
   if (campaignID) {
     docRef = docRef
-      .collection('campaigns')
+      .collection("campaigns")
       .doc(campaignID)
       .withConverter(new Converter<Campaign>());
   }
   const readerEmails = (await docRef.get()).data()?.readers;
   const contributors = await db
-    .collection('users')
-    .where('email', 'in', readerEmails)
+    .collection("users")
+    .where("email", "in", readerEmails)
     .withConverter(new Converter<User>())
     .get();
   return contributors.docs.map((contributor) => contributor.data());

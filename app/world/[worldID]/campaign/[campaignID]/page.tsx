@@ -1,9 +1,9 @@
-import { getCampaign, getPermissions, getWorld } from '@/lib/db';
-import { notFound } from 'next/navigation';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Session, getServerSession } from 'next-auth';
-import { Campaign, World } from '@/types';
-import ClientCampaignPage from '@/components/pages/ClientCampaignPage';
+import ClientCampaignPage from "@/components/pages/ClientCampaignPage";
+import { getCampaign, getPermissions, getWorld } from "@/lib/db";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { Campaign, World } from "@/types";
+import { getServerSession, Session } from "next-auth";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: {
@@ -15,14 +15,14 @@ interface Props {
 export default async function CampaignPage({ params }: Props) {
   const campaign: Campaign | undefined = await getCampaign(
     params.worldID,
-    params.campaignID
+    params.campaignID,
   );
   const session: Session | null = await getServerSession(authOptions);
   const email = session?.user?.email;
 
   const world: World | undefined = await getWorld(
     params.worldID,
-    email as string
+    email as string,
   );
 
   if (!campaign || !email || !world) {
@@ -31,7 +31,7 @@ export default async function CampaignPage({ params }: Props) {
   const permissions = await getPermissions(
     email,
     params.worldID,
-    params.campaignID
+    params.campaignID,
   );
 
   return (

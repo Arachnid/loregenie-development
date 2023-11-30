@@ -1,16 +1,16 @@
-import { Converter, db } from '@/lib/db';
-import { PermissionLevel, WorldDB } from '@/types';
-import { updateValidation } from '@/utils/validation/updateValidation';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { Converter, db } from "@/lib/db";
+import { WorldDB } from "@/types";
+import { updateValidation } from "@/utils/validation/updateValidation";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   request: NextApiRequest,
-  response: NextApiResponse
+  response: NextApiResponse,
 ) {
   const { worldData }: { worldData: WorldDB } = JSON.parse(request.body);
 
   const docRef = db
-    .collection('worlds')
+    .collection("worlds")
     .doc(worldData.id)
     .withConverter(new Converter<WorldDB>());
 
@@ -35,7 +35,7 @@ export default async function handler(
       throw new Error("Failed to retrieve updated data.");
     }
   } catch (error) {
-    console.error('Error updating world in database:', error);
-    response.status(500).send({ error: 'Error updating world in database.' });
+    console.error("Error updating world in database:", error);
+    response.status(500).send({ error: "Error updating world in database." });
   }
 }

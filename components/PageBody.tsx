@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Dispatch, SetStateAction } from 'react';
-import { LoreSchemas } from '@/types';
-import '@uiw/react-md-editor/markdown-editor.css';
-import '@uiw/react-markdown-preview/markdown.css';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
-import MarkdownEditor from '@/components/MarkdownEditor';
+import MarkdownEditor from "@/components/MarkdownEditor";
+import { LoreSchemas } from "@/types";
+import "@uiw/react-markdown-preview/markdown.css";
+import "@uiw/react-md-editor/markdown-editor.css";
+import { Dispatch, SetStateAction } from "react";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
 type Props<T extends LoreSchemas> = {
   data: T;
@@ -19,24 +19,24 @@ const PageBody = <T extends LoreSchemas>({
   permissions,
 }: Props<T>) => {
   return (
-    <div className='flex flex-col gap-4'>
+    <div className="flex flex-col gap-4">
       <input
-        className='flex text-[40px] font-bold w-full placeholder:text-black/50 focus-visible:outline-none disabled:bg-white disabled:cursor-text'
+        className="flex w-full text-[40px] font-bold placeholder:text-black/50 focus-visible:outline-none disabled:cursor-text disabled:bg-white"
         value={data.name}
-        placeholder='Title'
+        placeholder="Title"
         onChange={(e) => setData({ ...data, name: e.target.value })}
-        disabled={!permissions.includes('writer')}
+        disabled={!permissions.includes("writer")}
       />
-      {permissions.includes('writer') ? (
+      {permissions.includes("writer") ? (
         <MarkdownEditor
           initialText={data.description}
           data={data}
           setData={setData}
         />
       ) : (
-        <ReactMarkdown className='markdown' children={data.description} />
+        <ReactMarkdown className="markdown" children={data.description} />
       )}
-      <div className='flex w-full h-[72px]' />
+      <div className="flex h-[72px] w-full" />
     </div>
   );
 };

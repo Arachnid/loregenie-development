@@ -1,12 +1,12 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Inter } from '@next/font/google';
-import HomePage from '@/components/pages/HomePage';
-import { getWorlds } from '@/lib/db';
-import NavBar from '@/components/nav/NavBar';
-import { World } from '@/types';
+import NavBar from "@/components/nav/NavBar";
+import HomePage from "@/components/pages/HomePage";
+import { getWorlds } from "@/lib/db";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { World } from "@/types";
+import { Inter } from "@next/font/google";
+import { getServerSession } from "next-auth";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -17,7 +17,7 @@ export default async function Home() {
   }
 
   return (
-    <div className='flex flex-col h-screen min-w-fit'>
+    <div className="flex h-screen min-w-fit flex-col">
       <NavBar session={session} />
       <HomePage worlds={worlds} session={session} />
     </div>

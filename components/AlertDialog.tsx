@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import { Dispatch, SetStateAction, useState } from 'react';
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import { Dispatch, SetStateAction, useState } from "react";
 
 interface Props {
   title: string;
@@ -28,7 +28,7 @@ export default function AlertDialog({
   setAlertOpen,
   action,
 }: Props) {
-  const [confirmationBox, setConfirmationBox] = useState<string>('');
+  const [confirmationBox, setConfirmationBox] = useState<string>("");
 
   const handleConfirm = () => {
     action();
@@ -39,23 +39,23 @@ export default function AlertDialog({
     <Dialog
       open={alertOpen}
       onClose={() => setAlertOpen(true)}
-      aria-labelledby='alert-dialog-title'
-      aria-describedby='alert-dialog-description'
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       {description && (
         <DialogContent>
-          <DialogContentText id='alert-dialog-description'>
+          <DialogContentText id="alert-dialog-description">
             {description}
           </DialogContentText>
         </DialogContent>
       )}
       {confirmText && confirmValue && (
         <DialogContent>
-          <DialogContentText id='alert-dialog-description'>
+          <DialogContentText id="alert-dialog-description">
             {confirmText}
             <TextField
-              margin='normal'
+              margin="normal"
               label={confirmValue}
               value={confirmationBox}
               onChange={(e) => setConfirmationBox(e.target.value)}
@@ -70,8 +70,8 @@ export default function AlertDialog({
               ? true
               : false
           }
-          variant='contained'
-          color='error'
+          variant="contained"
+          color="error"
           onClick={handleConfirm}
         >
           Delete

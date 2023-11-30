@@ -1,8 +1,8 @@
-import { getPermissions } from '@/lib/db';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { CampaignDB, PermissionLevel, WorldDB } from '@/types';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { Session, getServerSession } from 'next-auth';
+import { getPermissions } from "@/lib/db";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { CampaignDB, PermissionLevel, WorldDB } from "@/types";
+import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession, Session } from "next-auth";
 
 export type ContributorSanityCheck = {
   request: NextApiRequest;
@@ -13,7 +13,7 @@ export type ContributorSanityCheck = {
 };
 
 export const contributorSanityCheck = async (
-  options: ContributorSanityCheck
+  options: ContributorSanityCheck,
 ): Promise<boolean> => {
   const { request, response, clientData, dbData, worldID } = options;
 
@@ -21,7 +21,7 @@ export const contributorSanityCheck = async (
     const session: Session | null = await getServerSession(
       request,
       response,
-      authOptions
+      authOptions,
     );
 
     if (dbData && contributorsHaveBeenAltered(clientData, dbData)) {
@@ -49,7 +49,7 @@ export const contributorSanityCheck = async (
 
 const contributorsHaveBeenAltered = (
   clientData: WorldDB | CampaignDB,
-  dbData: WorldDB | CampaignDB
+  dbData: WorldDB | CampaignDB,
 ): boolean =>
   JSON.stringify({
     readers: clientData.readers,
@@ -65,7 +65,7 @@ const contributorsHaveBeenAltered = (
 const isAdminAReaderAndWriter = (clientData: WorldDB | CampaignDB) =>
   clientData.admins.every(
     (admin) =>
-      clientData.readers.includes(admin) || clientData.writers.includes(admin)
+      clientData.readers.includes(admin) || clientData.writers.includes(admin),
   );
 
 const isWriterAReader = (clientData: WorldDB | CampaignDB) =>

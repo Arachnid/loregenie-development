@@ -1,4 +1,4 @@
-import { Entry, EntryHierarchy } from '@/types';
+import { Entry, EntryHierarchy } from "@/types";
 
 export const createEntryHierarchy = (entries: Entry[]): EntryHierarchy[] => {
   const result: EntryHierarchy[] = [];

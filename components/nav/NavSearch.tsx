@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Campaign, Entry } from '@/types';
-import { getActiveID } from '@/utils/getActiveID';
-import { getIcon } from '@/utils/getIcon';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Campaign, Entry } from "@/types";
+import { getActiveID } from "@/utils/getActiveID";
+import { getIcon } from "@/utils/getIcon";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type Props = {
   children: JSX.Element;
@@ -21,7 +21,7 @@ interface FilteredSearch {
 }
 
 const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [filteredSearch, setFilteredSearch] = useState<FilteredSearch[]>([]);
 
   const router = useRouter();
@@ -46,15 +46,15 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
         name: entry.name,
         category: entry.category,
         url: `/world/${worldID}/entry/${entry.id}`,
-      })
+      }),
     );
     campaigns.map((campaign) =>
       result.push({
         id: campaign.id,
         name: campaign.name,
-        category: 'Campaign',
+        category: "Campaign",
         url: `/world/${worldID}/campaign/${campaign.id}`,
-      })
+      }),
     );
     campaigns.map((campaign) =>
       campaign.entries.map((campaignEntry: any) =>
@@ -63,8 +63,8 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
           name: campaignEntry.name,
           category: campaignEntry.category,
           url: `/world/${worldID}/campaign/${campaign.id}/entry/${campaignEntry.id}`,
-        })
-      )
+        }),
+      ),
     );
     return result;
   };
@@ -80,42 +80,42 @@ const NavSearch = ({ children, entries, campaigns, worldID }: Props) => {
 
   return (
     <>
-      <div className='flex justify-between items-center bg-white py-[18px] px-4 gap-2 self-stretch mb-[2px] text-lore-blue-400'>
+      <div className="mb-[2px] flex items-center justify-between gap-2 self-stretch bg-white py-[18px] px-4 text-lore-blue-400">
         <input
-          className='leading-5 grow placeholder:text-lore-blue-400 focus-visible:outline-none'
-          placeholder='Search'
-          type='search'
-          autoComplete='off'
+          className="grow leading-5 placeholder:text-lore-blue-400 focus-visible:outline-none"
+          placeholder="Search"
+          type="search"
+          autoComplete="off"
           value={searchValue}
           onChange={(event) => setSearchValue(event.target.value)}
         />
         {searchValue ? (
           <span
-            className='cursor-pointer material-icons'
-            onClick={() => setSearchValue('')}
+            className="material-icons cursor-pointer"
+            onClick={() => setSearchValue("")}
           >
             close
           </span>
         ) : (
-          <span className='cursor-default material-icons-outlined'>search</span>
+          <span className="material-icons-outlined cursor-default">search</span>
         )}
       </div>
       {searchValue ? (
-        <div className='h-full gap-4 p-4 overflow-y-scroll bg-lore-beige-400 text-lore-blue-400 scrollbar-hide'>
+        <div className="h-full gap-4 overflow-y-scroll bg-lore-beige-400 p-4 text-lore-blue-400 scrollbar-hide">
           {filteredSearch.map((element) => (
             <button
-              className={`flex items-center p-2  gap-2 self-stretch ${
-                element.id === activeID && 'text-lore-red-400'
+              className={`flex items-center gap-2  self-stretch p-2 ${
+                element.id === activeID && "text-lore-red-400"
               }`}
               onClick={() => router.push(element.url)}
             >
-              {getIcon(element.category, 'material-icons-outlined text-[20px]')}
-              <p className='flex font-medium leading-5 grow'>{element.name}</p>
+              {getIcon(element.category, "material-icons-outlined text-[20px]")}
+              <p className="flex grow font-medium leading-5">{element.name}</p>
             </button>
           ))}
         </div>
       ) : (
-        <div className='h-full gap-4 p-4 overflow-y-scroll bg-lore-beige-400 scrollbar-hide'>
+        <div className="h-full gap-4 overflow-y-scroll bg-lore-beige-400 p-4 scrollbar-hide">
           {children}
         </div>
       )}
