@@ -45,6 +45,7 @@ const functionCallHandler: FunctionCallHandler = async (
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, data } = useChat({
+    api: "/api/generate/world",
     initialMessages: [
       {
         id: "1",
@@ -73,7 +74,7 @@ As you answer these questions, we will build the basic framework of your world t
   console.log("messages", messages);
 
   return (
-    <div className="stretch mx-auto flex w-full max-w-md flex-col space-y-4 py-24 text-sm">
+    <div className="stretch mx-auto flex w-full max-w-md flex-col py-24 ">
       {messages.length > 0
         ? messages.map((m) => {
             if (
@@ -114,7 +115,9 @@ As you answer these questions, we will build the basic framework of your world t
                   <p>{JSON.stringify(JSON.parse(m.content), null, 2)}</p>
                 )}
                 {["assistant", "system"].includes(m.role) && (
-                  <Markdown className="prose lg:prose-xl">{m.content}</Markdown>
+                  <Markdown className="[*>*]:margin-0 prose lg:prose-xl">
+                    {m.content}
+                  </Markdown>
                 )}
               </div>
             );
