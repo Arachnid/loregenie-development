@@ -9,8 +9,8 @@ import Markdown from "react-markdown";
 const roleToColorMap: Record<Message["role"], string> = {
   system: "text-purple-950",
   user: "black",
-  function: "text-blue-950",
-  assistant: "text-green-950",
+  function: "text-blue-900",
+  assistant: "text-purple-950",
 };
 
 const functionCallHandler: FunctionCallHandler = async (
@@ -71,10 +71,8 @@ As you answer these questions, we will build the basic framework of your world t
     experimental_onFunctionCall: functionCallHandler,
   });
 
-  console.log("messages", messages);
-
   return (
-    <div className="stretch mx-auto flex w-full max-w-md flex-col py-24 ">
+    <div className="stretch mx-auto flex w-full max-w-md flex-col space-y-6 py-24">
       {messages.length > 0
         ? messages.map((m) => {
             if (
@@ -89,9 +87,9 @@ As you answer these questions, we will build the basic framework of your world t
               );
               console.log("Args from AI", parsedFunctionCallArguments);
               return (
-                <div className="whitespace-pre-wrap text-amber-950">
+                <div className="whitespace-pre-wrap text-green-950" key={m.id}>
                   <p>AI:</p>
-                  <div className="bg-amber-100 p-4 shadow-inner">
+                  <div className="bg-green-100 p-4 font-bold shadow-inner">
                     Saved World Setting!
                   </div>
                 </div>
@@ -103,21 +101,24 @@ As you answer these questions, we will build the basic framework of your world t
             // }
 
             return (
-              <div
-                key={m.id}
-                className={`whitespace-pre-wrap ${roleToColorMap[m.role]}`}
-              >
+              <div key={m.id} className={`${roleToColorMap[m.role]}`}>
                 <p className="font-bold">
                   {m.role === "user" ? "User: " : "AI: "}
                 </p>
                 {m.role === "user" && <p>{m.content}</p>}
                 {m.role === "function" && (
-                  <p>{JSON.stringify(JSON.parse(m.content), null, 2)}</p>
+                  <div>
+                    <span className="text-xs font-bold">
+                      This is what will be passed to the save function. Printing
+                      here for debugging purposes
+                    </span>
+                    <p className="whitespace-pre-wrap">
+                      {JSON.stringify(JSON.parse(m.content), null, 2)}
+                    </p>
+                  </div>
                 )}
                 {["assistant", "system"].includes(m.role) && (
-                  <Markdown className="[*>*]:margin-0 prose lg:prose-xl">
-                    {m.content}
-                  </Markdown>
+                  <Markdown className="prose-sm ">{m.content}</Markdown>
                 )}
               </div>
             );

@@ -38,49 +38,51 @@ const functions: ChatCompletionCreateParams.Function[] = [
         scopeAndScale: {
           type: "string",
           description:
-            "The scope and scale of the setting from the conversation",
+            "The scope and scale of the setting from the conversation. 2-4 paragraphs.",
         },
         basicGeography: {
           type: "string",
           description:
-            "The basic geography of the setting from the conversation",
+            "The basic geography of the setting from the conversation. 2-4 paragraphs.",
         },
         climate: {
           type: "string",
-          description: "The climate of the setting from the conversation",
+          description:
+            "The climate of the setting from the conversation. 1-4 paragraphs.",
         },
         dayNightCycle: {
           type: "string",
           description:
-            "The day/night cycle of the setting from the conversation",
+            "The day/night cycle of the setting from the conversation. 1-4 paragraphs.",
         },
         technologyLevel: {
           type: "string",
           description:
-            "The technology level of the setting from the conversation",
+            "The technology level of the setting from the conversation. 1-4 paragraphs.",
         },
         magicLevel: {
           type: "string",
-          description: "The magic level of the setting from the conversation",
+          description:
+            "The magic level of the setting from the conversation. 1-4 paragraphs.",
         },
         historicalContext: {
           type: "string",
           description:
-            "The historical context of the setting from the conversation",
+            "The historical context of the setting from the conversation. 2-4 paragraphs.",
         },
         inhabitants: {
           type: "array",
-          description: "The inhabitants of the setting from the conversation",
+          description: "The inhabitants of the setting from the conversation.",
           items: {
             type: "string",
             description:
-              "An inhabitant of the setting and some simple details about them.",
+              "An inhabitant of the setting and some simple details about them. 1-4 paragraphs.",
           },
         },
         overallAtmosphere: {
           type: "string",
           description:
-            "The overall atmosphere of the setting from the conversation",
+            "The overall atmosphere of the setting from the conversation. 2-4 paragraphs.",
         },
       },
       required: [
