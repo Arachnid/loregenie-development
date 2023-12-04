@@ -47,6 +47,7 @@ ui-debug.log
 firebase-private-key.json
 storage.rules
 private-key.json
+/firebase-export-*
 # serviceAccountKey.json
 .env
 /messages
