@@ -54,3 +54,5 @@ private-key.json
 
 # jetbrains
 .idea
+# VSCode
+.vscode
