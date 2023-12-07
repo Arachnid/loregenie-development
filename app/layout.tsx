@@ -1,6 +1,8 @@
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { Inter as FontSans } from "next/font/google";
 import { ReactNode } from "react";
+import { Toaster } from "sonner";
 import ".//globals.css";
 
 const fontSans = FontSans({
@@ -22,7 +24,16 @@ export default async function RootLayout({
           fontSans.variable,
         )}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+          storageKey="lore-genie-theme"
+        >
+          <Toaster />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
