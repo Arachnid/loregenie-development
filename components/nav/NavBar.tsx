@@ -1,24 +1,16 @@
 "use client";
 
-import { Session } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/use-settings";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import {
-  MdClose,
-  MdMenu,
-  MdOutlineNotifications,
-  MdOutlineSettings,
-} from "react-icons/md";
+import { useEffect } from "react";
+import { MdOutlineNotifications, MdOutlineSettings } from "react-icons/md";
 
-type Props = {
-  session: Session | null;
-  worldName?: string;
-  showMenu?: boolean;
-  setShowMenu?: Dispatch<SetStateAction<boolean>>;
-};
+const NavBar = () => {
+  const { data: session, status } = useSession();
+  const settings = useSettings();
 
-const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
   const userData = {
     image: session?.user?.image as string,
     email: session?.user?.email as string,
@@ -49,24 +41,21 @@ const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
           <Link className="h-5" href="/">
             <img src={"/lore-genie-logo.svg"} alt="Lore Genie" />
           </Link>
-          {worldName && (
-            <h2 className="hidden self-center text-xl font-medium leading-6 text-lore-blue-400 md:block">
-              {worldName}
-            </h2>
-          )}
         </div>
         <div className="flex h-8 items-center gap-2 pl-2 text-lore-blue-400 md:gap-4">
           {session ? (
-            <button className="hidden md:block" onClick={() => signOut()}>
+            <Button className="hidden md:block" onClick={() => signOut()}>
               Sign Out
-            </button>
+            </Button>
           ) : (
-            <button className="hidden md:block" onClick={() => signIn()}>
+            <Button className="hidden md:block" onClick={() => signIn()}>
               Sign In
-            </button>
+            </Button>
           )}
           <MdOutlineNotifications className="h-6 w-6" />
-          <MdOutlineSettings className="h-6 w-6" />
+          <Button variant="ghost" size="icon" onClick={settings.onOpen}>
+            <MdOutlineSettings className="h-6 w-6" />
+          </Button>
           <img
             className="h-8 w-8 rounded-full"
             src={
@@ -78,19 +67,6 @@ const NavBar = ({ session, worldName, showMenu, setShowMenu }: Props) => {
           />
         </div>
       </div>
-      {setShowMenu && (
-        <button
-          className="flex w-fit items-center gap-2 text-lore-blue-400 md:hidden"
-          onClick={() => setShowMenu(!showMenu)}
-        >
-          {showMenu ? (
-            <MdClose className="h-5 w-5" />
-          ) : (
-            <MdMenu className="h-5 w-5" />
-          )}
-          <h2 className="text-xl font-medium leading-6">{worldName}</h2>
-        </button>
-      )}
     </div>
   );
 };
