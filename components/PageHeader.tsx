@@ -74,7 +74,7 @@ const PageHeader = <T extends LoreSchemas>({
                   onSave();
                   window.location.reload();
                 }}
-                disabled={isChanged}
+                disabled={!isChanged}
               >
                 Save
               </button>

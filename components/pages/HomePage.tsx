@@ -112,7 +112,7 @@ const HomePage = ({ worlds, session }: Props) => {
                   homebrew campaign.
                 </p>
               </div>
-              <Button size="xl" className="gap-4">
+              <Button size="lg" className="gap-4">
                 Get Started
                 <MdEast className="h-5 w-5" />
               </Button>

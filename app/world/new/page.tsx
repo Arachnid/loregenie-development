@@ -7,6 +7,7 @@ import Markdown from "react-markdown";
 
 // Generate a map of message role to text color
 const roleToColorMap: Record<Message["role"], string> = {
+  data: "text-green-950",
   system: "text-purple-950",
   user: "black",
   function: "text-blue-900",

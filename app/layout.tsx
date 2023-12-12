@@ -4,6 +4,12 @@ import SessionProvider from "@/components/providers/session-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getAllWorlds } from "@/server/actions/world";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
 import { Inter as FontSans } from "next/font/google";
 import { ReactNode } from "react";
@@ -22,8 +28,16 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions);
 
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery({
+    queryKey: ["worlds"],
+    queryFn: async () => {
+      return await getAllWorlds();
+    },
+  });
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head />
       <body
         className={cn(
@@ -40,9 +54,11 @@ export default async function RootLayout({
               disableTransitionOnChange
               storageKey="lore-genie-theme"
             >
-              <Toaster />
-              <ModalProvider />
-              {children}
+              <HydrationBoundary state={dehydrate(queryClient)}>
+                <Toaster />
+                <ModalProvider />
+                {children}
+              </HydrationBoundary>
             </ThemeProvider>
           </QueryProvider>
         </SessionProvider>

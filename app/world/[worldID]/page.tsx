@@ -21,7 +21,6 @@ export default async function WorldPage({ params }: Props) {
   }
 
   const permissions = await getPermissions(email, params.worldID);
-  console.log({ permissions });
 
   return (
     <>

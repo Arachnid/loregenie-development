@@ -10,6 +10,14 @@ const nextConfig = {
   },
   images: {
     domains: ["cdn.discordapp.com"],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9199",
+        pathname: "/**",
+      },
+    ],
   },
 };
 

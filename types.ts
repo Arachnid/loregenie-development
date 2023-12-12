@@ -85,3 +85,19 @@ export enum PermissionLevel {
   writer = "writer",
   admin = "admin",
 }
+
+export type WorldOrCampaignOrEntry =
+  | {
+      worldID: string;
+      initialData: World;
+    }
+  | {
+      worldID: string;
+      campaignID: string;
+      initialData: Campaign;
+    }
+  | {
+      worldID: string;
+      entryID: string;
+      initialData: Entry;
+    };

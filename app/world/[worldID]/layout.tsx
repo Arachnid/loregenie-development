@@ -1,17 +1,16 @@
 import EntriesNav from "@/components/nav/EntriesNav";
 import NavBar from "@/components/nav/NavBar";
 import { ClientProvider } from "@/context/ClientContext";
-import { getPermissions, getWorld } from "@/lib/db";
+import { getPermissions } from "@/lib/db";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { getAllWorlds } from "@/server/actions/world";
-import { World } from "@/types";
+import { getWorld } from "@/server/actions/world";
 import {
+  dehydrate,
   HydrationBoundary,
   QueryClient,
-  dehydrate,
 } from "@tanstack/react-query";
 import { getServerSession } from "next-auth";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 interface Props {
   children: JSX.Element;
@@ -25,25 +24,34 @@ export default async function Layout({ children, params }: Props) {
   const email = session?.user?.email;
 
   const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["worlds"],
-    queryFn: getAllWorlds,
+  const {
+    error,
+    data: world,
+    status,
+  } = await queryClient.fetchQuery({
+    queryKey: ["worlds", params.worldID],
+    queryFn: async () => {
+      return await getWorld(params.worldID);
+    },
   });
 
-  const world: World | undefined = await getWorld(
-    params.worldID,
-    email as string,
-  );
+  if (status === 500) {
+    throw error;
+  }
 
-  if (!email || !world) {
+  if (status === 401) {
+    redirect("/");
+  }
+
+  if (!email || !world || status === 404) {
     notFound();
   }
 
   const permissions = await getPermissions(email, world.id);
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <ClientProvider>
+    <ClientProvider>
+      <HydrationBoundary state={dehydrate(queryClient)}>
         <div className="flex h-screen min-w-fit flex-col">
           <NavBar />
           <div className="flex h-full overflow-y-hidden">
@@ -66,7 +74,7 @@ export default async function Layout({ children, params }: Props) {
             {/*)}*/}
           </div>
         </div>
-      </ClientProvider>
-    </HydrationBoundary>
+      </HydrationBoundary>
+    </ClientProvider>
   );
 }
