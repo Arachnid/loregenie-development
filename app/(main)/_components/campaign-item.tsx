@@ -1,14 +1,18 @@
+import { ENTRY_ICON_MAP } from "@/app/(main)/_components/entry-item";
 import { Item } from "@/app/(main)/_components/item";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { getCampaign } from "@/server/actions/campaigns";
-import { useQuery } from "@tanstack/react-query";
+import { createEntry as createEntryAction } from "@/server/actions/entry";
+import { Category } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Castle,
   ChevronDown,
@@ -18,6 +22,8 @@ import {
   Trash,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 type CampaignItemProps = {
   worldID: string;
@@ -37,7 +43,9 @@ export const CampaignItem = ({
   expanded,
 }: CampaignItemProps) => {
   const { data: session } = useSession();
+  const router = useRouter();
 
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["campaigns", campaignID],
     queryFn: () => {
@@ -45,6 +53,14 @@ export const CampaignItem = ({
         campaignID,
         worldID,
       });
+    },
+  });
+
+  const { mutateAsync: createEntry } = useMutation({
+    mutationFn: createEntryAction,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["worlds"] });
+      queryClient.invalidateQueries({ queryKey: ["worlds", worldID] });
     },
   });
 
@@ -65,8 +81,28 @@ export const CampaignItem = ({
     event.stopPropagation();
   };
 
-  const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.stopPropagation();
+  const onCreateEntry = (category: Category) => {
+    const promise = createEntry({
+      worldID,
+      category,
+      campaignID,
+    }).then((resp) => {
+      if (resp.error) {
+        return Promise.reject();
+      }
+      if (!expanded) {
+        onExpand?.();
+      }
+      router.push(
+        `/worlds/${worldID}/campaigns/${campaignID}/entries/${resp.entry?.id}`,
+      );
+    });
+
+    toast.promise(promise, {
+      loading: `Creating ${category}...`,
+      success: `${category} created`,
+      error: `Failed to create ${category}.`,
+    });
   };
 
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
@@ -116,13 +152,40 @@ export const CampaignItem = ({
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div
-          role="button"
-          onClick={onCreate}
-          className="ml-auto h-full rounded-sm opacity-0 hover:bg-neutral-300 group-hover:opacity-100 dark:hover:bg-neutral-600"
-        >
-          <Plus className="h-4 w-4 text-muted-foreground" />
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+            <div
+              role="button"
+              className="ml-auto h-full rounded-sm opacity-0 hover:bg-neutral-300 group-hover:opacity-100 dark:hover:bg-neutral-600"
+            >
+              <Plus className="h-4 w-4 text-muted-foreground" />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-60"
+            align="start"
+            side="right"
+            forceMount
+          >
+            <DropdownMenuLabel>Create Entry</DropdownMenuLabel>
+            {(Object.keys(Category) as Array<keyof typeof Category>).map(
+              (category) => {
+                const Icon = ENTRY_ICON_MAP[category];
+                return (
+                  <DropdownMenuItem
+                    key={category}
+                    onClick={() => {
+                      onCreateEntry(category as Category);
+                    }}
+                  >
+                    <Icon className="mr-2 h-4 w-4" />
+                    {category}
+                  </DropdownMenuItem>
+                );
+              },
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

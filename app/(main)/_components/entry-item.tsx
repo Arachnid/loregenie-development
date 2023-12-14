@@ -3,13 +3,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { getEntry } from "@/server/actions/entry";
+import {
+  createEntry as createEntryAction,
+  deleteEntry as deleteEntryAction,
+  getEntry,
+} from "@/server/actions/entry";
 import { Category } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BookOpenText,
   ChevronDown,
@@ -24,6 +29,8 @@ import {
   Trash,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const ENTRY_ICON_MAP: Record<Category, LucideIcon> = {
   Journal: BookOpenText,
@@ -54,7 +61,9 @@ export const EntryItem = ({
   onClick,
 }: EntryItemProps) => {
   const { data: session } = useSession();
+  const router = useRouter();
 
+  const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ["entries", entryID],
     queryFn: () => {
@@ -63,6 +72,21 @@ export const EntryItem = ({
         campaignID,
         worldID,
       });
+    },
+  });
+  const { mutateAsync: createEntry } = useMutation({
+    mutationFn: createEntryAction,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["worlds"] });
+      queryClient.invalidateQueries({ queryKey: ["worlds", worldID] });
+    },
+  });
+
+  const { mutateAsync: deleteEntry } = useMutation({
+    mutationFn: deleteEntryAction,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["worlds"] });
+      queryClient.invalidateQueries({ queryKey: ["worlds", worldID] });
     },
   });
 
@@ -83,8 +107,31 @@ export const EntryItem = ({
     event.stopPropagation();
   };
 
-  const onCreate = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    event.stopPropagation();
+  const onCreateEntry = (category: Category) => {
+    const promise = createEntry({
+      worldID,
+      category,
+      entryID,
+      campaignID,
+    }).then((resp) => {
+      if (resp.error) {
+        return Promise.reject();
+      }
+      if (!expanded) {
+        onExpand?.();
+      }
+      router.push(
+        campaignID
+          ? `/worlds/${worldID}/campaigns/${campaignID}/entries/${resp.entry?.id}`
+          : `/worlds/${worldID}/entries/${resp.entry?.id}`,
+      );
+    });
+
+    toast.promise(promise, {
+      loading: `Creating ${category}...`,
+      success: `${category} created`,
+      error: `Failed to create ${category}.`,
+    });
   };
 
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
@@ -142,13 +189,40 @@ export const EntryItem = ({
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div
-          role="button"
-          onClick={onCreate}
-          className="ml-auto h-full rounded-sm opacity-0 hover:bg-neutral-300 group-hover:opacity-100 dark:hover:bg-neutral-600"
-        >
-          <Plus className="h-4 w-4 text-muted-foreground" />
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+            <div
+              role="button"
+              className="ml-auto h-full rounded-sm opacity-0 hover:bg-neutral-300 group-hover:opacity-100 dark:hover:bg-neutral-600"
+            >
+              <Plus className="h-4 w-4 text-muted-foreground" />
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-60"
+            align="start"
+            side="right"
+            forceMount
+          >
+            <DropdownMenuLabel>Create Entry</DropdownMenuLabel>
+            {(Object.keys(Category) as Array<keyof typeof Category>).map(
+              (category) => {
+                const Icon = ENTRY_ICON_MAP[category];
+                return (
+                  <DropdownMenuItem
+                    key={category}
+                    onClick={() => {
+                      onCreateEntry(category as Category);
+                    }}
+                  >
+                    <Icon className="mr-2 h-4 w-4" />
+                    {category}
+                  </DropdownMenuItem>
+                );
+              },
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
