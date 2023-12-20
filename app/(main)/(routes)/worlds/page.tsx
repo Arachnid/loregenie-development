@@ -26,7 +26,7 @@ const WorldsPage = () => {
   const onCreate = () => {
     const promise = createWorldMutation().then((resp) => {
       if (resp?.status === 200) {
-        router.push(`/worlds/${resp?.data?.worldID}`);
+        router.push(`/worlds/${resp?.data?.id}`);
       } else {
         throw new Error("Failed to create a new world.");
       }

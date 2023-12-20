@@ -1,5 +1,7 @@
 "use server";
 
+import { save } from "@/ai/functions/save";
+import { ASSISTANT_INSTRUCTIONS } from "@/ai/prompts/system";
 import {
   Converter,
   db,
@@ -9,7 +11,6 @@ import {
   storage,
 } from "@/lib/db";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { ASSISTANT_INSTRUCTIONS } from "@/prompts/system";
 import { World, WorldDB } from "@/types";
 import writeDataToFile from "@/utils/storeMessages";
 import crypto from "crypto";
@@ -41,7 +42,8 @@ export async function createWorld() {
 
   const assistant = await openai.beta.assistants.create({
     instructions: ASSISTANT_INSTRUCTIONS,
-    model: "gpt-4-1106-preview",
+    model: "gpt-4",
+    tools: [save],
   });
 
   const threadId = (await openai.beta.threads.create()).id;

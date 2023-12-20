@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 
+import Chat from "@/components/chat/chat";
 import { Cover } from "@/components/cover";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -69,16 +70,25 @@ const WorldIDPage = ({ params }: DocumentIdPageProps) => {
   const world = data.data;
 
   return (
-    <div className="pb-40">
-      <Cover url={world.image} worldID={params.worldID} />
-      <div className="mx-auto md:max-w-3xl lg:max-w-4xl">
-        <Toolbar
-          initialData={{
-            worldID: world.id,
-            initialData: world,
-          }}
-        />
-        <Editor onChange={onChange} initialContent={world.description} />
+    <div>
+      <div className="flex">
+        <div className="flex-auto pb-40">
+          <Cover url={world.image} worldID={params.worldID} />
+          <div className="mx-auto md:max-w-3xl lg:max-w-4xl">
+            <Toolbar
+              initialData={{
+                worldID: world.id,
+                initialData: world,
+              }}
+            />
+            <Editor onChange={onChange} initialContent={world.description} />
+          </div>
+        </div>
+        <div className="flex-1">
+          <div className="relative h-[calc(100svh-52px)] w-[500px]">
+            <Chat assistantId={world.assistantId || ""} worldID={world.id} />
+          </div>
+        </div>
       </div>
     </div>
   );
