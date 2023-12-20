@@ -10,6 +10,8 @@ type CreateEntryArgs = {
   entryID?: string;
   campaignID?: string;
   category: Category;
+  name?: string;
+  description?: string;
 };
 
 export async function createEntry({
@@ -17,6 +19,8 @@ export async function createEntry({
   entryID,
   campaignID,
   category,
+  name,
+  description,
 }: CreateEntryArgs) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
@@ -98,8 +102,8 @@ export async function createEntry({
       }
 
       const newEntry = {
-        name: `Untitled ${category}`,
-        description: "",
+        name: name ?? `Untitled ${category}`,
+        description: description ?? "",
         prompt: "",
         image: "",
         imagePrompt: "",

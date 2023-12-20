@@ -119,7 +119,9 @@ As you answer these questions, we will build the basic framework of your world t
                   </div>
                 )}
                 {["assistant", "system"].includes(m.role) && (
-                  <Markdown className="prose-sm ">{m.content}</Markdown>
+                  <Markdown className="prose-sm *:*:*:m-0 *:*:m-0 *:m-0">
+                    {m.content}
+                  </Markdown>
                 )}
               </div>
             );

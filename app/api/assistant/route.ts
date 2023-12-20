@@ -1,3 +1,6 @@
+import { saveEntries, SaveEntryFunctionData } from "@/ai/functions/saveEntries";
+import { saveWorld, SaveWorldFunctionData } from "@/ai/functions/saveWorld";
+import { ASSISTANT_INSTRUCTIONS } from "@/ai/prompts/system";
 import { experimental_AssistantResponse } from "ai";
 import OpenAI from "openai";
 import { MessageContentText } from "openai/resources/beta/threads/messages/messages";
@@ -10,14 +13,47 @@ const openai = new OpenAI({
 // IMPORTANT! Set the runtime to edge
 export const runtime = "edge";
 
+export type SaveFunctionDataResponse = {
+  meta: {
+    threadId: string;
+    worldID?: string;
+    campaignID?: string;
+    entryID?: string;
+    assistantId: string;
+    messageId: string;
+    toolCallId: string;
+  };
+  functionResponse: SaveWorldFunctionData | SaveEntryFunctionData;
+};
+
 export async function POST(req: Request) {
   // Parse the request body
   const input: {
     threadId: string | null;
     message: string;
     worldID: string;
+    campaignID: string;
+    entryID: string;
     assistantId: string;
   } = await req.json();
+
+  let assistantId = input.assistantId;
+  let assistant: OpenAI.Beta.Assistants.Assistant;
+
+  if (!assistantId) {
+    assistant = await openai.beta.assistants.create({
+      instructions: ASSISTANT_INSTRUCTIONS,
+      model: "gpt-4-1106-preview",
+      tools: [
+        {
+          type: "retrieval",
+        },
+        saveWorld,
+        saveEntries,
+      ],
+    });
+    assistantId = assistant.id;
+  }
 
   // Create a thread if needed
   const threadId = input.threadId ?? (await openai.beta.threads.create({})).id;
@@ -34,7 +70,7 @@ export async function POST(req: Request) {
       // Run the assistant on the thread
       const run = await openai.beta.threads.runs.create(threadId, {
         assistant_id:
-          input.assistantId ??
+          assistantId ??
           (() => {
             throw new Error("ASSISTANT_ID is not set");
           })(),
@@ -66,26 +102,30 @@ export async function POST(req: Request) {
                 (toolCall) => {
                   const parameters = JSON.parse(toolCall.function.arguments);
 
-                  switch (toolCall.function.name) {
-                    case "save": {
-                      sendDataMessage({
-                        role: "data",
-                        data: {
-                          ...parameters,
-                        },
-                      });
+                  const resp: SaveFunctionDataResponse = {
+                    meta: {
+                      threadId,
+                      worldID: input.worldID,
+                      campaignID: input.campaignID,
+                      entryID: input.entryID,
+                      assistantId,
+                      messageId: createdMessage.id,
+                      toolCallId: toolCall.id,
+                    },
+                    functionResponse: {
+                      ...parameters,
+                    },
+                  };
 
-                      return {
-                        tool_call_id: toolCall.id,
-                        output: `Would you like to save this ${parameters?.entryType}?`,
-                      };
-                    }
+                  sendDataMessage({
+                    role: "data",
+                    data: resp,
+                  });
 
-                    default:
-                      throw new Error(
-                        `Unknown tool call function: ${toolCall.function.name}`,
-                      );
-                  }
+                  return {
+                    tool_call_id: toolCall.id,
+                    output: `Would you like to save this ${parameters?.entryType}?`,
+                  };
                 },
               );
 

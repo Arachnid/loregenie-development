@@ -8,17 +8,10 @@ import { useSettings } from "@/hooks/use-settings";
 import { cn } from "@/lib/utils";
 import { createWorld } from "@/server/actions/world";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ChevronsLeft,
-  MenuIcon,
-  Plus,
-  PlusCircle,
-  Search,
-  Settings,
-} from "lucide-react";
+import { ChevronsLeft, MenuIcon, Plus, Search, Settings } from "lucide-react";
+import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { ElementRef, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 
 export function Navigation() {
@@ -119,22 +112,6 @@ export function Navigation() {
     }
   };
 
-  const handleCreate = () => {
-    const promise = createWorldMutation().then((resp) => {
-      if (resp?.status === 200) {
-        router.push(`/worlds/${resp?.data?.worldID}`);
-      } else {
-        throw new Error("Failed to create a new world.");
-      }
-    });
-
-    toast.promise(promise, {
-      loading: "Creating a new world...",
-      success: "New world created!",
-      error: "Failed to create a new world.",
-    });
-  };
-
   return (
     <>
       <aside
@@ -159,11 +136,16 @@ export function Navigation() {
           <UserItem />
           <Item label="Search" icon={Search} isSearch onClick={search.onOpen} />
           <Item label="Settings" icon={Settings} onClick={settings.onOpen} />
-          <Item onClick={handleCreate} label="New World" icon={PlusCircle} />
         </div>
         <div className="mt-4">
           <WorldList />
-          <Item onClick={handleCreate} icon={Plus} label="Add a World" />
+          <Link
+            href="/worlds"
+            className="group flex min-h-[27px] w-full items-center py-1 pl-3 pr-3 text-sm font-medium text-muted-foreground hover:bg-primary/5"
+          >
+            <Plus className="mr-2 h-[18px] w-[18px] shrink-0 text-muted-foreground" />
+            <span className="truncate">Add a World</span>
+          </Link>
         </div>
         <div
           onMouseDown={handleMouseDown}

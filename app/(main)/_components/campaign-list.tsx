@@ -41,26 +41,28 @@ export const CampaignList = ({ worldID, campaigns }: CampaignListProps) => {
       >
         No pages inside
       </p>
-      {campaigns?.map((campaign) => (
-        <div key={campaign.id}>
-          <CampaignItem
-            worldID={worldID}
-            campaignID={campaign.id}
-            onClick={() => onRedirect(campaign.id)}
-            active={params?.campaignID === campaign.id}
-            onExpand={() => onExpand(campaign.id)}
-            expanded={expanded[campaign.id]}
-          />
-          {expanded[campaign.id] && (
-            <EntryList
+      {campaigns?.map((campaign) => {
+        return (
+          <div key={campaign.id}>
+            <CampaignItem
               worldID={worldID}
               campaignID={campaign.id}
-              level={2}
-              entries={campaign.entries}
+              onClick={() => onRedirect(campaign.id)}
+              active={params?.campaignID === campaign.id}
+              onExpand={() => onExpand(campaign.id)}
+              expanded={expanded[campaign.id]}
             />
-          )}
-        </div>
-      ))}
+            {expanded[campaign.id] && (
+              <EntryList
+                worldID={worldID}
+                campaignID={campaign.id}
+                level={2}
+                entries={campaign.entries}
+              />
+            )}
+          </div>
+        );
+      })}
     </>
   );
 };

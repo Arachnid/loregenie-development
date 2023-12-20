@@ -4,7 +4,6 @@ import { BlockNoteEditor } from "@blocknote/core";
 import "@blocknote/core/style.css";
 import { BlockNoteView, useBlockNote } from "@blocknote/react";
 import { useTheme } from "next-themes";
-import { useEffect } from "react";
 
 interface EditorProps {
   onChange: (value: string) => void;
@@ -30,15 +29,6 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
       onChange(JSON.stringify(editor.topLevelBlocks, null, 2));
     },
   });
-  useEffect(() => {
-    async function getBlocks() {
-      if (editor && content) {
-        const blocks = await editor.tryParseMarkdownToBlocks(content);
-        editor.replaceBlocks(editor.topLevelBlocks, blocks);
-      }
-      getBlocks();
-    }
-  }, [content, editor]);
 
   return (
     <div>

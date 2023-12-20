@@ -71,7 +71,16 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
 
   const onInput = (value: string) => {
     setValue(value);
+  };
 
+  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      disableInput();
+    }
+  };
+
+  const onSave = () => {
     if (isCampaign(initialData)) {
       updateCampaign({
         worldID: initialData.worldID,
@@ -93,13 +102,6 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
         id: initialData.initialData.id,
         name: value || "Untitled",
       });
-    }
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      disableInput();
     }
   };
 

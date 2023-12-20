@@ -1,7 +1,5 @@
 "use server";
 
-import { save } from "@/ai/functions/save";
-import { ASSISTANT_INSTRUCTIONS } from "@/ai/prompts/system";
 import {
   Converter,
   db,
@@ -23,13 +21,25 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+export type NewWorldArgs = {
+  name: string;
+  description: string;
+  assistantId: string;
+  threadId: string;
+};
+
 export type WorldResponse = {
   name: string;
   description: string;
   imagePrompt: string;
 };
 
-export async function createWorld() {
+export async function createWorld({
+  name,
+  description,
+  assistantId,
+  threadId,
+}: NewWorldArgs) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
 
@@ -40,18 +50,10 @@ export async function createWorld() {
     };
   }
 
-  const assistant = await openai.beta.assistants.create({
-    instructions: ASSISTANT_INSTRUCTIONS,
-    model: "gpt-4",
-    tools: [save],
-  });
-
-  const threadId = (await openai.beta.threads.create()).id;
-
   try {
     const worldData = {
-      name: "Untitled World",
-      description: "",
+      name,
+      description,
       image: "",
       imagePrompt: "",
       readers: [email],
@@ -59,7 +61,7 @@ export async function createWorld() {
       admins: [email],
       public: false,
       prompt: "",
-      assistantId: assistant.id,
+      assistantId,
       threadId,
     } as WorldDB;
 
