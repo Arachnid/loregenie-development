@@ -110,7 +110,18 @@ export const Toolbar = ({ initialData, preview }: ToolbarProps) => {
       <div className="flex items-center gap-x-1 py-4 opacity-0 group-hover:opacity-100">
         {!initialData.initialData.image && !preview && (
           <Button
-            onClick={coverImage.onOpen}
+            onClick={() => {
+              if (isEntry(initialData)) {
+                coverImage.onOpen({
+                  worldID: initialData.worldID,
+                  entryID: initialData.entryID,
+                });
+              } else {
+                coverImage.onOpen({
+                  worldID: initialData.worldID,
+                });
+              }
+            }}
             className="text-xs text-muted-foreground"
             variant="outline"
             size="sm"

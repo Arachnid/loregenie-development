@@ -27,7 +27,7 @@ export async function createEntry({
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -43,7 +43,7 @@ export async function createEntry({
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -62,7 +62,7 @@ export async function createEntry({
 
         if (!campaignDB) {
           return {
-            error: new Error("Campaign not found"),
+            error: "Campaign not found",
             status: 404,
           };
         }
@@ -74,7 +74,7 @@ export async function createEntry({
           )
         ) {
           return {
-            error: new Error("Invalid Campaign Permissions"),
+            error: "Invalid Campaign Permissions",
           };
         }
 
@@ -122,7 +122,7 @@ export async function createEntry({
     }
 
     return {
-      error: new Error("Invalid World Permissions"),
+      error: "Invalid World Permissions",
       status: 401,
     };
   } catch (error) {
@@ -145,7 +145,7 @@ export async function getEntry({ worldID, entryID, campaignID }: GetEntryArgs) {
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -161,7 +161,7 @@ export async function getEntry({ worldID, entryID, campaignID }: GetEntryArgs) {
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -184,7 +184,7 @@ export async function getEntry({ worldID, entryID, campaignID }: GetEntryArgs) {
 
         if (!campaignDB) {
           return {
-            error: new Error("Campaign not found"),
+            error: "Campaign not found",
             status: 404,
           };
         }
@@ -196,7 +196,7 @@ export async function getEntry({ worldID, entryID, campaignID }: GetEntryArgs) {
           )
         ) {
           return {
-            error: new Error("Invalid Campaign Permissions"),
+            error: "Invalid Campaign Permissions",
           };
         }
 
@@ -216,7 +216,7 @@ export async function getEntry({ worldID, entryID, campaignID }: GetEntryArgs) {
 
       if (!entryDB) {
         return {
-          error: new Error("Entry not found"),
+          error: "Entry not found",
           status: 404,
         };
       }
@@ -228,7 +228,7 @@ export async function getEntry({ worldID, entryID, campaignID }: GetEntryArgs) {
     }
 
     return {
-      error: new Error("Invalid World Permissions"),
+      error: "Invalid World Permissions",
       status: 401,
     };
   } catch (error) {
@@ -257,7 +257,7 @@ export async function updateEntry({
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -273,7 +273,7 @@ export async function updateEntry({
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -292,7 +292,7 @@ export async function updateEntry({
 
         if (!campaignDB) {
           return {
-            error: new Error("Campaign not found"),
+            error: "Campaign not found",
             status: 404,
           };
         }
@@ -304,7 +304,7 @@ export async function updateEntry({
           )
         ) {
           return {
-            error: new Error("Invalid Campaign Permissions"),
+            error: "Invalid Campaign Permissions",
           };
         }
 
@@ -324,7 +324,7 @@ export async function updateEntry({
 
       if (!entryDB) {
         return {
-          error: new Error("Entry not found"),
+          error: "Entry not found",
           status: 404,
         };
       }
@@ -337,7 +337,7 @@ export async function updateEntry({
     }
 
     return {
-      error: new Error("Invalid World Permissions"),
+      error: "Invalid World Permissions",
       status: 401,
     };
   } catch (error) {
@@ -364,7 +364,7 @@ export async function deleteEntry({
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -380,7 +380,7 @@ export async function deleteEntry({
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -399,7 +399,7 @@ export async function deleteEntry({
 
         if (!campaignDB) {
           return {
-            error: new Error("Campaign not found"),
+            error: "Campaign not found",
             status: 404,
           };
         }
@@ -411,7 +411,7 @@ export async function deleteEntry({
           )
         ) {
           return {
-            error: new Error("Invalid Campaign Permissions"),
+            error: "Invalid Campaign Permissions",
           };
         }
 
@@ -431,7 +431,7 @@ export async function deleteEntry({
 
       if (!entryDB) {
         return {
-          error: new Error("Entry not found"),
+          error: "Entry not found",
           status: 404,
         };
       }
@@ -444,7 +444,7 @@ export async function deleteEntry({
     }
 
     return {
-      error: new Error("Invalid World Permissions"),
+      error: "Invalid World Permissions",
       status: 401,
     };
   } catch (error) {

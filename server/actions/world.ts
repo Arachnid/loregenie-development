@@ -11,7 +11,6 @@ import {
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { World, WorldDB } from "@/types";
 import writeDataToFile from "@/utils/storeMessages";
-import crypto from "crypto";
 import { firestore } from "firebase-admin";
 import { getServerSession } from "next-auth";
 import OpenAI from "openai";
@@ -45,7 +44,7 @@ export async function createWorld({
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -147,7 +146,7 @@ export async function getWorld(worldID: string) {
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -163,7 +162,7 @@ export async function getWorld(worldID: string) {
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -193,7 +192,7 @@ export async function getWorld(worldID: string) {
     }
 
     return {
-      error: new Error("Invalid Permissions"),
+      error: "Invalid Permissions",
       status: 401,
     };
   } catch (error) {
@@ -210,14 +209,14 @@ export async function updateWorld(worldData: Partial<WorldDB>) {
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
 
   if (!worldData.id) {
     return {
-      error: new Error("Invalid World ID"),
+      error: "Invalid World ID",
       status: 400,
     };
   }
@@ -233,7 +232,7 @@ export async function updateWorld(worldData: Partial<WorldDB>) {
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -254,14 +253,14 @@ export async function updateWorld(worldData: Partial<WorldDB>) {
         };
       } else {
         return {
-          error: new Error("Failed to retrieve updated data."),
+          error: "Failed to retrieve updated data.",
           status: 500,
         };
       }
     }
 
     return {
-      error: new Error("Invalid Permissions"),
+      error: "Invalid Permissions",
       status: 401,
     };
   } catch (error) {
@@ -278,7 +277,7 @@ export async function deleteWorld(worldID: string) {
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -291,7 +290,7 @@ export async function deleteWorld(worldID: string) {
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -305,7 +304,7 @@ export async function deleteWorld(worldID: string) {
     }
 
     return {
-      error: new Error("Invalid Permissions"),
+      error: "Invalid Permissions",
       status: 401,
     };
   } catch (error) {
@@ -316,40 +315,13 @@ export async function deleteWorld(worldID: string) {
   }
 }
 
-export async function createImage({
-  prompt,
-  size = "1792x1024",
-}: {
-  prompt: string;
-  size: "256x256" | "512x512" | "1024x1024" | "1792x1024" | "1024x1792";
-}) {
-  const result = await openai.images.generate({
-    model: "dall-e-3",
-    prompt,
-    n: 1,
-    size,
-    response_format: "b64_json",
-  });
-  const image = result.data[0].b64_json as string;
-
-  const fileRef = storage.bucket().file(`${crypto.randomUUID()}.png`);
-  await fileRef.save(Buffer.from(image, "base64"));
-
-  return {
-    data: {
-      url: fileRef.publicUrl(),
-    },
-    status: 200,
-  };
-}
-
 export async function deleteWorldImage(worldID: string) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -365,7 +337,7 @@ export async function deleteWorldImage(worldID: string) {
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -384,7 +356,7 @@ export async function deleteWorldImage(worldID: string) {
     }
 
     return {
-      error: new Error("Invalid Permissions"),
+      error: "Invalid Permissions",
       status: 401,
     };
   } catch (error) {
@@ -393,4 +365,40 @@ export async function deleteWorldImage(worldID: string) {
       status: 500,
     };
   }
+}
+
+export async function getWorldThreadMessages(worldID: string) {
+  const world = await getWorld(worldID);
+
+  if (world.status !== 200) {
+    return {
+      error: world.error,
+      status: world.status,
+    };
+  }
+
+  const worldData = world.data;
+
+  if (!worldData) {
+    return {
+      error: "World not found",
+      status: 404,
+    };
+  }
+
+  if (!worldData.threadId) {
+    return {
+      error: "World thread not found",
+      status: 404,
+    };
+  }
+
+  const threadMessages = await openai.beta.threads.messages.list(
+    worldData.threadId,
+  );
+
+  return {
+    data: threadMessages.data.reverse(),
+    status: 200,
+  };
 }

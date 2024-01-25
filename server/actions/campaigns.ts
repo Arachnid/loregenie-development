@@ -15,7 +15,7 @@ export async function createCampaign({ worldID }: CreateCampaignArgs) {
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -31,7 +31,7 @@ export async function createCampaign({ worldID }: CreateCampaignArgs) {
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -68,7 +68,7 @@ export async function createCampaign({ worldID }: CreateCampaignArgs) {
     }
 
     return {
-      error: new Error("User does not have permission to create a campaign"),
+      error: "User does not have permission to create a campaign",
       status: 401,
     };
   } catch (error) {
@@ -90,7 +90,7 @@ export async function getCampaign({ worldID, campaignID }: GetCampaignArgs) {
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -106,7 +106,7 @@ export async function getCampaign({ worldID, campaignID }: GetCampaignArgs) {
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -126,7 +126,7 @@ export async function getCampaign({ worldID, campaignID }: GetCampaignArgs) {
 
       if (!campaignDB) {
         return {
-          error: new Error("Campaign not found"),
+          error: "Campaign not found",
           status: 404,
         };
       }
@@ -139,7 +139,7 @@ export async function getCampaign({ worldID, campaignID }: GetCampaignArgs) {
         )
       ) {
         return {
-          error: new Error("Invalid Campaign Permissions"),
+          error: "Invalid Campaign Permissions",
         };
       }
 
@@ -163,7 +163,7 @@ export async function getCampaign({ worldID, campaignID }: GetCampaignArgs) {
     }
 
     return {
-      error: new Error("Invalid Permissions"),
+      error: "Invalid Permissions",
       status: 401,
     };
   } catch (error) {
@@ -190,7 +190,7 @@ export async function updateCampaign({
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -206,7 +206,7 @@ export async function updateCampaign({
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -226,7 +226,7 @@ export async function updateCampaign({
 
       if (!campaignDB) {
         return {
-          error: new Error("Campaign not found"),
+          error: "Campaign not found",
           status: 404,
         };
       }
@@ -238,7 +238,7 @@ export async function updateCampaign({
         )
       ) {
         return {
-          error: new Error("Invalid Campaign Permissions"),
+          error: "Invalid Campaign Permissions",
         };
       }
 
@@ -256,7 +256,7 @@ export async function updateCampaign({
     }
 
     return {
-      error: new Error("Invalid Permissions"),
+      error: "Invalid Permissions",
       status: 401,
     };
   } catch (error) {
@@ -281,7 +281,7 @@ export async function deleteCampaign({
 
   if (!email) {
     return {
-      error: new Error("Invalid Email"),
+      error: "Invalid Email",
       status: 401,
     };
   }
@@ -297,7 +297,7 @@ export async function deleteCampaign({
 
     if (!worldDB) {
       return {
-        error: new Error("World not found"),
+        error: "World not found",
         status: 404,
       };
     }
@@ -317,7 +317,7 @@ export async function deleteCampaign({
 
       if (!campaignDB) {
         return {
-          error: new Error("Campaign not found"),
+          error: "Campaign not found",
           status: 404,
         };
       }
@@ -329,7 +329,7 @@ export async function deleteCampaign({
         )
       ) {
         return {
-          error: new Error("Invalid Campaign Permissions"),
+          error: "Invalid Campaign Permissions",
         };
       }
 
@@ -342,7 +342,7 @@ export async function deleteCampaign({
     }
 
     return {
-      error: new Error("Invalid Permissions"),
+      error: "Invalid Permissions",
       status: 401,
     };
   } catch (error) {

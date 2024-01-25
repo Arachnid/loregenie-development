@@ -46,7 +46,7 @@ export const saveEntries: OpenAI.Beta.Assistants.AssistantCreateParams.Assistant
                 parentEntry: {
                   type: "string",
                   description:
-                    "The name of the parent entry from the chat. If the entry is a completely new entry then this should be null.",
+                    "The name of the parent entry from the chat history. All entries must have a parent entry. The entry can be the world itself or one of the entries from the chat.",
                 },
                 name: {
                   type: "string",
